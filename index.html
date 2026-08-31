@@ -252,6 +252,10 @@
   .g5{background-image:linear-gradient(135deg,#081729,#3E86AC);}
   .g6{background-image:linear-gradient(135deg,#12314F,#A8331E);}
 
+  /* ---------- theme song ---------- */
+  .video-frame{position:relative; width:100%; aspect-ratio:16/9; border-radius:8px; overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow); background:var(--navy-deep);}
+  .video-frame iframe{position:absolute; inset:0; width:100%; height:100%; border:0; display:block;}
+
   /* ---------- contact ---------- */
   .contact{background:var(--navy-deep); color:#fff; position:relative; overflow:hidden;}
   .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px;}
@@ -396,6 +400,7 @@
         <a href="#founding">창립총회</a>
         <a href="#progress">추진경과</a>
         <a href="#activities">활동계획</a>
+        <a href="#themesong">테마곡</a>
         <a href="#contact">문의</a>
       </nav>
       <div class="header-actions">
@@ -414,6 +419,7 @@
       <a href="#founding">창립총회</a>
       <a href="#progress">추진경과</a>
       <a href="#activities">활동계획</a>
+      <a href="#themesong">테마곡</a>
       <a href="#contact">문의</a>
     </nav>
   </div>
@@ -856,6 +862,19 @@
       </div>
     </section>
 
+    <section class="section" id="themesong" style="background:var(--mist);">
+      <div class="wrap">
+        <div class="section-head reveal" style="--i:0">
+          <span class="eyebrow">테마곡</span>
+          <h2>뉴영덕연합회와 함께 듣는 노래</h2>
+          <p>창립을 축하하는 마음을 담은 테마곡입니다. 아래에서 바로 재생해 보세요.</p>
+        </div>
+        <div class="video-frame reveal" style="--i:1">
+          <iframe src="https://www.youtube.com/embed/17TrdOzDkBA" title="뉴영덕연합회 테마곡" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
     <section class="section contact" id="contact">
       <div class="wrap contact-grid">
         <div class="reveal" style="--i:0">
@@ -930,6 +949,7 @@
             <ul>
               <li><a href="#activities">활동계획</a></li>
               <li><a href="#gallery">갤러리</a></li>
+              <li><a href="#themesong">테마곡</a></li>
               <li><a href="#contact">문의</a></li>
             </ul>
           </div>
