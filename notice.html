@@ -639,8 +639,23 @@
   /* ==================== 공지사항 게시판 (Supabase) ==================== */
   var SUPABASE_URL = 'https://nfpysoaykskfrhjchrfr.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mcHlzb2F5a3NrZnJoamNocmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxOTY4NDUsImV4cCI6MjEwMzc3Mjg0NX0.2LRo6_PuNrdK74JwQIagICTmkZPNJVgJ7vvgPf3QLHY';
+  // Supabase's REST responses carry no Cache-Control header, so some
+  // browsers apply their own heuristic and quietly serve a stale cached
+  // response for an identical GET (same notices query, same URL) instead
+  // of hitting the network — a normal refresh doesn't fix it because the
+  // cached entry is still "fresh" by that heuristic; only a hard refresh
+  // (which bypasses cache) did. Force every request through with no-store
+  // so reads are always live.
   var sb = (window.supabase && window.supabase.createClient)
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        global: {
+          fetch: function(url, options){
+            options = options || {};
+            options.cache = 'no-store';
+            return fetch(url, options);
+          }
+        }
+      })
     : null;
 
   var noticeBoardList = document.getElementById('noticeBoardList');

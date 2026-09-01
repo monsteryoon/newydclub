@@ -1160,7 +1160,15 @@
   var SUPABASE_URL = 'https://nfpysoaykskfrhjchrfr.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mcHlzb2F5a3NrZnJoamNocmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxOTY4NDUsImV4cCI6MjEwMzc3Mjg0NX0.2LRo6_PuNrdK74JwQIagICTmkZPNJVgJ7vvgPf3QLHY';
   var sb = (window.supabase && window.supabase.createClient)
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        global: {
+          fetch: function(url, options){
+            options = options || {};
+            options.cache = 'no-store';
+            return fetch(url, options);
+          }
+        }
+      })
     : null;
   var noticeTickerList = document.querySelector('.notice-band .notice-list');
 
