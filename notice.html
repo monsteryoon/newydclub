@@ -841,11 +841,17 @@
   // stored refresh token. Call this right before any write so a long-idle
   // tab (background timers throttled, auto-refresh missed) doesn't silently
   // send an expired token and have the write rejected with no visible error.
-  async function ensureFreshSession(){
+  // If the session is truly gone, `retryFn` (the write the caller was about
+  // to make) is queued and re-run automatically right after the admin logs
+  // back in — otherwise re-login "worked" but the delete/save they actually
+  // wanted never happened, and clicking it again is easy to forget to do.
+  var pendingAction = null;
+  async function ensureFreshSession(retryFn){
     if(!sb) return false;
     var result = await sb.auth.getSession();
     if(!result.data || !result.data.session){
-      alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
+      pendingAction = retryFn || null;
+      alert('로그인이 만료되었습니다. 다시 로그인해주세요. 로그인하시면 하려던 작업이 이어서 실행됩니다.');
       setAdminUI(false);
       document.getElementById('loginModal').classList.add('open');
       return false;
@@ -865,9 +871,9 @@
     noticeForm.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
   }
 
-  async function deleteNotice(id){
-    if(!confirm('이 공지를 삭제할까요?')) return;
-    if(!(await ensureFreshSession())) return;
+  async function deleteNotice(id, skipConfirm){
+    if(!skipConfirm && !confirm('이 공지를 삭제할까요?')) return;
+    if(!(await ensureFreshSession(function(){ deleteNotice(id, true); }))) return;
     var result = await sb.from('notices').delete().eq('id', id);
     if(result.error){
       alert('삭제에 실패했습니다: ' + result.error.message);
@@ -914,6 +920,11 @@
       }
       loginModal.classList.remove('open');
       document.getElementById('loginForm').reset();
+      if(pendingAction){
+        var fn = pendingAction;
+        pendingAction = null;
+        fn();
+      }
     });
 
     document.getElementById('adminLogoutBtn').addEventListener('click', async function(){
@@ -948,11 +959,11 @@
       noticeForm.style.display = 'none';
       resetImageState();
     });
-    document.getElementById('noticeSubmitBtn').addEventListener('click', async function(){
+    async function performNoticeSubmit(skipSessionCheck){
       var title = document.getElementById('noticeTitleInput').value.trim();
       var body = document.getElementById('noticeBodyInput').value.trim();
       if(!title){ alert('제목을 입력해주세요.'); return; }
-      if(!(await ensureFreshSession())) return;
+      if(!skipSessionCheck && !(await ensureFreshSession(function(){ performNoticeSubmit(true); }))) return;
       var editingId = noticeForm.dataset.editingId;
       var submitBtn = document.getElementById('noticeSubmitBtn');
       submitBtn.disabled = true;
@@ -989,7 +1000,8 @@
       }
       resetImageState();
       window.location.href = 'notice.html';
-    });
+    }
+    document.getElementById('noticeSubmitBtn').addEventListener('click', function(){ performNoticeSubmit(false); });
 
     sb.auth.onAuthStateChange(function(_event, session){ setAdminUI(!!session); });
     sb.auth.getSession().then(function(result){ setAdminUI(!!(result.data && result.data.session)); });
