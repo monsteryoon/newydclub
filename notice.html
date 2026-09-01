@@ -696,17 +696,23 @@
   // browsers heuristically cache and replay a stale response for an
   // identical query. Force every request through with no-store so reads
   // are always live.
-  var sb = (window.supabase && window.supabase.createClient)
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        global: {
-          fetch: function(url, options){
-            options = options || {};
-            options.cache = 'no-store';
-            return fetch(url, options);
-          }
-        }
-      })
-    : null;
+  function noStoreFetch(url, options){
+    options = options || {};
+    options.cache = 'no-store';
+    return fetch(url, options);
+  }
+  var sbReady = window.supabase && window.supabase.createClient;
+  // sb: the normal client — carries the admin's session for login/write/
+  // delete/upload. sbRead: a second client with persistSession/autoRefresh
+  // off, so it never picks up that session and always reads as the public
+  // "anon" role. This means public read policies alone are enough — the
+  // page never depends on an "authenticated can also read" policy existing,
+  // so a missed RLS policy on read can't blank the list for a logged-in admin.
+  var sb = sbReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { fetch: noStoreFetch } }) : null;
+  var sbRead = sbReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { fetch: noStoreFetch },
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+  }) : null;
 
   var noticeBoardList = document.getElementById('noticeBoardList');
   var noticeTickerList = document.querySelector('.notice-band .notice-list');
@@ -809,11 +815,11 @@
   }
 
   async function loadNotices(){
-    if(!sb){
+    if(!sbRead){
       if(noticeBoardList){ noticeBoardList.innerHTML = '<p class="notice-empty">게시판 연결에 실패했습니다. 잠시 후 다시 시도해주세요.</p>'; }
       return;
     }
-    var result = await sb.from('notices').select('*').order('created_at', {ascending:false});
+    var result = await sbRead.from('notices').select('*').order('created_at', {ascending:false});
     if(result.error){
       if(noticeBoardList){ noticeBoardList.innerHTML = '<p class="notice-empty">공지사항을 불러오지 못했습니다.</p>'; }
       return;
