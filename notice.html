@@ -696,7 +696,12 @@
       noticeBoardList.querySelectorAll('[data-action="delete"]').forEach(function(btn){
         btn.addEventListener('click', async function(){
           if(!confirm('이 공지를 삭제할까요?')) return;
-          await sb.from('notices').delete().eq('id', btn.getAttribute('data-id'));
+          if(!(await ensureFreshSession())) return;
+          var result = await sb.from('notices').delete().eq('id', btn.getAttribute('data-id'));
+          if(result.error){
+            alert('삭제에 실패했습니다: ' + result.error.message);
+            return;
+          }
           loadNotices();
         });
       });
@@ -739,6 +744,22 @@
     if(adminLoggedIn){ adminLoggedIn.style.display = loggedIn ? 'flex' : 'none'; }
     if(!loggedIn && noticeForm){ noticeForm.style.display = 'none'; }
     renderNoticeBoard();
+  }
+
+  // getSession() transparently refreshes an expired access token using the
+  // stored refresh token. Call this right before any write so a long-idle
+  // tab (background timers throttled, auto-refresh missed) doesn't silently
+  // send an expired token and have the write rejected with no visible error.
+  async function ensureFreshSession(){
+    if(!sb) return false;
+    var result = await sb.auth.getSession();
+    if(!result.data || !result.data.session){
+      alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
+      setAdminUI(false);
+      document.getElementById('loginModal').classList.add('open');
+      return false;
+    }
+    return true;
   }
 
   if(sb){
@@ -818,6 +839,7 @@
       var title = document.getElementById('noticeTitleInput').value.trim();
       var body = document.getElementById('noticeBodyInput').value.trim();
       if(!title){ alert('제목을 입력해주세요.'); return; }
+      if(!(await ensureFreshSession())) return;
       var editingId = noticeForm.dataset.editingId;
       var submitBtn = document.getElementById('noticeSubmitBtn');
       submitBtn.disabled = true;
@@ -841,13 +863,17 @@
       }
 
       var payload = { title: title, body: body, image_url: imageUrl };
-      if(editingId){
-        await sb.from('notices').update(payload).eq('id', editingId);
-      } else {
-        await sb.from('notices').insert(payload);
-      }
+      var writeResult = editingId
+        ? await sb.from('notices').update(payload).eq('id', editingId)
+        : await sb.from('notices').insert(payload);
+
       submitBtn.disabled = false;
       submitBtn.textContent = '등록';
+
+      if(writeResult.error){
+        alert('저장에 실패했습니다: ' + writeResult.error.message);
+        return;
+      }
       noticeForm.style.display = 'none';
       resetImageState();
       loadNotices();
@@ -856,6 +882,17 @@
     sb.auth.onAuthStateChange(function(_event, session){ setAdminUI(!!session); });
     sb.auth.getSession().then(function(result){ setAdminUI(!!(result.data && result.data.session)); });
     loadNotices();
+
+    // A tab left in the background for a long time can miss its scheduled
+    // token refresh and show a stale list. Re-sync both whenever the tab
+    // becomes visible again, so switching back to it is enough — no manual
+    // reload needed.
+    document.addEventListener('visibilitychange', function(){
+      if(document.visibilityState === 'visible'){
+        sb.auth.getSession().then(function(result){ setAdminUI(!!(result.data && result.data.session)); });
+        loadNotices();
+      }
+    });
   } else if(noticeBoardList){
     noticeBoardList.innerHTML = '<p class="notice-empty">게시판을 불러올 수 없습니다.</p>';
   }
