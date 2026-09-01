@@ -344,18 +344,41 @@
   .notice-image-preview img{width:88px; height:88px; object-fit:cover; border-radius:6px; border:1px solid var(--line);}
   .notice-card-image{width:100%; max-height:360px; object-fit:cover; border-radius:6px; margin-bottom:14px; display:block;}
   .form-error{color:var(--crab); font-size:13px; margin:-4px 0 4px;}
-  .notice-board-list{display:flex; flex-direction:column; gap:10px;}
-  .notice-card{background:var(--paper); border:1px solid var(--line); border-radius:6px; overflow:hidden; transition:border-color .2s ease;}
-  .notice-card[open]{border-color:var(--sea);}
-  .notice-card summary{list-style:none; cursor:pointer; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px;}
-  .notice-card summary::-webkit-details-marker{display:none;}
-  .notice-card-body{padding:0 18px 20px; font-size:14.5px; line-height:1.85; color:var(--ink-soft);}
-  .notice-admin-actions{margin-top:16px; display:flex; gap:8px;}
+  .notice-table{border:1px solid var(--line); border-radius:6px; overflow:hidden;}
+  .notice-table-head{display:flex; align-items:center; gap:16px; padding:13px 18px; background:var(--mist); font-size:12px; font-weight:800; color:var(--ink-soft); letter-spacing:.02em;}
+  .notice-row{display:flex; align-items:center; gap:16px; padding:16px 18px; text-decoration:none; color:var(--ink); transition:background .15s ease;}
+  .notice-row + .notice-row{border-top:1px solid var(--line);}
+  .notice-row:hover{background:var(--mist);}
+  .notice-table-head .nt-num, .notice-row .nt-num{width:44px; flex:none; font-variant-numeric:tabular-nums;}
+  .notice-table-head .nt-title, .notice-row .nt-title{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .notice-row .nt-title{font-weight:700; font-size:14.5px;}
+  .notice-table-head .nt-author, .notice-row .nt-author{width:130px; flex:none;}
+  .notice-table-head .nt-date, .notice-row .nt-date{width:100px; flex:none; text-align:right; font-variant-numeric:tabular-nums;}
+  .notice-row .nt-author, .notice-row .nt-date{font-size:13px; color:var(--ink-soft);}
+  .nt-img-mark{font-size:12px; margin-left:2px;}
+  .notice-admin-actions{display:flex; gap:8px;}
   .btn-mini{font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:20px; border:1px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer;}
   .btn-mini:hover{border-color:var(--sea); color:var(--sea);}
   .btn-mini.danger{color:var(--crab); border-color:var(--crab);}
   .btn-mini.danger:hover{background:var(--crab); color:#fff;}
-  .notice-empty, .notice-loading{color:var(--ink-soft); font-size:14px; padding:24px 0; text-align:center;}
+  .notice-empty, .notice-loading{color:var(--ink-soft); font-size:14px; padding:24px 18px; text-align:center;}
+
+  .notice-detail{border:1px solid var(--line); border-radius:8px; padding:32px;}
+  .notice-detail-head h3{font-size:clamp(20px,2.6vw,26px); font-weight:800; line-height:1.4; text-wrap:balance;}
+  .notice-detail-meta{margin-top:10px; display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft);}
+  .notice-detail-meta .dot{opacity:.5;}
+  .notice-detail-image{width:100%; max-height:440px; object-fit:cover; border-radius:6px; margin:24px 0;}
+  .notice-detail-body{font-size:15.5px; line-height:1.9; color:var(--ink); margin-top:24px; padding-top:24px; border-top:1px solid var(--line);}
+  .notice-detail-actions{margin-top:32px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
+
+  @media (max-width:640px){
+    .notice-table-head{display:none;}
+    .notice-row{flex-wrap:wrap; gap:4px 12px; padding:14px 16px;}
+    .notice-row .nt-num{display:none;}
+    .notice-row .nt-title{width:100%; white-space:normal;}
+    .notice-row .nt-author, .notice-row .nt-date{width:auto; flex:none;}
+    .notice-detail{padding:22px;}
+  }
 
   .quick-menu{position:fixed; right:20px; top:50%; transform:translateY(-50%); z-index:80; display:flex; flex-direction:column; gap:10px;}
   .quick-btn{width:54px; height:54px; border-radius:50%; background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:var(--ink); cursor:pointer; text-decoration:none;
@@ -539,8 +562,38 @@
           </div>
         </div>
 
-        <div class="notice-board-list reveal" style="--i:2" id="noticeBoardList">
-          <p class="notice-loading" id="noticeLoading">공지사항을 불러오는 중입니다…</p>
+        <div id="noticeListView" class="reveal" style="--i:2">
+          <div class="notice-table">
+            <div class="notice-table-head">
+              <span class="nt-num">번호</span>
+              <span class="nt-title">제목</span>
+              <span class="nt-author">작성자</span>
+              <span class="nt-date">작성일</span>
+            </div>
+            <div id="noticeBoardList">
+              <p class="notice-loading" id="noticeLoading">공지사항을 불러오는 중입니다…</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="noticeDetailView" style="display:none;">
+          <div class="notice-detail">
+            <div class="notice-detail-head">
+              <h3 id="detailTitle"></h3>
+              <div class="notice-detail-meta">
+                <span id="detailAuthor"></span><span class="dot">·</span><span id="detailDate"></span>
+              </div>
+            </div>
+            <img id="detailImage" class="notice-detail-image" style="display:none;" alt="">
+            <div class="notice-detail-body" id="detailBody"></div>
+            <div class="notice-detail-actions">
+              <a class="btn btn-line" href="notice.html">← 목록으로</a>
+              <div class="notice-admin-actions" id="detailAdminActions" style="display:none;">
+                <button class="btn-mini" type="button" id="detailEditBtn">수정</button>
+                <button class="btn-mini danger" type="button" id="detailDeleteBtn">삭제</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -640,12 +693,9 @@
   var SUPABASE_URL = 'https://nfpysoaykskfrhjchrfr.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mcHlzb2F5a3NrZnJoamNocmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxOTY4NDUsImV4cCI6MjEwMzc3Mjg0NX0.2LRo6_PuNrdK74JwQIagICTmkZPNJVgJ7vvgPf3QLHY';
   // Supabase's REST responses carry no Cache-Control header, so some
-  // browsers apply their own heuristic and quietly serve a stale cached
-  // response for an identical GET (same notices query, same URL) instead
-  // of hitting the network — a normal refresh doesn't fix it because the
-  // cached entry is still "fresh" by that heuristic; only a hard refresh
-  // (which bypasses cache) did. Force every request through with no-store
-  // so reads are always live.
+  // browsers heuristically cache and replay a stale response for an
+  // identical query. Force every request through with no-store so reads
+  // are always live.
   var sb = (window.supabase && window.supabase.createClient)
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         global: {
@@ -661,11 +711,14 @@
   var noticeBoardList = document.getElementById('noticeBoardList');
   var noticeTickerList = document.querySelector('.notice-band .notice-list');
   var noticeForm = document.getElementById('noticeForm');
+  var noticeListView = document.getElementById('noticeListView');
+  var noticeDetailView = document.getElementById('noticeDetailView');
   var adminLoggedOut = document.getElementById('adminLoggedOut');
   var adminLoggedIn = document.getElementById('adminLoggedIn');
   var isAdmin = false;
   var currentNotices = [];
   var selectedImageFile = null;
+  var AUTHOR_NAME = '뉴영덕연합회';
 
   function escapeHtml(str){
     return String(str == null ? '' : str).replace(/[&<>"']/g, function(c){
@@ -676,66 +729,83 @@
     var d = new Date(iso);
     return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
   }
+  function getIdFromUrl(){
+    return new URLSearchParams(window.location.search).get('id');
+  }
 
   function renderNoticeTicker(){
     if(!noticeTickerList || currentNotices.length === 0) return;
     noticeTickerList.innerHTML = currentNotices.slice(0,5).map(function(n){
-      return '<li class="notice-item"><a href="#noticeboard">'+escapeHtml(n.title)+'</a><span class="d">'+formatDate(n.created_at)+'</span></li>';
+      return '<li class="notice-item"><a href="notice.html?id='+encodeURIComponent(n.id)+'">'+escapeHtml(n.title)+'</a><span class="d">'+formatDate(n.created_at)+'</span></li>';
     }).join('');
   }
 
-  function renderNoticeBoard(){
+  function renderNoticeList(){
     if(!noticeBoardList) return;
     if(currentNotices.length === 0){
       noticeBoardList.innerHTML = '<p class="notice-empty">등록된 공지사항이 없습니다.</p>';
       return;
     }
-    noticeBoardList.innerHTML = currentNotices.map(function(n){
-      var adminBtns = isAdmin ? (
-        '<div class="notice-admin-actions">' +
-          '<button class="btn-mini" type="button" data-action="edit" data-id="'+n.id+'">수정</button>' +
-          '<button class="btn-mini danger" type="button" data-action="delete" data-id="'+n.id+'">삭제</button>' +
-        '</div>'
-      ) : '';
-      var imageHtml = n.image_url ? '<img class="notice-card-image" src="'+escapeHtml(n.image_url)+'" alt="'+escapeHtml(n.title)+' 첨부 이미지" loading="lazy">' : '';
+    var total = currentNotices.length;
+    noticeBoardList.innerHTML = currentNotices.map(function(n, i){
+      var imgMark = n.image_url ? ' <span class="nt-img-mark" title="사진 첨부">📷</span>' : '';
       return (
-        '<details class="notice-card">' +
-          '<summary><span class="oc-title"><b>'+escapeHtml(n.title)+'</b><i>'+formatDate(n.created_at)+'</i></span>' +
-          '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>' +
-          '<div class="notice-card-body">'+imageHtml+'<p>'+escapeHtml(n.body).replace(/\n/g,'<br>')+'</p>'+adminBtns+'</div>' +
-        '</details>'
+        '<a class="notice-row" href="notice.html?id='+encodeURIComponent(n.id)+'">' +
+          '<span class="nt-num">'+(total - i)+'</span>' +
+          '<span class="nt-title">'+escapeHtml(n.title)+imgMark+'</span>' +
+          '<span class="nt-author">'+escapeHtml(AUTHOR_NAME)+'</span>' +
+          '<span class="nt-date">'+formatDate(n.created_at)+'</span>' +
+        '</a>'
       );
     }).join('');
+  }
 
+  function renderNoticeDetail(notice){
+    document.getElementById('detailTitle').textContent = notice.title;
+    document.getElementById('detailAuthor').textContent = AUTHOR_NAME;
+    document.getElementById('detailDate').textContent = formatDate(notice.created_at);
+    var img = document.getElementById('detailImage');
+    if(notice.image_url){ img.src = notice.image_url; img.alt = notice.title + ' 첨부 이미지'; img.style.display = 'block'; }
+    else { img.style.display = 'none'; img.src = ''; }
+    document.getElementById('detailBody').innerHTML = escapeHtml(notice.body).replace(/\n/g,'<br>');
+
+    var adminActions = document.getElementById('detailAdminActions');
+    adminActions.style.display = isAdmin ? 'flex' : 'none';
     if(isAdmin){
-      noticeBoardList.querySelectorAll('[data-action="delete"]').forEach(function(btn){
-        btn.addEventListener('click', async function(){
-          if(!confirm('이 공지를 삭제할까요?')) return;
-          if(!(await ensureFreshSession())) return;
-          var result = await sb.from('notices').delete().eq('id', btn.getAttribute('data-id'));
-          if(result.error){
-            alert('삭제에 실패했습니다: ' + result.error.message);
-            return;
-          }
-          loadNotices();
-        });
-      });
-      noticeBoardList.querySelectorAll('[data-action="edit"]').forEach(function(btn){
-        btn.addEventListener('click', function(){
-          var notice = currentNotices.find(function(n){ return String(n.id) === btn.getAttribute('data-id'); });
-          if(!notice) return;
-          document.getElementById('noticeTitleInput').value = notice.title;
-          document.getElementById('noticeBodyInput').value = notice.body || '';
-          noticeForm.dataset.editingId = notice.id;
-          noticeForm.dataset.existingImageUrl = notice.image_url || '';
-          noticeForm.dataset.removeImage = '';
-          selectedImageFile = null;
-          if(notice.image_url){ showImagePreview(notice.image_url); } else { hideImagePreview(); }
-          noticeForm.style.display = 'block';
-          noticeForm.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
-        });
-      });
+      document.getElementById('detailEditBtn').onclick = function(){ openEditForm(notice); };
+      document.getElementById('detailDeleteBtn').onclick = function(){ deleteNotice(notice.id); };
     }
+  }
+
+  function showListView(){
+    noticeListView.style.display = 'block';
+    noticeDetailView.style.display = 'none';
+  }
+  function showDetailView(notice){
+    noticeListView.style.display = 'none';
+    noticeDetailView.style.display = 'block';
+    renderNoticeDetail(notice);
+  }
+
+  function renderCurrentView(){
+    var id = getIdFromUrl();
+    if(id){
+      var notice = currentNotices.find(function(n){ return String(n.id) === id; });
+      if(notice){ showDetailView(notice); return; }
+      if(currentNotices.length){
+        noticeDetailView.style.display = 'block';
+        noticeListView.style.display = 'none';
+        document.getElementById('detailTitle').textContent = '글을 찾을 수 없습니다.';
+        document.getElementById('detailAuthor').textContent = '';
+        document.getElementById('detailDate').textContent = '';
+        document.getElementById('detailImage').style.display = 'none';
+        document.getElementById('detailBody').textContent = '삭제되었거나 존재하지 않는 공지입니다.';
+        document.getElementById('detailAdminActions').style.display = 'none';
+        return;
+      }
+    }
+    renderNoticeList();
+    showListView();
   }
 
   async function loadNotices(){
@@ -745,11 +815,11 @@
     }
     var result = await sb.from('notices').select('*').order('created_at', {ascending:false});
     if(result.error){
-      noticeBoardList.innerHTML = '<p class="notice-empty">공지사항을 불러오지 못했습니다.</p>';
+      if(noticeBoardList){ noticeBoardList.innerHTML = '<p class="notice-empty">공지사항을 불러오지 못했습니다.</p>'; }
       return;
     }
     currentNotices = result.data || [];
-    renderNoticeBoard();
+    renderCurrentView();
     renderNoticeTicker();
   }
 
@@ -758,7 +828,7 @@
     if(adminLoggedOut){ adminLoggedOut.style.display = loggedIn ? 'none' : 'flex'; }
     if(adminLoggedIn){ adminLoggedIn.style.display = loggedIn ? 'flex' : 'none'; }
     if(!loggedIn && noticeForm){ noticeForm.style.display = 'none'; }
-    renderNoticeBoard();
+    renderCurrentView();
   }
 
   // getSession() transparently refreshes an expired access token using the
@@ -775,6 +845,47 @@
       return false;
     }
     return true;
+  }
+
+  function openEditForm(notice){
+    document.getElementById('noticeTitleInput').value = notice.title;
+    document.getElementById('noticeBodyInput').value = notice.body || '';
+    noticeForm.dataset.editingId = notice.id;
+    noticeForm.dataset.existingImageUrl = notice.image_url || '';
+    noticeForm.dataset.removeImage = '';
+    selectedImageFile = null;
+    if(notice.image_url){ showImagePreview(notice.image_url); } else { hideImagePreview(); }
+    noticeForm.style.display = 'block';
+    noticeForm.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
+  }
+
+  async function deleteNotice(id){
+    if(!confirm('이 공지를 삭제할까요?')) return;
+    if(!(await ensureFreshSession())) return;
+    var result = await sb.from('notices').delete().eq('id', id);
+    if(result.error){
+      alert('삭제에 실패했습니다: ' + result.error.message);
+      return;
+    }
+    window.location.href = 'notice.html';
+  }
+
+  function showImagePreview(url){
+    var img = document.getElementById('noticeImagePreviewImg');
+    var box = document.getElementById('noticeImagePreview');
+    img.src = url;
+    box.style.display = 'flex';
+  }
+  function hideImagePreview(){
+    document.getElementById('noticeImagePreview').style.display = 'none';
+    document.getElementById('noticeImagePreviewImg').src = '';
+  }
+  function resetImageState(){
+    selectedImageFile = null;
+    document.getElementById('noticeImageInput').value = '';
+    noticeForm.dataset.existingImageUrl = '';
+    noticeForm.dataset.removeImage = '';
+    hideImagePreview();
   }
 
   if(sb){
@@ -803,38 +914,18 @@
       await sb.auth.signOut();
     });
 
-    var noticeImageInput = document.getElementById('noticeImageInput');
-    var noticeImagePreview = document.getElementById('noticeImagePreview');
-    var noticeImagePreviewImg = document.getElementById('noticeImagePreviewImg');
-
-    function showImagePreview(url){
-      noticeImagePreviewImg.src = url;
-      noticeImagePreview.style.display = 'flex';
-    }
-    function hideImagePreview(){
-      noticeImagePreview.style.display = 'none';
-      noticeImagePreviewImg.src = '';
-    }
-    function resetImageState(){
-      selectedImageFile = null;
-      noticeImageInput.value = '';
-      noticeForm.dataset.existingImageUrl = '';
-      noticeForm.dataset.removeImage = '';
-      hideImagePreview();
-    }
-
-    noticeImageInput.addEventListener('change', function(){
-      var file = noticeImageInput.files && noticeImageInput.files[0];
+    document.getElementById('noticeImageInput').addEventListener('change', function(e){
+      var file = e.target.files && e.target.files[0];
       if(!file) return;
       selectedImageFile = file;
       noticeForm.dataset.removeImage = '';
       var reader = new FileReader();
-      reader.onload = function(e){ showImagePreview(e.target.result); };
+      reader.onload = function(ev){ showImagePreview(ev.target.result); };
       reader.readAsDataURL(file);
     });
     document.getElementById('noticeImageRemoveBtn').addEventListener('click', function(){
       selectedImageFile = null;
-      noticeImageInput.value = '';
+      document.getElementById('noticeImageInput').value = '';
       noticeForm.dataset.removeImage = '1';
       hideImagePreview();
     });
@@ -845,6 +936,7 @@
       document.getElementById('noticeBodyInput').value = '';
       resetImageState();
       noticeForm.style.display = 'block';
+      noticeForm.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
     });
     document.getElementById('noticeCancelBtn').addEventListener('click', function(){
       noticeForm.style.display = 'none';
@@ -889,9 +981,8 @@
         alert('저장에 실패했습니다: ' + writeResult.error.message);
         return;
       }
-      noticeForm.style.display = 'none';
       resetImageState();
-      loadNotices();
+      window.location.href = 'notice.html';
     });
 
     sb.auth.onAuthStateChange(function(_event, session){ setAdminUI(!!session); });
