@@ -174,6 +174,13 @@
   .notice-item{flex:none; display:flex; align-items:baseline; gap:10px; font-size:13.5px; color:var(--ink-soft);}
   .notice-item .d{font-variant-numeric:tabular-nums; font-size:12px;}
 
+  /* ---------- slogan ---------- */
+  .slogan{background:var(--paper); padding:96px 0; text-align:center;}
+  .slogan .eyebrow{justify-content:center;}
+  .slogan-text{margin-top:26px; font-size:clamp(28px,4.6vw,46px); font-weight:800; line-height:1.55; letter-spacing:-0.015em; color:var(--ink); text-wrap:balance;}
+  .slogan-text em{font-style:normal; color:var(--crab);}
+  .slogan-mark{display:block; width:64px; height:4px; background:var(--crab); border-radius:2px; margin:32px auto 0;}
+
   .reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:calc(var(--i,0) * 70ms);}
   .reveal.is-visible{opacity:1; transform:translateY(0);}
 
@@ -287,19 +294,19 @@
   .cta-inner p{margin-top:8px; font-size:14.5px; color:var(--ink-soft);}
 
   /* ---------- footer ---------- */
-  .site-footer{background:var(--ink); color:rgba(255,255,255,0.68); padding:56px 0 28px;}
-  .footer-top{display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:36px; border-bottom:1px solid rgba(255,255,255,0.12);}
-  .footer-brand b{color:#fff; font-size:18px; font-weight:800;}
+  .site-footer{background:var(--paper); color:var(--ink-soft); padding:56px 0 28px; border-top:1px solid var(--line);}
+  .footer-top{display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:36px; border-bottom:1px solid var(--line);}
+  .footer-brand b{color:var(--ink); font-size:18px; font-weight:800;}
   .footer-brand p{margin-top:10px; font-size:13.5px; line-height:1.8; max-width:34ch;}
   .footer-cols{display:flex; gap:64px;}
-  .footer-col h4{color:#fff; font-size:13px; font-weight:700; margin-bottom:14px; letter-spacing:.02em;}
+  .footer-col h4{color:var(--ink); font-size:13px; font-weight:700; margin-bottom:14px; letter-spacing:.02em;}
   .footer-col ul{display:flex; flex-direction:column; gap:9px;}
   .footer-col a{font-size:13.5px;}
-  .footer-col a:hover{color:#fff;}
+  .footer-col a:hover{color:var(--crab);}
   .footer-bottom{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding-top:22px; font-size:12.5px;}
   .socials{display:flex; gap:10px;}
-  .socials a{width:32px; height:32px; border:1px solid rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center;}
-  .socials a:hover{border-color:#fff; color:#fff;}
+  .socials a{width:32px; height:32px; border:1px solid var(--line); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--ink-soft);}
+  .socials a:hover{border-color:var(--crab); color:var(--crab);}
   .socials svg{width:14px; height:14px;}
 
   /* ---------- popup modal ---------- */
@@ -549,6 +556,14 @@
       </div>
     </section>
 
+    <section class="slogan">
+      <div class="wrap">
+        <span class="eyebrow">SLOGAN</span>
+        <p class="slogan-text">하나 된 마음으로,<br><em>새로운 영덕의 미래를 열다.</em></p>
+        <span class="slogan-mark" aria-hidden="true"></span>
+      </div>
+    </section>
+
     <section class="section message" id="message">
       <div class="wrap message-grid">
         <div class="reveal" style="--i:0">
@@ -569,7 +584,7 @@
       <div class="wrap">
         <div class="section-head reveal" style="--i:0">
           <span class="eyebrow">NEW영덕청년연합회 조직도</span>
-          <h2>회장부터 8개 지회, 11개 위원회까지</h2>
+          <h2>회장부터 8개 지회, 12개 위원회까지</h2>
           <p>창립을 준비하며 확정된 뉴영덕연합회의 임원진과 조직 구성입니다. 지회·위원회 카드를 눌러 회원 명단을 펼쳐 보세요.</p>
         </div>
 
@@ -662,7 +677,7 @@
         </div>
 
         <div class="org-group-head reveal" style="--i:0; margin-top:44px;">
-          <h3>위원회 <span>11개 분과</span></h3>
+          <h3>위원회 <span>12개 분과</span></h3>
         </div>
         <div class="org-grid reveal" style="--i:1">
           <details class="org-card">
@@ -727,6 +742,12 @@
             <summary><span class="oc-title"><b>차세대위원장(북부)</b><i>김준일</i></span><span class="oc-meta">3명 <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></summary>
             <div class="org-members">
               <span class="member-chip">권대홍</span><span class="member-chip">정헌석</span><span class="member-chip">정영석</span>
+            </div>
+          </details>
+          <details class="org-card">
+            <summary><span class="oc-title"><b>여성위원장</b><i>신유정</i></span><span class="oc-meta">14명 <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+            <div class="org-members">
+              <span class="member-chip">강정임</span><span class="member-chip">고영임</span><span class="member-chip">권미옥</span><span class="member-chip">김미경</span><span class="member-chip">김은숙</span><span class="member-chip">김현주</span><span class="member-chip">박종숙</span><span class="member-chip">백은희</span><span class="member-chip">손미정</span><span class="member-chip">이미자</span><span class="member-chip">이영희</span><span class="member-chip">임수정</span><span class="member-chip">정애연</span><span class="member-chip">최미경</span>
             </div>
           </details>
         </div>
@@ -836,7 +857,7 @@
           <div class="progress-item done">
             <span class="st">완료</span>
             <h3>조직 구성 및 임원진 확정</h3>
-            <p>회장 서병환을 중심으로 부회장단, 사무국, 8개 읍·면 지회, 11개 위원회 조직을 확정했습니다. <a href="#orgchart" style="color:var(--crab); font-weight:800;">조직도 보기 →</a></p>
+            <p>회장 서병환을 중심으로 부회장단, 사무국, 8개 읍·면 지회, 12개 위원회 조직을 확정했습니다. <a href="#orgchart" style="color:var(--crab); font-weight:800;">조직도 보기 →</a></p>
           </div>
           <div class="progress-item active">
             <span class="st">D-DAY 2026.09.17</span>

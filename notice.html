@@ -174,6 +174,13 @@
   .notice-item{flex:none; display:flex; align-items:baseline; gap:10px; font-size:13.5px; color:var(--ink-soft);}
   .notice-item .d{font-variant-numeric:tabular-nums; font-size:12px;}
 
+  /* ---------- slogan ---------- */
+  .slogan{background:var(--paper); padding:96px 0; text-align:center;}
+  .slogan .eyebrow{justify-content:center;}
+  .slogan-text{margin-top:26px; font-size:clamp(28px,4.6vw,46px); font-weight:800; line-height:1.55; letter-spacing:-0.015em; color:var(--ink); text-wrap:balance;}
+  .slogan-text em{font-style:normal; color:var(--crab);}
+  .slogan-mark{display:block; width:64px; height:4px; background:var(--crab); border-radius:2px; margin:32px auto 0;}
+
   .reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:calc(var(--i,0) * 70ms);}
   .reveal.is-visible{opacity:1; transform:translateY(0);}
 
@@ -287,19 +294,19 @@
   .cta-inner p{margin-top:8px; font-size:14.5px; color:var(--ink-soft);}
 
   /* ---------- footer ---------- */
-  .site-footer{background:var(--ink); color:rgba(255,255,255,0.68); padding:56px 0 28px;}
-  .footer-top{display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:36px; border-bottom:1px solid rgba(255,255,255,0.12);}
-  .footer-brand b{color:#fff; font-size:18px; font-weight:800;}
+  .site-footer{background:var(--paper); color:var(--ink-soft); padding:56px 0 28px; border-top:1px solid var(--line);}
+  .footer-top{display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:36px; border-bottom:1px solid var(--line);}
+  .footer-brand b{color:var(--ink); font-size:18px; font-weight:800;}
   .footer-brand p{margin-top:10px; font-size:13.5px; line-height:1.8; max-width:34ch;}
   .footer-cols{display:flex; gap:64px;}
-  .footer-col h4{color:#fff; font-size:13px; font-weight:700; margin-bottom:14px; letter-spacing:.02em;}
+  .footer-col h4{color:var(--ink); font-size:13px; font-weight:700; margin-bottom:14px; letter-spacing:.02em;}
   .footer-col ul{display:flex; flex-direction:column; gap:9px;}
   .footer-col a{font-size:13.5px;}
-  .footer-col a:hover{color:#fff;}
+  .footer-col a:hover{color:var(--crab);}
   .footer-bottom{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding-top:22px; font-size:12.5px;}
   .socials{display:flex; gap:10px;}
-  .socials a{width:32px; height:32px; border:1px solid rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center;}
-  .socials a:hover{border-color:#fff; color:#fff;}
+  .socials a{width:32px; height:32px; border:1px solid var(--line); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--ink-soft);}
+  .socials a:hover{border-color:var(--crab); color:var(--crab);}
   .socials svg{width:14px; height:14px;}
 
   /* ---------- popup modal ---------- */
@@ -480,7 +487,7 @@
   </div>
 
   <main>
-    <section style="background:linear-gradient(120deg, var(--sea) 0%, var(--crab) 100%); padding:76px 0 56px; color:#fff;">
+    <section style="background:var(--crab); padding:96px 0 56px; color:#fff;">
       <div class="wrap">
         <p style="font-size:13px; font-weight:700; opacity:.85;"><a href="index.html" style="color:#fff; text-decoration:underline;">홈</a> / 공지사항</p>
         <h1 style="margin-top:12px; font-size:clamp(28px,4vw,40px); font-weight:800; letter-spacing:-0.01em;">공지사항</h1>
@@ -601,6 +608,17 @@
   panel.querySelectorAll('a').forEach(function(a){
     a.addEventListener('click', function(){ panel.classList.remove('open'); });
   });
+
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      });
+    }, {threshold:0.15});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('is-visible'); });
+  }
 
   /* ==================== 공지사항 게시판 (Supabase) ==================== */
   var SUPABASE_URL = 'https://nfpysoaykskfrhjchrfr.supabase.co';
