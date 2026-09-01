@@ -56,7 +56,7 @@
     html{scroll-behavior:auto;}
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
   }
-  body{margin:0; font-family:var(--font-kr); background:var(--mist); color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+  body{margin:0; font-family:var(--font-kr); background:var(--mist); color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden; word-break:keep-all; overflow-wrap:break-word;}
   img,svg{display:block; max-width:100%;}
   a{color:inherit; text-decoration:none;}
   ul{margin:0; padding:0; list-style:none;}
@@ -69,7 +69,7 @@
   .section-head{max-width:640px; margin-bottom:48px;}
   .section-head h2{font-size:clamp(28px,3.6vw,40px); font-weight:800; letter-spacing:-0.015em; margin-top:12px; text-wrap:balance; line-height:1.25;}
   .section-head p{margin-top:14px; font-size:15.5px; line-height:1.75; color:var(--ink-soft); max-width:56ch;}
-  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border-radius:3px; font-weight:800; font-size:14.5px; border:1px solid transparent; background:none; font-family:inherit; cursor:pointer; transition:transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease; white-space:nowrap;}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border-radius:3px; font-weight:700; font-size:14.5px; letter-spacing:-0.005em; border:1px solid transparent; background:none; font-family:inherit; cursor:pointer; transition:transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease; white-space:nowrap;}
   .btn:hover{transform:translateY(-3px);}
   .btn-primary{background:var(--crab); color:#fff; position:relative;}
   .btn-primary:hover{background:var(--crab-deep);}
@@ -121,7 +121,7 @@
   /* ---------- hero ---------- */
   .hero{position:relative; background:linear-gradient(165deg, var(--navy-deep) 0%, var(--navy) 55%, var(--sea) 100%); color:#fff; padding:148px 0 0; overflow:hidden;}
   .hero-bg{position:absolute; inset:0; overflow:hidden;}
-  .hero-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(165deg, rgba(8,23,41,0.90) 0%, rgba(18,43,71,0.85) 55%, rgba(27,90,120,0.8) 100%);}
+  .hero-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(200deg, rgba(8,23,41,0.72) 0%, rgba(18,43,71,0.58) 50%, rgba(27,90,120,0.46) 100%);}
   .hero-bg-slide{position:absolute; inset:0; background-size:cover; background-position:center; opacity:0; animation:heroFade 18s ease-in-out infinite;}
   .hero-bg-slide:first-child{opacity:1;}
   .hero-bg-slide:nth-child(2){animation-delay:6s;}
@@ -135,7 +135,10 @@
   .hero-grid{position:relative; z-index:2; display:grid; grid-template-columns:1.1fr 0.9fr; gap:40px; align-items:center; padding-bottom:56px;}
   .hero-copy .eyebrow{color:var(--gold-bright);}
   .hero-copy .eyebrow::before{background:var(--gold-bright);}
-  .hero-copy h1{margin-top:20px; font-size:clamp(34px,5vw,56px); font-weight:800; line-height:1.24; letter-spacing:-0.015em; text-wrap:balance;}
+  .hero-slogan{display:flex; align-items:center; gap:12px; font-size:clamp(14px,1.6vw,16.5px); font-weight:700; color:rgba(255,255,255,0.92); letter-spacing:-0.005em;}
+  .hero-slogan .hs-mark{width:20px; height:2px; background:var(--gold-bright); flex:none;}
+  .hero-slogan em{font-style:normal; color:var(--gold-bright); font-weight:800;}
+  .hero-copy h1{margin-top:18px; font-size:clamp(34px,5vw,56px); font-weight:800; line-height:1.24; letter-spacing:-0.015em; text-wrap:balance;}
   .hero-copy h1 em{font-style:normal; color:var(--gold-bright);}
   .hero-copy p{margin-top:22px; font-size:16.5px; line-height:1.8; color:rgba(255,255,255,0.84); max-width:52ch;}
   .hero-actions{display:flex; gap:12px; margin-top:32px; flex-wrap:wrap;}
@@ -337,6 +340,9 @@
     display:block; width:100%; margin-top:6px; padding:11px 12px; border:1px solid var(--line); border-radius:4px;
     font-family:inherit; font-size:14px; background:var(--paper); color:var(--ink); resize:vertical;}
   .notice-form-actions{display:flex; gap:10px; margin-top:4px;}
+  .notice-image-preview{display:flex; align-items:center; gap:14px; margin:-6px 0 16px;}
+  .notice-image-preview img{width:88px; height:88px; object-fit:cover; border-radius:6px; border:1px solid var(--line);}
+  .notice-card-image{width:100%; max-height:360px; object-fit:cover; border-radius:6px; margin-bottom:14px; display:block;}
   .form-error{color:var(--crab); font-size:13px; margin:-4px 0 4px;}
   .notice-board-list{display:flex; flex-direction:column; gap:10px;}
   .notice-card{background:var(--paper); border:1px solid var(--line); border-radius:6px; overflow:hidden; transition:border-color .2s ease;}
@@ -421,6 +427,9 @@
     .cd-unit{padding:10px 2px;}
     .quick-btn{width:46px; height:46px;}
     .quick-btn .qb-label{display:none;}
+    .modal-overlay{padding:12px;}
+    .modal-card{max-height:82vh;}
+    .modal-body img{width:auto; max-width:100%; max-height:58vh; margin:0 auto; object-fit:contain;}
   }
 </style>
 </head>
@@ -517,6 +526,13 @@
         <div class="notice-form" id="noticeForm" style="display:none;">
           <label class="form-label">제목<input type="text" id="noticeTitleInput" placeholder="공지 제목을 입력하세요"></label>
           <label class="form-label">내용<textarea id="noticeBodyInput" rows="5" placeholder="공지 내용을 입력하세요"></textarea></label>
+          <label class="form-label">사진 (선택)
+            <input type="file" id="noticeImageInput" accept="image/*">
+          </label>
+          <div class="notice-image-preview" id="noticeImagePreview" style="display:none;">
+            <img id="noticeImagePreviewImg" alt="첨부 이미지 미리보기">
+            <button type="button" class="btn-mini danger" id="noticeImageRemoveBtn">사진 제거</button>
+          </div>
           <div class="notice-form-actions">
             <button class="btn btn-primary" id="noticeSubmitBtn" type="button">등록</button>
             <button class="btn btn-line" id="noticeCancelBtn" type="button">취소</button>
@@ -634,6 +650,7 @@
   var adminLoggedIn = document.getElementById('adminLoggedIn');
   var isAdmin = false;
   var currentNotices = [];
+  var selectedImageFile = null;
 
   function escapeHtml(str){
     return String(str == null ? '' : str).replace(/[&<>"']/g, function(c){
@@ -665,11 +682,12 @@
           '<button class="btn-mini danger" type="button" data-action="delete" data-id="'+n.id+'">삭제</button>' +
         '</div>'
       ) : '';
+      var imageHtml = n.image_url ? '<img class="notice-card-image" src="'+escapeHtml(n.image_url)+'" alt="'+escapeHtml(n.title)+' 첨부 이미지" loading="lazy">' : '';
       return (
         '<details class="notice-card">' +
           '<summary><span class="oc-title"><b>'+escapeHtml(n.title)+'</b><i>'+formatDate(n.created_at)+'</i></span>' +
           '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>' +
-          '<div class="notice-card-body"><p>'+escapeHtml(n.body).replace(/\n/g,'<br>')+'</p>'+adminBtns+'</div>' +
+          '<div class="notice-card-body">'+imageHtml+'<p>'+escapeHtml(n.body).replace(/\n/g,'<br>')+'</p>'+adminBtns+'</div>' +
         '</details>'
       );
     }).join('');
@@ -689,6 +707,10 @@
           document.getElementById('noticeTitleInput').value = notice.title;
           document.getElementById('noticeBodyInput').value = notice.body || '';
           noticeForm.dataset.editingId = notice.id;
+          noticeForm.dataset.existingImageUrl = notice.image_url || '';
+          noticeForm.dataset.removeImage = '';
+          selectedImageFile = null;
+          if(notice.image_url){ showImagePreview(notice.image_url); } else { hideImagePreview(); }
           noticeForm.style.display = 'block';
           noticeForm.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
         });
@@ -745,26 +767,89 @@
       await sb.auth.signOut();
     });
 
+    var noticeImageInput = document.getElementById('noticeImageInput');
+    var noticeImagePreview = document.getElementById('noticeImagePreview');
+    var noticeImagePreviewImg = document.getElementById('noticeImagePreviewImg');
+
+    function showImagePreview(url){
+      noticeImagePreviewImg.src = url;
+      noticeImagePreview.style.display = 'flex';
+    }
+    function hideImagePreview(){
+      noticeImagePreview.style.display = 'none';
+      noticeImagePreviewImg.src = '';
+    }
+    function resetImageState(){
+      selectedImageFile = null;
+      noticeImageInput.value = '';
+      noticeForm.dataset.existingImageUrl = '';
+      noticeForm.dataset.removeImage = '';
+      hideImagePreview();
+    }
+
+    noticeImageInput.addEventListener('change', function(){
+      var file = noticeImageInput.files && noticeImageInput.files[0];
+      if(!file) return;
+      selectedImageFile = file;
+      noticeForm.dataset.removeImage = '';
+      var reader = new FileReader();
+      reader.onload = function(e){ showImagePreview(e.target.result); };
+      reader.readAsDataURL(file);
+    });
+    document.getElementById('noticeImageRemoveBtn').addEventListener('click', function(){
+      selectedImageFile = null;
+      noticeImageInput.value = '';
+      noticeForm.dataset.removeImage = '1';
+      hideImagePreview();
+    });
+
     document.getElementById('adminWriteBtn').addEventListener('click', function(){
       noticeForm.dataset.editingId = '';
       document.getElementById('noticeTitleInput').value = '';
       document.getElementById('noticeBodyInput').value = '';
+      resetImageState();
       noticeForm.style.display = 'block';
     });
     document.getElementById('noticeCancelBtn').addEventListener('click', function(){
       noticeForm.style.display = 'none';
+      resetImageState();
     });
     document.getElementById('noticeSubmitBtn').addEventListener('click', async function(){
       var title = document.getElementById('noticeTitleInput').value.trim();
       var body = document.getElementById('noticeBodyInput').value.trim();
       if(!title){ alert('제목을 입력해주세요.'); return; }
       var editingId = noticeForm.dataset.editingId;
-      if(editingId){
-        await sb.from('notices').update({ title: title, body: body }).eq('id', editingId);
-      } else {
-        await sb.from('notices').insert({ title: title, body: body });
+      var submitBtn = document.getElementById('noticeSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '등록 중…';
+
+      var imageUrl = noticeForm.dataset.existingImageUrl || null;
+      if(noticeForm.dataset.removeImage === '1'){ imageUrl = null; }
+
+      if(selectedImageFile){
+        var ext = (selectedImageFile.name.split('.').pop() || 'jpg').toLowerCase();
+        var path = Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
+        var uploadResult = await sb.storage.from('notice-images').upload(path, selectedImageFile, { cacheControl: '3600', upsert: false });
+        if(uploadResult.error){
+          alert('이미지 업로드에 실패했습니다: ' + uploadResult.error.message);
+          submitBtn.disabled = false;
+          submitBtn.textContent = '등록';
+          return;
+        }
+        var pub = sb.storage.from('notice-images').getPublicUrl(path);
+        imageUrl = pub.data.publicUrl;
       }
+
+      var payload = { title: title, body: body, image_url: imageUrl };
+      if(editingId){
+        await sb.from('notices').update(payload).eq('id', editingId);
+      } else {
+        await sb.from('notices').insert(payload);
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = '등록';
       noticeForm.style.display = 'none';
+      resetImageState();
       loadNotices();
     });
 

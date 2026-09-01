@@ -56,7 +56,7 @@
     html{scroll-behavior:auto;}
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
   }
-  body{margin:0; font-family:var(--font-kr); background:var(--mist); color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+  body{margin:0; font-family:var(--font-kr); background:var(--mist); color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden; word-break:keep-all; overflow-wrap:break-word;}
   img,svg{display:block; max-width:100%;}
   a{color:inherit; text-decoration:none;}
   ul{margin:0; padding:0; list-style:none;}
@@ -69,7 +69,7 @@
   .section-head{max-width:640px; margin-bottom:48px;}
   .section-head h2{font-size:clamp(28px,3.6vw,40px); font-weight:800; letter-spacing:-0.015em; margin-top:12px; text-wrap:balance; line-height:1.25;}
   .section-head p{margin-top:14px; font-size:15.5px; line-height:1.75; color:var(--ink-soft); max-width:56ch;}
-  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border-radius:3px; font-weight:800; font-size:14.5px; border:1px solid transparent; background:none; font-family:inherit; cursor:pointer; transition:transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease; white-space:nowrap;}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border-radius:3px; font-weight:700; font-size:14.5px; letter-spacing:-0.005em; border:1px solid transparent; background:none; font-family:inherit; cursor:pointer; transition:transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease; white-space:nowrap;}
   .btn:hover{transform:translateY(-3px);}
   .btn-primary{background:var(--crab); color:#fff; position:relative;}
   .btn-primary:hover{background:var(--crab-deep);}
@@ -121,7 +121,7 @@
   /* ---------- hero ---------- */
   .hero{position:relative; background:linear-gradient(165deg, var(--navy-deep) 0%, var(--navy) 55%, var(--sea) 100%); color:#fff; padding:148px 0 0; overflow:hidden;}
   .hero-bg{position:absolute; inset:0; overflow:hidden;}
-  .hero-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(165deg, rgba(8,23,41,0.90) 0%, rgba(18,43,71,0.85) 55%, rgba(27,90,120,0.8) 100%);}
+  .hero-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(200deg, rgba(8,23,41,0.72) 0%, rgba(18,43,71,0.58) 50%, rgba(27,90,120,0.46) 100%);}
   .hero-bg-slide{position:absolute; inset:0; background-size:cover; background-position:center; opacity:0; animation:heroFade 18s ease-in-out infinite;}
   .hero-bg-slide:first-child{opacity:1;}
   .hero-bg-slide:nth-child(2){animation-delay:6s;}
@@ -135,7 +135,10 @@
   .hero-grid{position:relative; z-index:2; display:grid; grid-template-columns:1.1fr 0.9fr; gap:40px; align-items:center; padding-bottom:56px;}
   .hero-copy .eyebrow{color:var(--gold-bright);}
   .hero-copy .eyebrow::before{background:var(--gold-bright);}
-  .hero-copy h1{margin-top:20px; font-size:clamp(34px,5vw,56px); font-weight:800; line-height:1.24; letter-spacing:-0.015em; text-wrap:balance;}
+  .hero-slogan{display:flex; align-items:center; gap:12px; font-size:clamp(14px,1.6vw,16.5px); font-weight:700; color:rgba(255,255,255,0.92); letter-spacing:-0.005em;}
+  .hero-slogan .hs-mark{width:20px; height:2px; background:var(--gold-bright); flex:none;}
+  .hero-slogan em{font-style:normal; color:var(--gold-bright); font-weight:800;}
+  .hero-copy h1{margin-top:18px; font-size:clamp(34px,5vw,56px); font-weight:800; line-height:1.24; letter-spacing:-0.015em; text-wrap:balance;}
   .hero-copy h1 em{font-style:normal; color:var(--gold-bright);}
   .hero-copy p{margin-top:22px; font-size:16.5px; line-height:1.8; color:rgba(255,255,255,0.84); max-width:52ch;}
   .hero-actions{display:flex; gap:12px; margin-top:32px; flex-wrap:wrap;}
@@ -337,6 +340,9 @@
     display:block; width:100%; margin-top:6px; padding:11px 12px; border:1px solid var(--line); border-radius:4px;
     font-family:inherit; font-size:14px; background:var(--paper); color:var(--ink); resize:vertical;}
   .notice-form-actions{display:flex; gap:10px; margin-top:4px;}
+  .notice-image-preview{display:flex; align-items:center; gap:14px; margin:-6px 0 16px;}
+  .notice-image-preview img{width:88px; height:88px; object-fit:cover; border-radius:6px; border:1px solid var(--line);}
+  .notice-card-image{width:100%; max-height:360px; object-fit:cover; border-radius:6px; margin-bottom:14px; display:block;}
   .form-error{color:var(--crab); font-size:13px; margin:-4px 0 4px;}
   .notice-board-list{display:flex; flex-direction:column; gap:10px;}
   .notice-card{background:var(--paper); border:1px solid var(--line); border-radius:6px; overflow:hidden; transition:border-color .2s ease;}
@@ -421,6 +427,9 @@
     .cd-unit{padding:10px 2px;}
     .quick-btn{width:46px; height:46px;}
     .quick-btn .qb-label{display:none;}
+    .modal-overlay{padding:12px;}
+    .modal-card{max-height:82vh;}
+    .modal-body img{width:auto; max-width:100%; max-height:58vh; margin:0 auto; object-fit:contain;}
   }
 </style>
 </head>
@@ -497,8 +506,8 @@
       <span class="blob blob-2"></span>
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <span class="eyebrow">청년이 만드는 새로운 시작</span>
-          <h1>고향 영덕을 사랑하는 청년들,<br>이제 <em>하나</em>로 뭉칩니다</h1>
+          <p class="hero-slogan"><span class="hs-mark"></span>하나 된 마음으로, <em>새로운 영덕의 미래를 열다.</em></p>
+          <h1>고향 영덕을<br>사랑하는 청년들,<br>이제 <em>하나</em>로 뭉칩니다</h1>
           <p>뉴영덕연합회는 영덕을 사랑하는 청년들이 모여 지역의 화합과 발전을 위해 만든 단체입니다. 2026년 9월 17일, 그 첫걸음인 창립총회 및 취임식을 개최합니다.</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#founding">창립총회 안내 보기</a>
@@ -553,14 +562,6 @@
           <li class="notice-item"><a href="notice.html">창립 발기인 모집 안내</a><span class="d">2026.08.02</span></li>
           <li class="notice-item"><a href="notice.html">NEW영덕청년연합회 임원회의 및 상견례 개최</a><span class="d">2026.07.14</span></li>
         </ul>
-      </div>
-    </section>
-
-    <section class="slogan">
-      <div class="wrap">
-        <span class="eyebrow">SLOGAN</span>
-        <p class="slogan-text">하나 된 마음으로,<br><em>새로운 영덕의 미래를 열다.</em></p>
-        <span class="slogan-mark" aria-hidden="true"></span>
       </div>
     </section>
 
