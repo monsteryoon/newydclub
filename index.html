@@ -325,6 +325,30 @@
   .modal-foot .btn{padding:10px 18px; font-size:13.5px;}
   .modal-foot .btn-primary::after{display:none;}
 
+  /* ---------- notice board ---------- */
+  .admin-bar{display:flex; justify-content:flex-end; margin-bottom:28px;}
+  #adminLoggedOut, #adminLoggedIn{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .admin-status{font-size:13px; font-weight:800; color:var(--sea);}
+  .notice-form{background:var(--mist); border:1px solid var(--line); border-radius:6px; padding:22px; margin-bottom:24px;}
+  .form-label{display:block; font-size:12.5px; font-weight:800; color:var(--ink-soft); letter-spacing:.02em; margin-bottom:14px;}
+  .form-label input, .form-label textarea, .notice-form input, .notice-form textarea{
+    display:block; width:100%; margin-top:6px; padding:11px 12px; border:1px solid var(--line); border-radius:4px;
+    font-family:inherit; font-size:14px; background:var(--paper); color:var(--ink); resize:vertical;}
+  .notice-form-actions{display:flex; gap:10px; margin-top:4px;}
+  .form-error{color:var(--crab); font-size:13px; margin:-4px 0 4px;}
+  .notice-board-list{display:flex; flex-direction:column; gap:10px;}
+  .notice-card{background:var(--paper); border:1px solid var(--line); border-radius:6px; overflow:hidden; transition:border-color .2s ease;}
+  .notice-card[open]{border-color:var(--sea);}
+  .notice-card summary{list-style:none; cursor:pointer; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px;}
+  .notice-card summary::-webkit-details-marker{display:none;}
+  .notice-card-body{padding:0 18px 20px; font-size:14.5px; line-height:1.85; color:var(--ink-soft);}
+  .notice-admin-actions{margin-top:16px; display:flex; gap:8px;}
+  .btn-mini{font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:20px; border:1px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer;}
+  .btn-mini:hover{border-color:var(--sea); color:var(--sea);}
+  .btn-mini.danger{color:var(--crab); border-color:var(--crab);}
+  .btn-mini.danger:hover{background:var(--crab); color:#fff;}
+  .notice-empty, .notice-loading{color:var(--ink-soft); font-size:14px; padding:24px 0; text-align:center;}
+
   .quick-menu{position:fixed; right:20px; top:50%; transform:translateY(-50%); z-index:80; display:flex; flex-direction:column; gap:10px;}
   .quick-btn{width:54px; height:54px; border-radius:50%; background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:var(--ink); cursor:pointer; text-decoration:none;
     transition:transform .18s ease, background .18s ease, color .18s ease, border-color .18s ease;}
@@ -416,6 +440,7 @@
         <span class="brand-text"><b>뉴영덕연합회</b><span>청년이 만드는 영덕의 화합과 발전</span></span>
       </a>
       <nav class="gnb">
+        <a href="#noticeboard">공지사항</a>
         <a href="#message">인사말</a>
         <a href="#orgchart">조직도</a>
         <a href="#values">설립취지</a>
@@ -435,6 +460,7 @@
   <div class="mobile-panel" id="mobilePanel">
     <div class="top"><button class="close" id="mobileClose" aria-label="닫기">×</button></div>
     <nav>
+      <a href="#noticeboard">공지사항</a>
       <a href="#message">인사말</a>
       <a href="#orgchart">조직도</a>
       <a href="#values">설립취지</a>
@@ -509,10 +535,44 @@
           <button id="noticeInviteBtn" type="button">초대장 보기</button>
         </span>
         <ul class="notice-list">
-          <li class="notice-item"><a href="#contact">회원 가입 문의 방법</a><span class="d">2026.08.10</span></li>
-          <li class="notice-item"><a href="#founding">창립 발기인 모집 안내</a><span class="d">2026.08.02</span></li>
-          <li class="notice-item"><a href="#gallery">NEW영덕청년연합회 임원회의 및 상견례 개최</a><span class="d">2026.07.14</span></li>
+          <li class="notice-item"><a href="#noticeboard">회원 가입 문의 방법</a><span class="d">2026.08.10</span></li>
+          <li class="notice-item"><a href="#noticeboard">창립 발기인 모집 안내</a><span class="d">2026.08.02</span></li>
+          <li class="notice-item"><a href="#noticeboard">NEW영덕청년연합회 임원회의 및 상견례 개최</a><span class="d">2026.07.14</span></li>
         </ul>
+      </div>
+    </section>
+
+    <section class="section" id="noticeboard" style="background:var(--paper);">
+      <div class="wrap">
+        <div class="section-head reveal" style="--i:0">
+          <span class="eyebrow">공지사항</span>
+          <h2>뉴영덕연합회 소식</h2>
+          <p>창립 준비 소식과 공지사항을 전해드립니다.</p>
+        </div>
+
+        <div class="admin-bar reveal" style="--i:1">
+          <div id="adminLoggedOut">
+            <button class="btn btn-line" id="adminLoginBtn" type="button">관리자 로그인</button>
+          </div>
+          <div id="adminLoggedIn" style="display:none;">
+            <span class="admin-status">관리자로 로그인됨</span>
+            <button class="btn btn-primary" id="adminWriteBtn" type="button">새 공지 작성</button>
+            <button class="btn btn-line" id="adminLogoutBtn" type="button">로그아웃</button>
+          </div>
+        </div>
+
+        <div class="notice-form" id="noticeForm" style="display:none;">
+          <label class="form-label">제목<input type="text" id="noticeTitleInput" placeholder="공지 제목을 입력하세요"></label>
+          <label class="form-label">내용<textarea id="noticeBodyInput" rows="5" placeholder="공지 내용을 입력하세요"></textarea></label>
+          <div class="notice-form-actions">
+            <button class="btn btn-primary" id="noticeSubmitBtn" type="button">등록</button>
+            <button class="btn btn-line" id="noticeCancelBtn" type="button">취소</button>
+          </div>
+        </div>
+
+        <div class="notice-board-list reveal" style="--i:2" id="noticeBoardList">
+          <p class="notice-loading" id="noticeLoading">공지사항을 불러오는 중입니다…</p>
+        </div>
       </div>
     </section>
 
@@ -963,6 +1023,7 @@
           <div class="footer-col">
             <h4>바로가기</h4>
             <ul>
+              <li><a href="#noticeboard">공지사항</a></li>
               <li><a href="#message">인사말</a></li>
               <li><a href="#orgchart">조직도</a></li>
               <li><a href="#values">설립취지</a></li>
@@ -1004,6 +1065,23 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-label="관리자 로그인">
+    <div class="modal-card" style="max-width:380px;">
+      <div class="modal-head">
+        <span><span class="badge-dot"></span>관리자 로그인</span>
+        <button id="loginModalClose" aria-label="닫기">×</button>
+      </div>
+      <div class="modal-body" style="padding:26px;">
+        <form id="loginForm">
+          <label class="form-label">이메일<input type="email" id="loginEmail" autocomplete="username" required></label>
+          <label class="form-label">비밀번호<input type="password" id="loginPassword" autocomplete="current-password" required></label>
+          <p class="form-error" id="loginError" style="display:none;"></p>
+          <button class="btn btn-primary" type="submit" style="width:100%; margin-top:6px; justify-content:center;">로그인</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div class="quick-menu" id="quickMenu">
     <button class="quick-btn" id="quickInviteBtn" type="button" aria-label="초대장 보기">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a6 6 0 00-6 6c0 4-2 5-2 7h16c0-2-2-3-2-7a6 6 0 00-6-6z"/><path d="M10 20a2 2 0 004 0"/></svg>
@@ -1019,6 +1097,7 @@
     </button>
   </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   var header = document.getElementById('siteHeader');
   var quickTopBtn = document.getElementById('quickTopBtn');
@@ -1106,6 +1185,161 @@
   var hideUntil = parseInt(localStorage.getItem(HIDE_KEY) || '0', 10);
   if(Date.now() > hideUntil){
     setTimeout(openModal, 500);
+  }
+
+  /* ==================== 공지사항 게시판 (Supabase) ==================== */
+  var SUPABASE_URL = 'https://nfpysoaykskfrhjchrfr.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mcHlzb2F5a3NrZnJoamNocmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxOTY4NDUsImV4cCI6MjEwMzc3Mjg0NX0.2LRo6_PuNrdK74JwQIagICTmkZPNJVgJ7vvgPf3QLHY';
+  var sb = (window.supabase && window.supabase.createClient)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+  var noticeBoardList = document.getElementById('noticeBoardList');
+  var noticeTickerList = document.querySelector('.notice-band .notice-list');
+  var noticeForm = document.getElementById('noticeForm');
+  var adminLoggedOut = document.getElementById('adminLoggedOut');
+  var adminLoggedIn = document.getElementById('adminLoggedIn');
+  var isAdmin = false;
+  var currentNotices = [];
+
+  function escapeHtml(str){
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function formatDate(iso){
+    var d = new Date(iso);
+    return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function renderNoticeTicker(){
+    if(!noticeTickerList || currentNotices.length === 0) return;
+    noticeTickerList.innerHTML = currentNotices.slice(0,5).map(function(n){
+      return '<li class="notice-item"><a href="#noticeboard">'+escapeHtml(n.title)+'</a><span class="d">'+formatDate(n.created_at)+'</span></li>';
+    }).join('');
+  }
+
+  function renderNoticeBoard(){
+    if(!noticeBoardList) return;
+    if(currentNotices.length === 0){
+      noticeBoardList.innerHTML = '<p class="notice-empty">등록된 공지사항이 없습니다.</p>';
+      return;
+    }
+    noticeBoardList.innerHTML = currentNotices.map(function(n){
+      var adminBtns = isAdmin ? (
+        '<div class="notice-admin-actions">' +
+          '<button class="btn-mini" type="button" data-action="edit" data-id="'+n.id+'">수정</button>' +
+          '<button class="btn-mini danger" type="button" data-action="delete" data-id="'+n.id+'">삭제</button>' +
+        '</div>'
+      ) : '';
+      return (
+        '<details class="notice-card">' +
+          '<summary><span class="oc-title"><b>'+escapeHtml(n.title)+'</b><i>'+formatDate(n.created_at)+'</i></span>' +
+          '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>' +
+          '<div class="notice-card-body"><p>'+escapeHtml(n.body).replace(/\n/g,'<br>')+'</p>'+adminBtns+'</div>' +
+        '</details>'
+      );
+    }).join('');
+
+    if(isAdmin){
+      noticeBoardList.querySelectorAll('[data-action="delete"]').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          if(!confirm('이 공지를 삭제할까요?')) return;
+          await sb.from('notices').delete().eq('id', btn.getAttribute('data-id'));
+          loadNotices();
+        });
+      });
+      noticeBoardList.querySelectorAll('[data-action="edit"]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var notice = currentNotices.find(function(n){ return String(n.id) === btn.getAttribute('data-id'); });
+          if(!notice) return;
+          document.getElementById('noticeTitleInput').value = notice.title;
+          document.getElementById('noticeBodyInput').value = notice.body || '';
+          noticeForm.dataset.editingId = notice.id;
+          noticeForm.style.display = 'block';
+          noticeForm.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
+        });
+      });
+    }
+  }
+
+  async function loadNotices(){
+    if(!sb){
+      if(noticeBoardList){ noticeBoardList.innerHTML = '<p class="notice-empty">게시판 연결에 실패했습니다. 잠시 후 다시 시도해주세요.</p>'; }
+      return;
+    }
+    var result = await sb.from('notices').select('*').order('created_at', {ascending:false});
+    if(result.error){
+      noticeBoardList.innerHTML = '<p class="notice-empty">공지사항을 불러오지 못했습니다.</p>';
+      return;
+    }
+    currentNotices = result.data || [];
+    renderNoticeBoard();
+    renderNoticeTicker();
+  }
+
+  function setAdminUI(loggedIn){
+    isAdmin = loggedIn;
+    if(adminLoggedOut){ adminLoggedOut.style.display = loggedIn ? 'none' : 'flex'; }
+    if(adminLoggedIn){ adminLoggedIn.style.display = loggedIn ? 'flex' : 'none'; }
+    if(!loggedIn && noticeForm){ noticeForm.style.display = 'none'; }
+    renderNoticeBoard();
+  }
+
+  if(sb){
+    var loginModal = document.getElementById('loginModal');
+    document.getElementById('adminLoginBtn').addEventListener('click', function(){ loginModal.classList.add('open'); });
+    document.getElementById('loginModalClose').addEventListener('click', function(){ loginModal.classList.remove('open'); });
+    loginModal.addEventListener('click', function(e){ if(e.target === loginModal){ loginModal.classList.remove('open'); } });
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      var email = document.getElementById('loginEmail').value;
+      var password = document.getElementById('loginPassword').value;
+      var errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+      var result = await sb.auth.signInWithPassword({ email: email, password: password });
+      if(result.error){
+        errEl.textContent = '로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.';
+        errEl.style.display = 'block';
+        return;
+      }
+      loginModal.classList.remove('open');
+      document.getElementById('loginForm').reset();
+    });
+
+    document.getElementById('adminLogoutBtn').addEventListener('click', async function(){
+      await sb.auth.signOut();
+    });
+
+    document.getElementById('adminWriteBtn').addEventListener('click', function(){
+      noticeForm.dataset.editingId = '';
+      document.getElementById('noticeTitleInput').value = '';
+      document.getElementById('noticeBodyInput').value = '';
+      noticeForm.style.display = 'block';
+    });
+    document.getElementById('noticeCancelBtn').addEventListener('click', function(){
+      noticeForm.style.display = 'none';
+    });
+    document.getElementById('noticeSubmitBtn').addEventListener('click', async function(){
+      var title = document.getElementById('noticeTitleInput').value.trim();
+      var body = document.getElementById('noticeBodyInput').value.trim();
+      if(!title){ alert('제목을 입력해주세요.'); return; }
+      var editingId = noticeForm.dataset.editingId;
+      if(editingId){
+        await sb.from('notices').update({ title: title, body: body }).eq('id', editingId);
+      } else {
+        await sb.from('notices').insert({ title: title, body: body });
+      }
+      noticeForm.style.display = 'none';
+      loadNotices();
+    });
+
+    sb.auth.onAuthStateChange(function(_event, session){ setAdminUI(!!session); });
+    sb.auth.getSession().then(function(result){ setAdminUI(!!(result.data && result.data.session)); });
+    loadNotices();
+  } else if(noticeBoardList){
+    noticeBoardList.innerHTML = '<p class="notice-empty">게시판을 불러올 수 없습니다.</p>';
   }
 </script>
 </body>
