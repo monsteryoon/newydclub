@@ -311,10 +311,15 @@
   .modal-foot .btn{padding:10px 18px; font-size:13.5px;}
   .modal-foot .btn-primary::after{display:none;}
 
-  .reopen-chip{position:fixed; left:20px; bottom:20px; z-index:80; display:flex; align-items:center; gap:8px; background:var(--ink); color:#fff; border:none; border-radius:30px; padding:11px 18px 11px 14px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 12px 26px -10px rgba(0,0,0,0.5); opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .25s ease, transform .25s ease;}
-  .reopen-chip.show{opacity:1; transform:translateY(0); pointer-events:auto;}
-  .reopen-chip svg{width:15px; height:15px; color:var(--gold-bright);}
-  .reopen-chip:hover{background:var(--navy);}
+  .quick-menu{position:fixed; right:20px; top:50%; transform:translateY(-50%); z-index:80; display:flex; flex-direction:column; gap:10px;}
+  .quick-btn{width:54px; height:54px; border-radius:50%; background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:var(--ink); cursor:pointer; text-decoration:none;
+    transition:transform .18s ease, background .18s ease, color .18s ease, border-color .18s ease;}
+  .quick-btn svg{width:19px; height:19px;}
+  .quick-btn .qb-label{font-size:9px; font-weight:800; letter-spacing:.02em;}
+  .quick-btn:hover{background:var(--crab); border-color:var(--crab); color:#fff; transform:translateY(-3px);}
+  .quick-top{opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .25s ease, transform .25s ease, background .18s ease, color .18s ease;}
+  .quick-top.show{opacity:1; transform:translateY(0); pointer-events:auto;}
+  .quick-top.show:hover{transform:translateY(-3px);}
 
   /* ---------- org chart ---------- */
   .leader-tier{display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-bottom:16px; position:relative;}
@@ -368,11 +373,14 @@
     .footer-cols{gap:40px;}
     .section{padding:68px 0;}
     .founding-visual, .founding-detail{padding:32px 26px;}
+    .quick-menu{right:14px; top:auto; bottom:20px; transform:none;}
   }
   @media (max-width: 560px){
     .footer-cols{flex-wrap:wrap; gap:28px;}
     .countdown-grid{gap:6px;}
     .cd-unit{padding:10px 2px;}
+    .quick-btn{width:46px; height:46px;}
+    .quick-btn .qb-label{display:none;}
   }
 </style>
 </head>
@@ -978,19 +986,36 @@
     </div>
   </div>
 
-  <button class="reopen-chip" id="reopenChip" type="button">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a6 6 0 00-6 6c0 4-2 5-2 7h16c0-2-2-3-2-7a6 6 0 00-6-6z"/><path d="M10 20a2 2 0 004 0"/></svg>
-    초대장 다시보기
-  </button>
+  <div class="quick-menu" id="quickMenu">
+    <button class="quick-btn" id="quickInviteBtn" type="button" aria-label="초대장 보기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a6 6 0 00-6 6c0 4-2 5-2 7h16c0-2-2-3-2-7a6 6 0 00-6-6z"/><path d="M10 20a2 2 0 004 0"/></svg>
+      <span class="qb-label">초대장</span>
+    </button>
+    <a class="quick-btn" href="#contact" aria-label="참석 및 가입 문의">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 2 .7 3a2 2 0 01-.5 2L8 10a16 16 0 006 6l1.3-1.3a2 2 0 012-.5c1 .3 2 .5 3 .7a2 2 0 011.7 2z"/></svg>
+      <span class="qb-label">문의</span>
+    </a>
+    <button class="quick-btn quick-top" id="quickTopBtn" type="button" aria-label="맨 위로 이동">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      <span class="qb-label">TOP</span>
+    </button>
+  </div>
 
 <script>
   var header = document.getElementById('siteHeader');
+  var quickTopBtn = document.getElementById('quickTopBtn');
   function onScroll(){
     if(window.scrollY > 40){ header.classList.add('is-scrolled'); }
     else{ header.classList.remove('is-scrolled'); }
+    if(window.scrollY > 480){ quickTopBtn.classList.add('show'); }
+    else{ quickTopBtn.classList.remove('show'); }
   }
   document.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
+  quickTopBtn.addEventListener('click', function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({top:0, behavior: reduce ? 'auto' : 'smooth'});
+  });
 
   var burger = document.getElementById('burgerBtn');
   var panel = document.getElementById('mobilePanel');
@@ -1038,7 +1063,6 @@
 
   /* ---- invitation popup ---- */
   var modal = document.getElementById('inviteModal');
-  var reopenChip = document.getElementById('reopenChip');
   var HIDE_KEY = 'nyd_invite_hide_until';
 
   function openModal(){ modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
@@ -1049,7 +1073,6 @@
     if(hideBox && hideBox.checked){
       localStorage.setItem(HIDE_KEY, String(Date.now() + 7*86400000));
     }
-    reopenChip.classList.add('show');
   }
 
   document.getElementById('modalClose').addEventListener('click', closeModal);
@@ -1057,7 +1080,7 @@
   document.getElementById('modalCta').addEventListener('click', function(){ closeModal(); });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('open')){ closeModal(); } });
 
-  ['heroInviteBtn','noticeInviteBtn','foundingInviteBtn','reopenChip'].forEach(function(id){
+  ['heroInviteBtn','noticeInviteBtn','foundingInviteBtn','quickInviteBtn'].forEach(function(id){
     var el = document.getElementById(id);
     if(el){ el.addEventListener('click', openModal); }
   });
@@ -1065,8 +1088,6 @@
   var hideUntil = parseInt(localStorage.getItem(HIDE_KEY) || '0', 10);
   if(Date.now() > hideUntil){
     setTimeout(openModal, 500);
-  } else {
-    reopenChip.classList.add('show');
   }
 </script>
 </body>
