@@ -51,7 +51,7 @@
   }
 
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; overflow-x:hidden; width:100%;}
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
@@ -85,7 +85,7 @@
   .site-header{position:fixed; top:0; left:0; right:0; z-index:50; background:transparent; transition:background .25s ease, border-color .25s ease; border-bottom:1px solid transparent;}
   .site-header.is-scrolled{background:var(--paper); box-shadow:0 1px 0 var(--line), 0 12px 24px -18px rgba(8,23,41,0.25);}
   .site-header .wrap{display:flex; align-items:center; justify-content:space-between; height:78px;}
-  .brand{display:flex; align-items:center; gap:10px;}
+  .brand{display:flex; align-items:center; gap:10px; min-width:0;}
   .brand-mark{width:38px; height:38px; border-radius:50%; background:linear-gradient(155deg, var(--crab) 0%, var(--crab-deep) 100%); display:flex; align-items:center; justify-content:center; flex:none;}
   .brand-mark svg{width:20px; height:20px;}
   .brand-text{display:flex; flex-direction:column; line-height:1.15;}
@@ -450,8 +450,8 @@
     .cd-unit{padding:10px 2px;}
     .quick-btn{width:46px; height:46px;}
     .quick-btn .qb-label{display:none;}
-    .modal-overlay{padding:28px 20px;}
-    .modal-card{max-width:320px; max-height:78vh;}
+    .modal-overlay{padding:28px 16px; justify-content:flex-start;}
+    .modal-card{max-width:280px; max-height:78vh;}
     .modal-body{display:flex; align-items:center; justify-content:center; background:var(--mist);}
     .modal-body img{width:100%; height:auto; max-width:100%; max-height:55vh; object-fit:contain; margin:0;}
   }
