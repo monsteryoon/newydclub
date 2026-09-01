@@ -1,0 +1,944 @@
+[
+  {
+    "name": "서병환",
+    "role": "회장",
+    "group": "임원단",
+    "business": ""
+  },
+  {
+    "name": "이화동",
+    "role": "감사",
+    "group": "임원단",
+    "business": ""
+  },
+  {
+    "name": "김여규",
+    "role": "감사",
+    "group": "임원단",
+    "business": ""
+  },
+  {
+    "name": "신재민",
+    "role": "감사",
+    "group": "임원단",
+    "business": ""
+  },
+  {
+    "name": "박승욱",
+    "role": "수석부회장",
+    "group": "임원단",
+    "business": ""
+  },
+  {
+    "name": "전병만",
+    "role": "총괄부회장",
+    "group": "임원단",
+    "business": ""
+  },
+  {
+    "name": "박윤식",
+    "role": "실무부회장",
+    "group": "임원단",
+    "business": ""
+  },
+  {
+    "name": "권순용",
+    "role": "국장",
+    "group": "사무국",
+    "business": ""
+  },
+  {
+    "name": "이정호",
+    "role": "간사",
+    "group": "사무국",
+    "business": ""
+  },
+  {
+    "name": "조주현",
+    "role": "차장",
+    "group": "사무국",
+    "business": ""
+  },
+  {
+    "name": "강유호",
+    "role": "차장",
+    "group": "사무국",
+    "business": ""
+  },
+  {
+    "name": "경민호",
+    "role": "차장",
+    "group": "사무국",
+    "business": ""
+  },
+  {
+    "name": "윤상필",
+    "role": "지회장",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "김도준",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "김태완",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "김형대",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "민경환",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "백민규",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "신규철",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "신재익",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "유성준",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "이동균",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "이창희",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "최대윤",
+    "role": "회원",
+    "group": "영덕읍지회",
+    "business": ""
+  },
+  {
+    "name": "김주홍",
+    "role": "지회장",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "하일규",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "김철수",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "최재혁",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "박민수",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "이원준",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "전성욱",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "임구곤",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "김동진",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "김형만",
+    "role": "회원",
+    "group": "강구면지회",
+    "business": ""
+  },
+  {
+    "name": "유원일",
+    "role": "지회장",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "이상태",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "박주영",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "김창동",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "김태윤",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "권영욱",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "천민수",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "이성민",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "김유성",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "박해찬",
+    "role": "회원",
+    "group": "남정면지회",
+    "business": ""
+  },
+  {
+    "name": "박임식",
+    "role": "지회장",
+    "group": "지품·달산면지회",
+    "business": ""
+  },
+  {
+    "name": "김수용",
+    "role": "지회장",
+    "group": "축산면지회",
+    "business": ""
+  },
+  {
+    "name": "박상욱",
+    "role": "회원",
+    "group": "축산면지회",
+    "business": ""
+  },
+  {
+    "name": "이동길",
+    "role": "회원",
+    "group": "축산면지회",
+    "business": ""
+  },
+  {
+    "name": "장상철",
+    "role": "회원",
+    "group": "축산면지회",
+    "business": ""
+  },
+  {
+    "name": "강인구",
+    "role": "지회장",
+    "group": "영해면지회",
+    "business": ""
+  },
+  {
+    "name": "유상준",
+    "role": "회원",
+    "group": "영해면지회",
+    "business": ""
+  },
+  {
+    "name": "최동훈",
+    "role": "회원",
+    "group": "영해면지회",
+    "business": ""
+  },
+  {
+    "name": "한성철",
+    "role": "회원",
+    "group": "영해면지회",
+    "business": ""
+  },
+  {
+    "name": "홍태진",
+    "role": "회원",
+    "group": "영해면지회",
+    "business": ""
+  },
+  {
+    "name": "황창현",
+    "role": "회원",
+    "group": "영해면지회",
+    "business": ""
+  },
+  {
+    "name": "이길호",
+    "role": "지회장",
+    "group": "창수면지회",
+    "business": ""
+  },
+  {
+    "name": "김민규",
+    "role": "회원",
+    "group": "창수면지회",
+    "business": ""
+  },
+  {
+    "name": "박동규",
+    "role": "회원",
+    "group": "창수면지회",
+    "business": ""
+  },
+  {
+    "name": "강신기",
+    "role": "지회장",
+    "group": "병곡면지회",
+    "business": ""
+  },
+  {
+    "name": "김구준",
+    "role": "회원",
+    "group": "병곡면지회",
+    "business": ""
+  },
+  {
+    "name": "김종대",
+    "role": "회원",
+    "group": "병곡면지회",
+    "business": ""
+  },
+  {
+    "name": "정보빈",
+    "role": "차세대위원장(남부)",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "공영웅",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "김강함",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "김경민",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "김병서",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "남지웅",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "박수현",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "박시형",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "신호업",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "윤용수",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "이동화",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "임성엽",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "장지호",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "주재홍",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "최진혁",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "최하늘",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "하기철",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "황남진",
+    "role": "회원",
+    "group": "차세대위원회(남부)",
+    "business": ""
+  },
+  {
+    "name": "고재광",
+    "role": "조직위원장",
+    "group": "조직위원회",
+    "business": ""
+  },
+  {
+    "name": "고민성",
+    "role": "회원",
+    "group": "조직위원회",
+    "business": ""
+  },
+  {
+    "name": "김동언",
+    "role": "회원",
+    "group": "조직위원회",
+    "business": ""
+  },
+  {
+    "name": "김태환",
+    "role": "회원",
+    "group": "조직위원회",
+    "business": ""
+  },
+  {
+    "name": "이진근",
+    "role": "회원",
+    "group": "조직위원회",
+    "business": ""
+  },
+  {
+    "name": "황정모",
+    "role": "회원",
+    "group": "조직위원회",
+    "business": ""
+  },
+  {
+    "name": "황정인",
+    "role": "회원",
+    "group": "조직위원회",
+    "business": ""
+  },
+  {
+    "name": "정성조",
+    "role": "대외협력위원장",
+    "group": "대외협력위원회",
+    "business": ""
+  },
+  {
+    "name": "권순석",
+    "role": "회원",
+    "group": "대외협력위원회",
+    "business": ""
+  },
+  {
+    "name": "김도수",
+    "role": "회원",
+    "group": "대외협력위원회",
+    "business": ""
+  },
+  {
+    "name": "류기백",
+    "role": "회원",
+    "group": "대외협력위원회",
+    "business": ""
+  },
+  {
+    "name": "신정우",
+    "role": "회원",
+    "group": "대외협력위원회",
+    "business": ""
+  },
+  {
+    "name": "이상화",
+    "role": "회원",
+    "group": "대외협력위원회",
+    "business": ""
+  },
+  {
+    "name": "김철규",
+    "role": "정책위원장",
+    "group": "정책위원회",
+    "business": ""
+  },
+  {
+    "name": "권정훈",
+    "role": "회원",
+    "group": "정책위원회",
+    "business": ""
+  },
+  {
+    "name": "김태한",
+    "role": "회원",
+    "group": "정책위원회",
+    "business": ""
+  },
+  {
+    "name": "이강우",
+    "role": "회원",
+    "group": "정책위원회",
+    "business": ""
+  },
+  {
+    "name": "장민우",
+    "role": "회원",
+    "group": "정책위원회",
+    "business": ""
+  },
+  {
+    "name": "정은호",
+    "role": "회원",
+    "group": "정책위원회",
+    "business": ""
+  },
+  {
+    "name": "박춘현",
+    "role": "지역개발위원장",
+    "group": "지역개발위원회",
+    "business": ""
+  },
+  {
+    "name": "김상범",
+    "role": "회원",
+    "group": "지역개발위원회",
+    "business": ""
+  },
+  {
+    "name": "남경훈",
+    "role": "회원",
+    "group": "지역개발위원회",
+    "business": ""
+  },
+  {
+    "name": "이중호",
+    "role": "회원",
+    "group": "지역개발위원회",
+    "business": ""
+  },
+  {
+    "name": "이충호",
+    "role": "회원",
+    "group": "지역개발위원회",
+    "business": ""
+  },
+  {
+    "name": "최태욱",
+    "role": "회원",
+    "group": "지역개발위원회",
+    "business": ""
+  },
+  {
+    "name": "신승민",
+    "role": "원전위원장",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "권병수",
+    "role": "회원",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "권용성",
+    "role": "회원",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "문종대",
+    "role": "회원",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "신병문",
+    "role": "회원",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "신승기",
+    "role": "회원",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "신철호",
+    "role": "회원",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "오영환",
+    "role": "회원",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "정상현",
+    "role": "회원",
+    "group": "원전위원회",
+    "business": ""
+  },
+  {
+    "name": "장진성",
+    "role": "홍보위원장",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "박소연",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "유영진",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "장일성",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "이세형",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "김대용",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "박일석",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "이준근",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "경관두",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "류광태",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "우신동",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "한승엽",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "정재학",
+    "role": "회원",
+    "group": "홍보위원회",
+    "business": ""
+  },
+  {
+    "name": "김종훈",
+    "role": "체육봉사위원장",
+    "group": "체육봉사위원회",
+    "business": ""
+  },
+  {
+    "name": "주찬혁",
+    "role": "직능위원장",
+    "group": "직능위원회",
+    "business": ""
+  },
+  {
+    "name": "김일광",
+    "role": "회원",
+    "group": "직능위원회",
+    "business": ""
+  },
+  {
+    "name": "김희태",
+    "role": "회원",
+    "group": "직능위원회",
+    "business": ""
+  },
+  {
+    "name": "정태영",
+    "role": "회원",
+    "group": "직능위원회",
+    "business": ""
+  },
+  {
+    "name": "한해규",
+    "role": "회원",
+    "group": "직능위원회",
+    "business": ""
+  },
+  {
+    "name": "윤태원",
+    "role": "미디어위원장",
+    "group": "미디어위원회",
+    "business": ""
+  },
+  {
+    "name": "류현준",
+    "role": "회원",
+    "group": "미디어위원회",
+    "business": ""
+  },
+  {
+    "name": "윤덕규",
+    "role": "회원",
+    "group": "미디어위원회",
+    "business": ""
+  },
+  {
+    "name": "윤기원",
+    "role": "회원",
+    "group": "미디어위원회",
+    "business": ""
+  },
+  {
+    "name": "이지훈",
+    "role": "회원",
+    "group": "미디어위원회",
+    "business": ""
+  },
+  {
+    "name": "정영창",
+    "role": "회원",
+    "group": "미디어위원회",
+    "business": ""
+  },
+  {
+    "name": "김준일",
+    "role": "차세대위원장(북부)",
+    "group": "차세대위원회(북부)",
+    "business": ""
+  },
+  {
+    "name": "권대홍",
+    "role": "회원",
+    "group": "차세대위원회(북부)",
+    "business": ""
+  },
+  {
+    "name": "김영석",
+    "role": "회원",
+    "group": "차세대위원회(북부)",
+    "business": ""
+  },
+  {
+    "name": "정현석",
+    "role": "회원",
+    "group": "차세대위원회(북부)",
+    "business": ""
+  },
+  {
+    "name": "신유정",
+    "role": "여성위원장",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "강정임",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "고영임",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "권미옥",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "김미경",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "김은숙",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "김현주",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "박종숙",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "백은희",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "손미정",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "이미자",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "이영희",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "임수정",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "정애연",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  },
+  {
+    "name": "최미경",
+    "role": "회원",
+    "group": "여성위원회",
+    "business": ""
+  }
+]

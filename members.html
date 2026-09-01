@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>공지사항 | 뉴영덕연합회</title>
-<meta name="description" content="뉴영덕연합회 공지사항 게시판입니다.">
+<title>회원검색 | 뉴영덕연합회</title>
+<meta name="description" content="뉴영덕연합회 회원 이름으로 소속과 직책을 검색합니다.">
 <style>
   :root{
     --ink:#333333;
@@ -552,82 +552,31 @@
   <main>
     <section style="background:var(--crab); padding:96px 0 56px; color:#fff;">
       <div class="wrap">
-        <p style="font-size:13px; font-weight:700; opacity:.85;"><a href="index.html" style="color:#fff; text-decoration:underline;">홈</a> / 공지사항</p>
-        <h1 style="margin-top:12px; font-size:clamp(28px,4vw,40px); font-weight:800; letter-spacing:-0.01em;">공지사항</h1>
-        <p style="margin-top:10px; font-size:15.5px; color:rgba(255,255,255,0.88);">뉴영덕연합회의 소식과 공지를 전해드립니다.</p>
+        <p style="font-size:13px; font-weight:700; opacity:.85;"><a href="index.html" style="color:#fff; text-decoration:underline;">홈</a> / 회원검색</p>
+        <h1 style="margin-top:12px; font-size:clamp(28px,4vw,40px); font-weight:800;">회원검색</h1>
+        <p style="margin-top:10px; font-size:15.5px; color:rgba(255,255,255,0.88);">이름으로 회원의 소속과 직책을 찾아보세요.</p>
       </div>
     </section>
 
     <section class="section" style="background:var(--paper); padding-top:56px;">
       <div class="wrap">
-        <div class="section-head reveal" style="--i:0">
-          <span class="eyebrow">공지사항</span>
-          <h2>뉴영덕연합회 소식</h2>
-          <p>창립 준비 소식과 공지사항을 전해드립니다.</p>
+        <div class="member-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="memberSearchInput" placeholder="이름을 입력하세요 (예: 서병환)" autocomplete="off">
         </div>
-
-        <div class="admin-bar reveal" style="--i:1">
-          <div id="adminLoggedOut">
-            <button class="btn btn-line" id="adminLoginBtn" type="button">관리자 로그인</button>
+        <p class="member-search-hint" id="memberSearchHint">회원 명단을 불러오는 중입니다…</p>
+        <div class="member-table" id="memberResults" style="display:none;">
+          <div class="member-table-head">
+            <span class="mt-name">이름</span>
+            <span class="mt-group">소속</span>
+            <span class="mt-role">직책</span>
+            <span class="mt-business">사업체·직업</span>
           </div>
-          <div id="adminLoggedIn" style="display:none;">
-            <span class="admin-status">관리자로 로그인됨</span>
-            <button class="btn btn-primary" id="adminWriteBtn" type="button">새 공지 작성</button>
-            <button class="btn btn-line" id="adminLogoutBtn" type="button">로그아웃</button>
-          </div>
-        </div>
-
-        <div class="notice-form" id="noticeForm" style="display:none;">
-          <label class="form-label">제목<input type="text" id="noticeTitleInput" placeholder="공지 제목을 입력하세요"></label>
-          <label class="form-label">내용<textarea id="noticeBodyInput" rows="5" placeholder="공지 내용을 입력하세요"></textarea></label>
-          <label class="form-label">사진 (선택)
-            <input type="file" id="noticeImageInput" accept="image/*">
-          </label>
-          <div class="notice-image-preview" id="noticeImagePreview" style="display:none;">
-            <img id="noticeImagePreviewImg" alt="첨부 이미지 미리보기">
-            <button type="button" class="btn-mini danger" id="noticeImageRemoveBtn">사진 제거</button>
-          </div>
-          <div class="notice-form-actions">
-            <button class="btn btn-primary" id="noticeSubmitBtn" type="button">등록</button>
-            <button class="btn btn-line" id="noticeCancelBtn" type="button">취소</button>
-          </div>
-        </div>
-
-        <div id="noticeListView" class="reveal" style="--i:2">
-          <div class="notice-table">
-            <div class="notice-table-head">
-              <span class="nt-num">번호</span>
-              <span class="nt-title">제목</span>
-              <span class="nt-author">작성자</span>
-              <span class="nt-date">작성일</span>
-            </div>
-            <div id="noticeBoardList">
-              <p class="notice-loading" id="noticeLoading">공지사항을 불러오는 중입니다…</p>
-            </div>
-          </div>
-        </div>
-
-        <div id="noticeDetailView" style="display:none;">
-          <div class="notice-detail">
-            <div class="notice-detail-head">
-              <h3 id="detailTitle"></h3>
-              <div class="notice-detail-meta">
-                <span id="detailAuthor"></span><span class="dot">·</span><span id="detailDate"></span>
-              </div>
-            </div>
-            <img id="detailImage" class="notice-detail-image" style="display:none;" alt="">
-            <div class="notice-detail-body" id="detailBody"></div>
-            <div class="notice-detail-actions">
-              <a class="btn btn-line" href="notice.html">← 목록으로</a>
-              <div class="notice-admin-actions" id="detailAdminActions" style="display:none;">
-                <button class="btn-mini" type="button" id="detailEditBtn">수정</button>
-                <button class="btn-mini danger" type="button" id="detailDeleteBtn">삭제</button>
-              </div>
-            </div>
-          </div>
+          <div id="memberRows"></div>
         </div>
       </div>
     </section>
+
   </main>
 
   <footer class="site-footer">
@@ -673,25 +622,6 @@
     </div>
   </footer>
 
-  <div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-label="관리자 로그인">
-    <div class="modal-card" style="max-width:380px;">
-      <div class="modal-head">
-        <span><span class="badge-dot"></span>관리자 로그인</span>
-        <button id="loginModalClose" aria-label="닫기">×</button>
-      </div>
-      <div class="modal-body" style="padding:26px;">
-        <form id="loginForm">
-          <label class="form-label">이메일<input type="email" id="loginEmail" autocomplete="username" required></label>
-          <label class="form-label">비밀번호<input type="password" id="loginPassword" autocomplete="current-password" required></label>
-          <p class="form-error" id="loginError" style="display:none;"></p>
-          <button class="btn btn-primary" type="submit" style="width:100%; margin-top:6px; justify-content:center;">로그인</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   var header = document.getElementById('siteHeader');
   function onScroll(){
@@ -721,337 +651,60 @@
     document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('is-visible'); });
   }
 
-  /* ==================== 공지사항 게시판 (Supabase) ==================== */
-  var SUPABASE_URL = 'https://nfpysoaykskfrhjchrfr.supabase.co';
-  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mcHlzb2F5a3NrZnJoamNocmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxOTY4NDUsImV4cCI6MjEwMzc3Mjg0NX0.2LRo6_PuNrdK74JwQIagICTmkZPNJVgJ7vvgPf3QLHY';
-  // Supabase's REST responses carry no Cache-Control header, so some
-  // browsers heuristically cache and replay a stale response for an
-  // identical query. Force every request through with no-store so reads
-  // are always live.
-  function noStoreFetch(url, options){
-    options = options || {};
-    options.cache = 'no-store';
-    return fetch(url, options);
-  }
-  var sbReady = window.supabase && window.supabase.createClient;
-  // sb: the normal client — carries the admin's session for login/write/
-  // delete/upload. sbRead: a second client with persistSession/autoRefresh
-  // off, so it never picks up that session and always reads as the public
-  // "anon" role. This means public read policies alone are enough — the
-  // page never depends on an "authenticated can also read" policy existing,
-  // so a missed RLS policy on read can't blank the list for a logged-in admin.
-  var sb = sbReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { fetch: noStoreFetch } }) : null;
-  var sbRead = sbReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    global: { fetch: noStoreFetch },
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
-  }) : null;
-
-  var noticeBoardList = document.getElementById('noticeBoardList');
-  var noticeTickerList = document.querySelector('.notice-band .notice-list');
-  var noticeForm = document.getElementById('noticeForm');
-  var noticeListView = document.getElementById('noticeListView');
-  var noticeDetailView = document.getElementById('noticeDetailView');
-  var adminLoggedOut = document.getElementById('adminLoggedOut');
-  var adminLoggedIn = document.getElementById('adminLoggedIn');
-  var isAdmin = false;
-  var currentNotices = [];
-  var selectedImageFile = null;
-  var AUTHOR_NAME = '뉴영덕연합회';
+  /* ==================== 회원검색 ==================== */
+  var memberInput = document.getElementById('memberSearchInput');
+  var memberResults = document.getElementById('memberResults');
+  var memberRows = document.getElementById('memberRows');
+  var memberHint = document.getElementById('memberSearchHint');
+  var ALL_MEMBERS = [];
 
   function escapeHtml(str){
     return String(str == null ? '' : str).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
-  function formatDate(iso){
-    var d = new Date(iso);
-    return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
-  }
-  function getIdFromUrl(){
-    return new URLSearchParams(window.location.search).get('id');
+
+  function defaultHint(){
+    memberHint.style.display = 'block';
+    memberResults.style.display = 'none';
+    memberHint.textContent = ALL_MEMBERS.length
+      ? '이름을 입력하면 소속과 직책을 확인할 수 있습니다. 총 ' + ALL_MEMBERS.length + '명 등록.'
+      : '회원 명단을 불러오지 못했습니다.';
   }
 
-  function renderNoticeTicker(){
-    if(!noticeTickerList || currentNotices.length === 0) return;
-    noticeTickerList.innerHTML = currentNotices.slice(0,5).map(function(n){
-      return '<li class="notice-item"><a href="notice.html?id='+encodeURIComponent(n.id)+'">'+escapeHtml(n.title)+'</a><span class="d">'+formatDate(n.created_at)+'</span></li>';
-    }).join('');
-  }
-
-  function renderNoticeList(){
-    if(!noticeBoardList) return;
-    if(currentNotices.length === 0){
-      noticeBoardList.innerHTML = '<p class="notice-empty">등록된 공지사항이 없습니다.</p>';
+  function renderResults(list){
+    if(list.length === 0){
+      memberResults.style.display = 'none';
+      memberHint.style.display = 'block';
+      memberHint.textContent = '검색 결과가 없습니다.';
       return;
     }
-    var total = currentNotices.length;
-    noticeBoardList.innerHTML = currentNotices.map(function(n, i){
-      var imgMark = n.image_url ? ' <span class="nt-img-mark" title="사진 첨부">📷</span>' : '';
+    memberHint.style.display = 'none';
+    memberResults.style.display = 'block';
+    memberRows.innerHTML = list.map(function(m){
+      var isLeader = m.role !== '회원';
       return (
-        '<a class="notice-row" href="notice.html?id='+encodeURIComponent(n.id)+'">' +
-          '<span class="nt-num">'+(total - i)+'</span>' +
-          '<span class="nt-title">'+escapeHtml(n.title)+imgMark+'</span>' +
-          '<span class="nt-author">'+escapeHtml(AUTHOR_NAME)+'</span>' +
-          '<span class="nt-date">'+formatDate(n.created_at)+'</span>' +
-        '</a>'
+        '<div class="member-row">' +
+          '<span class="mt-name">' + escapeHtml(m.name) + '</span>' +
+          '<span class="mt-group">' + escapeHtml(m.group) + '</span>' +
+          '<span class="mt-role"><span class="role-badge' + (isLeader ? ' leader' : '') + '">' + escapeHtml(m.role) + '</span></span>' +
+          '<span class="mt-business">' + (m.business ? escapeHtml(m.business) : '<span class="mt-business-empty">정보 없음</span>') + '</span>' +
+        '</div>'
       );
     }).join('');
   }
 
-  function renderNoticeDetail(notice){
-    document.getElementById('detailTitle').textContent = notice.title;
-    document.getElementById('detailAuthor').textContent = AUTHOR_NAME;
-    document.getElementById('detailDate').textContent = formatDate(notice.created_at);
-    var img = document.getElementById('detailImage');
-    if(notice.image_url){ img.src = notice.image_url; img.alt = notice.title + ' 첨부 이미지'; img.style.display = 'block'; }
-    else { img.style.display = 'none'; img.src = ''; }
-    document.getElementById('detailBody').innerHTML = escapeHtml(notice.body).replace(/\n/g,'<br>');
+  memberInput.addEventListener('input', function(){
+    var q = memberInput.value.trim();
+    if(!q){ defaultHint(); return; }
+    var matches = ALL_MEMBERS.filter(function(m){ return m.name.indexOf(q) !== -1; });
+    renderResults(matches);
+  });
 
-    var adminActions = document.getElementById('detailAdminActions');
-    adminActions.style.display = isAdmin ? 'flex' : 'none';
-    if(isAdmin){
-      document.getElementById('detailEditBtn').onclick = function(){ openEditForm(notice); };
-      document.getElementById('detailDeleteBtn').onclick = function(){ deleteNotice(notice.id); };
-    }
-  }
-
-  function showListView(){
-    noticeListView.style.display = 'block';
-    noticeDetailView.style.display = 'none';
-  }
-  function showDetailView(notice){
-    noticeListView.style.display = 'none';
-    noticeDetailView.style.display = 'block';
-    renderNoticeDetail(notice);
-  }
-
-  function renderCurrentView(){
-    var id = getIdFromUrl();
-    if(id){
-      var notice = currentNotices.find(function(n){ return String(n.id) === id; });
-      if(notice){ showDetailView(notice); return; }
-      if(currentNotices.length){
-        noticeDetailView.style.display = 'block';
-        noticeListView.style.display = 'none';
-        document.getElementById('detailTitle').textContent = '글을 찾을 수 없습니다.';
-        document.getElementById('detailAuthor').textContent = '';
-        document.getElementById('detailDate').textContent = '';
-        document.getElementById('detailImage').style.display = 'none';
-        document.getElementById('detailBody').textContent = '삭제되었거나 존재하지 않는 공지입니다.';
-        document.getElementById('detailAdminActions').style.display = 'none';
-        return;
-      }
-    }
-    renderNoticeList();
-    showListView();
-  }
-
-  async function loadNotices(){
-    if(!sbRead){
-      if(noticeBoardList){ noticeBoardList.innerHTML = '<p class="notice-empty">게시판 연결에 실패했습니다. 잠시 후 다시 시도해주세요.</p>'; }
-      return;
-    }
-    var result = await sbRead.from('notices').select('*').order('created_at', {ascending:false});
-    if(result.error){
-      if(noticeBoardList){ noticeBoardList.innerHTML = '<p class="notice-empty">공지사항을 불러오지 못했습니다.</p>'; }
-      return;
-    }
-    currentNotices = result.data || [];
-    renderCurrentView();
-    renderNoticeTicker();
-  }
-
-  function setAdminUI(loggedIn){
-    isAdmin = loggedIn;
-    if(adminLoggedOut){ adminLoggedOut.style.display = loggedIn ? 'none' : 'flex'; }
-    if(adminLoggedIn){ adminLoggedIn.style.display = loggedIn ? 'flex' : 'none'; }
-    if(!loggedIn && noticeForm){ noticeForm.style.display = 'none'; }
-    renderCurrentView();
-  }
-
-  // getSession() transparently refreshes an expired access token using the
-  // stored refresh token. Call this right before any write so a long-idle
-  // tab (background timers throttled, auto-refresh missed) doesn't silently
-  // send an expired token and have the write rejected with no visible error.
-  // If the session is truly gone, `retryFn` (the write the caller was about
-  // to make) is queued and re-run automatically right after the admin logs
-  // back in — otherwise re-login "worked" but the delete/save they actually
-  // wanted never happened, and clicking it again is easy to forget to do.
-  var pendingAction = null;
-  async function ensureFreshSession(retryFn){
-    if(!sb) return false;
-    var result = await sb.auth.getSession();
-    if(!result.data || !result.data.session){
-      pendingAction = retryFn || null;
-      alert('로그인이 만료되었습니다. 다시 로그인해주세요. 로그인하시면 하려던 작업이 이어서 실행됩니다.');
-      setAdminUI(false);
-      document.getElementById('loginModal').classList.add('open');
-      return false;
-    }
-    return true;
-  }
-
-  function openEditForm(notice){
-    document.getElementById('noticeTitleInput').value = notice.title;
-    document.getElementById('noticeBodyInput').value = notice.body || '';
-    noticeForm.dataset.editingId = notice.id;
-    noticeForm.dataset.existingImageUrl = notice.image_url || '';
-    noticeForm.dataset.removeImage = '';
-    selectedImageFile = null;
-    if(notice.image_url){ showImagePreview(notice.image_url); } else { hideImagePreview(); }
-    noticeForm.style.display = 'block';
-    noticeForm.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
-  }
-
-  async function deleteNotice(id, skipConfirm){
-    if(!skipConfirm && !confirm('이 공지를 삭제할까요?')) return;
-    if(!(await ensureFreshSession(function(){ deleteNotice(id, true); }))) return;
-    var result = await sb.from('notices').delete().eq('id', id);
-    if(result.error){
-      alert('삭제에 실패했습니다: ' + result.error.message);
-      return;
-    }
-    window.location.href = 'notice.html';
-  }
-
-  function showImagePreview(url){
-    var img = document.getElementById('noticeImagePreviewImg');
-    var box = document.getElementById('noticeImagePreview');
-    img.src = url;
-    box.style.display = 'flex';
-  }
-  function hideImagePreview(){
-    document.getElementById('noticeImagePreview').style.display = 'none';
-    document.getElementById('noticeImagePreviewImg').src = '';
-  }
-  function resetImageState(){
-    selectedImageFile = null;
-    document.getElementById('noticeImageInput').value = '';
-    noticeForm.dataset.existingImageUrl = '';
-    noticeForm.dataset.removeImage = '';
-    hideImagePreview();
-  }
-
-  if(sb){
-    var loginModal = document.getElementById('loginModal');
-    document.getElementById('adminLoginBtn').addEventListener('click', function(){ loginModal.classList.add('open'); });
-    document.getElementById('loginModalClose').addEventListener('click', function(){ loginModal.classList.remove('open'); });
-    loginModal.addEventListener('click', function(e){ if(e.target === loginModal){ loginModal.classList.remove('open'); } });
-
-    document.getElementById('loginForm').addEventListener('submit', async function(e){
-      e.preventDefault();
-      var email = document.getElementById('loginEmail').value;
-      var password = document.getElementById('loginPassword').value;
-      var errEl = document.getElementById('loginError');
-      errEl.style.display = 'none';
-      var result = await sb.auth.signInWithPassword({ email: email, password: password });
-      if(result.error){
-        errEl.textContent = '로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.';
-        errEl.style.display = 'block';
-        return;
-      }
-      loginModal.classList.remove('open');
-      document.getElementById('loginForm').reset();
-      if(pendingAction){
-        var fn = pendingAction;
-        pendingAction = null;
-        fn();
-      }
-    });
-
-    document.getElementById('adminLogoutBtn').addEventListener('click', async function(){
-      await sb.auth.signOut();
-    });
-
-    document.getElementById('noticeImageInput').addEventListener('change', function(e){
-      var file = e.target.files && e.target.files[0];
-      if(!file) return;
-      selectedImageFile = file;
-      noticeForm.dataset.removeImage = '';
-      var reader = new FileReader();
-      reader.onload = function(ev){ showImagePreview(ev.target.result); };
-      reader.readAsDataURL(file);
-    });
-    document.getElementById('noticeImageRemoveBtn').addEventListener('click', function(){
-      selectedImageFile = null;
-      document.getElementById('noticeImageInput').value = '';
-      noticeForm.dataset.removeImage = '1';
-      hideImagePreview();
-    });
-
-    document.getElementById('adminWriteBtn').addEventListener('click', function(){
-      noticeForm.dataset.editingId = '';
-      document.getElementById('noticeTitleInput').value = '';
-      document.getElementById('noticeBodyInput').value = '';
-      resetImageState();
-      noticeForm.style.display = 'block';
-      noticeForm.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
-    });
-    document.getElementById('noticeCancelBtn').addEventListener('click', function(){
-      noticeForm.style.display = 'none';
-      resetImageState();
-    });
-    async function performNoticeSubmit(skipSessionCheck){
-      var title = document.getElementById('noticeTitleInput').value.trim();
-      var body = document.getElementById('noticeBodyInput').value.trim();
-      if(!title){ alert('제목을 입력해주세요.'); return; }
-      if(!skipSessionCheck && !(await ensureFreshSession(function(){ performNoticeSubmit(true); }))) return;
-      var editingId = noticeForm.dataset.editingId;
-      var submitBtn = document.getElementById('noticeSubmitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = '등록 중…';
-
-      var imageUrl = noticeForm.dataset.existingImageUrl || null;
-      if(noticeForm.dataset.removeImage === '1'){ imageUrl = null; }
-
-      if(selectedImageFile){
-        var ext = (selectedImageFile.name.split('.').pop() || 'jpg').toLowerCase();
-        var path = Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
-        var uploadResult = await sb.storage.from('notice-images').upload(path, selectedImageFile, { cacheControl: '3600', upsert: false });
-        if(uploadResult.error){
-          alert('이미지 업로드에 실패했습니다: ' + uploadResult.error.message);
-          submitBtn.disabled = false;
-          submitBtn.textContent = '등록';
-          return;
-        }
-        var pub = sb.storage.from('notice-images').getPublicUrl(path);
-        imageUrl = pub.data.publicUrl;
-      }
-
-      var payload = { title: title, body: body, image_url: imageUrl };
-      var writeResult = editingId
-        ? await sb.from('notices').update(payload).eq('id', editingId)
-        : await sb.from('notices').insert(payload);
-
-      submitBtn.disabled = false;
-      submitBtn.textContent = '등록';
-
-      if(writeResult.error){
-        alert('저장에 실패했습니다: ' + writeResult.error.message);
-        return;
-      }
-      resetImageState();
-      window.location.href = 'notice.html';
-    }
-    document.getElementById('noticeSubmitBtn').addEventListener('click', function(){ performNoticeSubmit(false); });
-
-    sb.auth.onAuthStateChange(function(_event, session){ setAdminUI(!!session); });
-    sb.auth.getSession().then(function(result){ setAdminUI(!!(result.data && result.data.session)); });
-    loadNotices();
-
-    // A tab left in the background for a long time can miss its scheduled
-    // token refresh and show a stale list. Re-sync both whenever the tab
-    // becomes visible again, so switching back to it is enough — no manual
-    // reload needed.
-    document.addEventListener('visibilitychange', function(){
-      if(document.visibilityState === 'visible'){
-        sb.auth.getSession().then(function(result){ setAdminUI(!!(result.data && result.data.session)); });
-        loadNotices();
-      }
-    });
-  } else if(noticeBoardList){
-    noticeBoardList.innerHTML = '<p class="notice-empty">게시판을 불러올 수 없습니다.</p>';
-  }
+  fetch('members-data.json', { cache: 'no-store' })
+    .then(function(r){ return r.json(); })
+    .then(function(data){ ALL_MEMBERS = data; defaultHint(); })
+    .catch(function(){ memberHint.textContent = '회원 명단을 불러오지 못했습니다.'; });
 
 </script>
 </body>
