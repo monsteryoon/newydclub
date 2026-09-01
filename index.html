@@ -450,9 +450,10 @@
     .cd-unit{padding:10px 2px;}
     .quick-btn{width:46px; height:46px;}
     .quick-btn .qb-label{display:none;}
-    .modal-overlay{padding:12px;}
-    .modal-card{max-height:82vh;}
-    .modal-body img{width:auto; max-width:100%; max-height:58vh; margin:0 auto; object-fit:contain;}
+    .modal-overlay{padding:0; align-items:stretch;}
+    .modal-card{max-width:100%; width:100%; height:100%; max-height:100%; border-radius:0;}
+    .modal-body{display:flex; align-items:center; justify-content:center; background:var(--ink);}
+    .modal-body img{width:100%; height:auto; max-width:100%; max-height:none; object-fit:contain; margin:0;}
   }
 </style>
 </head>
