@@ -484,6 +484,7 @@
     .modal-body img{width:100%; height:auto; max-width:100%; max-height:55vh; object-fit:contain; margin:0;}
   }
 </style>
+<link rel="stylesheet" href="css/extra.css">
 </head>
 <body>
 
@@ -516,7 +517,8 @@
           <button type="button" class="nav-trigger">활동·소식</button>
           <div class="nav-dropdown">
             <a href="#activities">활동계획</a>
-            <a href="#gallery">갤러리</a>
+            <a href="gallery.html">사진첩</a>
+            <a href="board.html">게시판</a>
             <a href="#themesong">테마곡</a>
           </div>
         </div>
@@ -542,7 +544,8 @@
       <a href="#progress">추진경과</a>
       <span class="mp-label">활동·소식</span>
       <a href="#activities">활동계획</a>
-      <a href="#gallery">갤러리</a>
+      <a href="gallery.html">사진첩</a>
+      <a href="board.html">게시판</a>
       <a href="#themesong">테마곡</a>
       <a href="#contact">문의</a>
       <a href="members.html">회원검색</a>
@@ -552,28 +555,28 @@
   <main id="top">
     <section class="hero">
       <div class="hero-bg" aria-hidden="true">
-        <div class="hero-bg-slide" style="background-image:var(--photo-founders)"></div>
-        <div class="hero-bg-slide" style="background-image:var(--photo-prep)"></div>
-        <div class="hero-bg-slide" style="background-image:var(--photo-bylaws)"></div>
+        <div class="hero-bg-slide" style="background-image:url('images/founders.jpg')" data-edit-bg="hero_photo_1" data-edit-label="배경 사진 1" data-edit-group="① 첫 화면"></div>
+        <div class="hero-bg-slide" style="background-image:url('images/prep.jpg')" data-edit-bg="hero_photo_2" data-edit-label="배경 사진 2" data-edit-group="① 첫 화면"></div>
+        <div class="hero-bg-slide" style="background-image:url('images/bylaws.jpg')" data-edit-bg="hero_photo_3" data-edit-label="배경 사진 3" data-edit-group="① 첫 화면"></div>
       </div>
       <span class="blob blob-1"></span>
       <span class="blob blob-2"></span>
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <p class="hero-slogan"><span class="hs-mark"></span>하나 된 마음으로, <em>새로운 영덕의 미래를 열다.</em></p>
-          <h1>고향 영덕을<br>사랑하는 청년들,<br>이제 <em>하나</em>로 뭉칩니다</h1>
-          <p>뉴영덕연합회는 영덕을 사랑하는 청년들이 모여 지역의 화합과 발전을 위해 만든 단체입니다. 2026년 9월 17일, 그 첫걸음인 창립총회 및 취임식을 개최합니다.</p>
+          <p class="hero-slogan"><span class="hs-mark"></span><span data-edit="hero_slogan" data-edit-label="슬로건 (한 줄)" data-edit-group="① 첫 화면">하나 된 마음으로, <em>새로운 영덕의 미래를 열다.</em></span></p>
+          <h1 data-edit="hero_title" data-edit-label="큰 제목" data-edit-group="① 첫 화면">고향 영덕을<br>사랑하는 청년들,<br>이제 <em>하나</em>로 뭉칩니다</h1>
+          <p data-edit="hero_desc" data-edit-label="소개 문구" data-edit-group="① 첫 화면">뉴영덕연합회는 영덕을 사랑하는 청년들이 모여 지역의 화합과 발전을 위해 만든 단체입니다. 2026년 9월 17일, 그 첫걸음인 창립총회 및 취임식을 개최합니다.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#founding">창립총회 안내 보기</a>
+            <a class="btn btn-primary" href="#founding" data-edit="hero_button" data-edit-label="주 버튼 글자" data-edit-group="① 첫 화면">창립총회 안내 보기</a>
             <button class="btn btn-ghost" id="heroInviteBtn" type="button">초대장 다시 보기</button>
           </div>
         </div>
-        <div class="countdown-card reveal">
+        <div class="countdown-card reveal" id="countdownCard">
           <span class="cc-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
-            창립총회까지
+            <span data-edit="countdown_label" data-edit-label="카운트다운 제목" data-edit-group="② 행사 카운트다운">창립총회까지</span>
           </span>
-          <p class="cc-date">2026년 9월 17일 (목) 오후 5시 30분</p>
+          <p class="cc-date" data-edit="countdown_date_text" data-edit-label="날짜 표시 문구" data-edit-group="② 행사 카운트다운">2026년 9월 17일 (목) 오후 5시 30분</p>
           <div class="countdown-grid" id="countdownHero">
             <div class="cd-unit"><b id="cdDaysH">–</b><span>DAYS</span></div>
             <div class="cd-unit"><b id="cdHoursH">–</b><span>HOURS</span></div>
@@ -582,7 +585,7 @@
           </div>
           <p class="countdown-venue">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.2 7-11.5A7 7 0 105 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
-            칠보산 웨딩홀
+            <span data-edit="countdown_venue" data-edit-label="장소" data-edit-group="② 행사 카운트다운">칠보산 웨딩홀</span>
           </p>
         </div>
       </div>
@@ -592,7 +595,7 @@
     </section>
 
     <div class="marquee">
-      <div class="marquee-track">
+      <div class="marquee-track" id="marqueeTrack">
         <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>고향사랑</span>
         <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>청년화합</span>
         <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>지역발전</span>
@@ -608,7 +611,7 @@
       <div class="wrap">
         <span class="notice-pin">
           <span class="badge">공지</span>
-          <span>뉴영덕연합회 창립총회 및 취임식 개최 안내 (2026.09.17 목 17:30 · 칠보산 웨딩홀)</span>
+          <span data-edit="notice_pin_text" data-edit-label="공지 띠 고정 문구" data-edit-group="③ 공지 띠 · 팝업">뉴영덕연합회 창립총회 및 취임식 개최 안내 (2026.09.17 목 17:30 · 칠보산 웨딩홀)</span>
           <button id="noticeInviteBtn" type="button">초대장 보기</button>
         </span>
         <ul class="notice-list">
@@ -622,15 +625,17 @@
     <section class="section message" id="message">
       <div class="wrap message-grid">
         <div class="reveal" style="--i:0">
-          <div class="portrait-frame" style="background-image:var(--photo-chairman); background-size:cover; background-position:center top;"></div>
-          <p class="portrait-cap"><b>서병환</b>뉴영덕연합회 회장</p>
+          <div class="portrait-frame" style="background-image:url('images/chairman.jpg'); background-size:cover; background-position:center top;" data-edit-bg="chairman_photo" data-edit-label="회장 사진" data-edit-group="④ 회장 인사말"></div>
+          <p class="portrait-cap"><b data-edit="chairman_name" data-edit-label="회장 이름" data-edit-group="④ 회장 인사말">서병환</b><span data-edit="chairman_title" data-edit-label="사진 아래 직함" data-edit-group="④ 회장 인사말">뉴영덕연합회 회장</span></p>
         </div>
         <div class="reveal" style="--i:1">
-          <span class="eyebrow">회장 인사말</span>
-          <p class="message-quote" style="margin-top:14px;">청년의 열정으로, 고향 영덕의 내일을 그립니다.</p>
-          <p class="message-body" data-draft="true">안녕하십니까, 뉴영덕연합회 회장 서병환입니다. 저희는 고향 영덕을 사랑하는 마음 하나로 모인 청년들입니다. 각자의 자리에서 살아가면서도 마음 한 켠에는 늘 영덕이 있었고, 이제는 그 마음을 모아 지역의 화합과 발전을 위한 힘으로 만들고자 합니다.</p>
+          <span class="eyebrow" data-edit="message_eyebrow" data-edit-label="작은 제목" data-edit-group="④ 회장 인사말">회장 인사말</span>
+          <p class="message-quote" style="margin-top:14px;" data-edit="message_quote" data-edit-label="인용 문구" data-edit-group="④ 회장 인사말">청년의 열정으로, 고향 영덕의 내일을 그립니다.</p>
+          <div data-edit="message_body" data-edit-label="인사말 본문 (문단 사이는 빈 줄로 구분)" data-edit-group="④ 회장 인사말" data-edit-mode="paras">
+            <p class="message-body" data-draft="true">안녕하십니까, 뉴영덕연합회 회장 서병환입니다. 저희는 고향 영덕을 사랑하는 마음 하나로 모인 청년들입니다. 각자의 자리에서 살아가면서도 마음 한 켠에는 늘 영덕이 있었고, 이제는 그 마음을 모아 지역의 화합과 발전을 위한 힘으로 만들고자 합니다.</p>
           <p class="message-body" data-draft="true">감사단과 부회장단, 사무국, 그리고 9개 읍·면 지회와 12개 위원회의 청년 회원들이 함께 뜻을 모아 연합회의 틀을 갖추었습니다. 2026년 9월 17일 창립총회 및 취임식에서 그 시작을 정식으로 알리고자 하니, 여러분의 많은 관심과 참여를 부탁드립니다.</p>
-          <p class="message-sign">뉴영덕연합회 회장 서병환 올림</p>
+          </div>
+          <p class="message-sign" data-edit="message_sign" data-edit-label="서명" data-edit-group="④ 회장 인사말">뉴영덕연합회 회장 서병환 올림</p>
         </div>
       </div>
     </section>
@@ -638,11 +643,12 @@
     <section class="section orgchart" id="orgchart" style="background:var(--mist);">
       <div class="wrap">
         <div class="section-head reveal" style="--i:0">
-          <span class="eyebrow">NEW영덕청년연합회 조직도</span>
-          <h2>회장단부터 9개 지회, 12개 위원회까지</h2>
-          <p>창립을 준비하며 확정된 뉴영덕연합회의 임원진과 조직 구성입니다.</p>
+          <span class="eyebrow" data-edit="org_eyebrow" data-edit-label="작은 제목" data-edit-group="⑤ 조직도 제목">NEW영덕청년연합회 조직도</span>
+          <h2 data-edit="org_heading" data-edit-label="큰 제목" data-edit-group="⑤ 조직도 제목">회장단부터 9개 지회, 12개 위원회까지</h2>
+          <p data-edit="org_desc" data-edit-label="설명" data-edit-group="⑤ 조직도 제목">창립을 준비하며 확정된 뉴영덕연합회의 임원진과 조직 구성입니다.</p>
         </div>
 
+        <div id="orgLeaders">
         <div class="leader-tier reveal" style="--i:1">
           <div class="leader-card featured">
             <span class="lc-role">회장</span>
@@ -679,10 +685,11 @@
           </div>
         </div>
 
-        <div class="org-group-head reveal" style="--i:0">
-          <h3>지회 <span>9개 읍·면</span></h3>
         </div>
-        <div class="org-grid reveal" style="--i:1">
+        <div class="org-group-head reveal" style="--i:0">
+          <h3>지회 <span data-edit="org_branch_badge" data-edit-label="지회 옆 표시" data-edit-group="⑤ 조직도 제목">9개 읍·면</span></h3>
+        </div>
+        <div class="org-grid reveal" style="--i:1" id="orgBranches">
           <details class="org-card">
             <summary><span class="oc-title"><b>영덕읍지회</b><i>지회장 윤상필</i></span><span class="oc-meta">11명 <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></summary>
             <div class="org-members">
@@ -724,9 +731,9 @@
         </div>
 
         <div class="org-group-head reveal" style="--i:0; margin-top:44px;">
-          <h3>위원회 <span>12개 분과</span></h3>
+          <h3>위원회 <span data-edit="org_committee_badge" data-edit-label="위원회 옆 표시" data-edit-group="⑤ 조직도 제목">12개 분과</span></h3>
         </div>
-        <div class="org-grid reveal" style="--i:1">
+        <div class="org-grid reveal" style="--i:1" id="orgCommittees">
           <details class="org-card">
             <summary><span class="oc-title"><b>조직위원장</b><i>고재광</i></span><span class="oc-meta">6명 <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></summary>
             <div class="org-members">
@@ -804,30 +811,30 @@
     <section class="section values" id="values">
       <div class="wrap">
         <div class="section-head reveal" style="--i:0">
-          <span class="eyebrow">설립 취지</span>
-          <h2>우리가 뭉치는 네 가지 이유</h2>
-          <p>뉴영덕연합회가 지향하는 핵심 가치입니다. 창립총회 이후에도 이 원칙을 중심으로 활동을 이어갑니다.</p>
+          <span class="eyebrow" data-edit="values_eyebrow" data-edit-label="작은 제목" data-edit-group="⑥ 설립 취지">설립 취지</span>
+          <h2 data-edit="values_heading" data-edit-label="큰 제목" data-edit-group="⑥ 설립 취지">우리가 뭉치는 네 가지 이유</h2>
+          <p data-edit="values_desc" data-edit-label="설명" data-edit-group="⑥ 설립 취지">뉴영덕연합회가 지향하는 핵심 가치입니다. 창립총회 이후에도 이 원칙을 중심으로 활동을 이어갑니다.</p>
         </div>
         <div class="values-grid reveal" style="--i:1">
           <div class="value-card">
             <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.8 8.6c0 5.2-8.8 10.6-8.8 10.6S3.2 13.8 3.2 8.6a4.8 4.8 0 018.8-2.6 4.8 4.8 0 018.8 2.6z"/></svg>
-            <h3>고향사랑</h3>
-            <p>어디에 있든 마음 한켠에 품고 있던 고향 영덕에 대한 애정을 나눕니다.</p>
+            <h3 data-edit="value_1_title" data-edit-label="가치 1 제목" data-edit-group="⑥ 설립 취지">고향사랑</h3>
+            <p data-edit="value_1_desc" data-edit-label="가치 1 설명" data-edit-group="⑥ 설립 취지">어디에 있든 마음 한켠에 품고 있던 고향 영덕에 대한 애정을 나눕니다.</p>
           </div>
           <div class="value-card">
             <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.4"/><path d="M2 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M14.5 20c.2-2.6 2-4.6 4.5-4.6"/></svg>
-            <h3>청년화합</h3>
-            <p>세대와 지역을 넘어 청년들이 함께 모이고 어울리는 구심점이 됩니다.</p>
+            <h3 data-edit="value_2_title" data-edit-label="가치 2 제목" data-edit-group="⑥ 설립 취지">청년화합</h3>
+            <p data-edit="value_2_desc" data-edit-label="가치 2 설명" data-edit-group="⑥ 설립 취지">세대와 지역을 넘어 청년들이 함께 모이고 어울리는 구심점이 됩니다.</p>
           </div>
           <div class="value-card">
             <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21V10l9-6 9 6v11"/><path d="M9 21v-6h6v6"/></svg>
-            <h3>지역발전</h3>
-            <p>영덕의 미래를 위한 실질적인 사업과 활동으로 지역 발전에 힘을 보탭니다.</p>
+            <h3 data-edit="value_3_title" data-edit-label="가치 3 제목" data-edit-group="⑥ 설립 취지">지역발전</h3>
+            <p data-edit="value_3_desc" data-edit-label="가치 3 설명" data-edit-group="⑥ 설립 취지">영덕의 미래를 위한 실질적인 사업과 활동으로 지역 발전에 힘을 보탭니다.</p>
           </div>
           <div class="value-card">
             <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v4M12 17v4M4.2 12H2M22 12h-2.2M6 6l1.4 1.4M16.6 16.6L18 18M18 6l-1.4 1.4M7.4 16.6L6 18"/><circle cx="12" cy="12" r="4.5"/></svg>
-            <h3>미래세대</h3>
-            <p>다음 세대에게도 이어질 수 있는 지속가능한 연합회를 만들어 갑니다.</p>
+            <h3 data-edit="value_4_title" data-edit-label="가치 4 제목" data-edit-group="⑥ 설립 취지">미래세대</h3>
+            <p data-edit="value_4_desc" data-edit-label="가치 4 설명" data-edit-group="⑥ 설립 취지">다음 세대에게도 이어질 수 있는 지속가능한 연합회를 만들어 갑니다.</p>
           </div>
         </div>
       </div>
@@ -836,13 +843,13 @@
     <section class="section founding" id="founding">
       <div class="wrap">
         <div class="section-head reveal" style="--i:0">
-          <span class="eyebrow">창립총회 및 취임식 안내</span>
-          <h2>뉴영덕연합회, 첫걸음을 함께해 주세요</h2>
+          <span class="eyebrow" data-edit="founding_eyebrow" data-edit-label="작은 제목" data-edit-group="⑦ 행사 안내 (창립총회)">창립총회 및 취임식 안내</span>
+          <h2 data-edit="founding_heading" data-edit-label="큰 제목" data-edit-group="⑦ 행사 안내 (창립총회)">뉴영덕연합회, 첫걸음을 함께해 주세요</h2>
         </div>
         <div class="founding-card reveal" style="--i:1">
           <div class="founding-visual">
-            <span class="tag">INVITATION</span>
-            <h3>2026년 9월 17일 (목)<br>오후 5시 30분, 칠보산 웨딩홀</h3>
+            <span class="tag" data-edit="founding_tag" data-edit-label="꼬리표" data-edit-group="⑦ 행사 안내 (창립총회)">INVITATION</span>
+            <h3 data-edit="founding_title" data-edit-label="빨간 카드 제목" data-edit-group="⑦ 행사 안내 (창립총회)">2026년 9월 17일 (목)<br>오후 5시 30분, 칠보산 웨딩홀</h3>
             <div class="founding-countdown" id="countdownFeature">
               <div class="cd-unit"><b id="cdDaysF">–</b><span>DAYS</span></div>
               <div class="cd-unit"><b id="cdHoursF">–</b><span>HOURS</span></div>
@@ -853,21 +860,21 @@
           <div class="founding-detail">
             <div class="fd-row">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
-              <div><b>일시</b><p>2026년 9월 17일 목요일 오후 5시 30분 · 창립총회</p></div>
+              <div><b data-edit="founding_row1_label" data-edit-label="첫째 줄 항목명" data-edit-group="⑦ 행사 안내 (창립총회)">일시</b><p data-edit="founding_row1_text" data-edit-label="첫째 줄 내용" data-edit-group="⑦ 행사 안내 (창립총회)">2026년 9월 17일 목요일 오후 5시 30분 · 창립총회</p></div>
             </div>
             <div class="fd-row">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>
-              <div><b>이어서</b><p>오후 6시 30분 · 회장단 및 감사 취임식</p></div>
+              <div><b data-edit="founding_row2_label" data-edit-label="둘째 줄 항목명" data-edit-group="⑦ 행사 안내 (창립총회)">이어서</b><p data-edit="founding_row2_text" data-edit-label="둘째 줄 내용" data-edit-group="⑦ 행사 안내 (창립총회)">오후 6시 30분 · 회장단 및 감사 취임식</p></div>
             </div>
             <div class="fd-row">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.2 7-11.5A7 7 0 105 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
-              <div><b>장소</b><p>칠보산 웨딩홀</p></div>
+              <div><b data-edit="founding_row3_label" data-edit-label="셋째 줄 항목명" data-edit-group="⑦ 행사 안내 (창립총회)">장소</b><p data-edit="founding_row3_text" data-edit-label="셋째 줄 내용" data-edit-group="⑦ 행사 안내 (창립총회)">칠보산 웨딩홀</p></div>
             </div>
-            <div class="fd-note">
+            <div class="fd-note" data-edit="founding_note" data-edit-label="안내 상자" data-edit-group="⑦ 행사 안내 (창립총회)">
               <b>참석 안내</b> 참석자 명단에 본인 인감도장을 찍습니다. 오실 때 <b>인감도장을 꼭 지참</b>해 주세요.
             </div>
             <div class="fd-actions">
-              <a class="btn btn-primary" href="#contact">참석 신청하기</a>
+              <a class="btn btn-primary" href="#contact" data-edit="founding_button" data-edit-label="버튼 글자" data-edit-group="⑦ 행사 안내 (창립총회)">참석 신청하기</a>
               <button class="btn btn-line" id="foundingInviteBtn" type="button">초대장 원본 보기</button>
             </div>
           </div>
@@ -882,10 +889,10 @@
     <section class="section" id="progress" style="background:var(--paper); padding-top:0;">
       <div class="wrap">
         <div class="section-head reveal" style="--i:0">
-          <span class="eyebrow">추진 경과</span>
-          <h2>창립총회를 향한 걸음</h2>
+          <span class="eyebrow" data-edit="progress_eyebrow" data-edit-label="작은 제목" data-edit-group="⑧ 추진 경과 제목">추진 경과</span>
+          <h2 data-edit="progress_heading" data-edit-label="큰 제목" data-edit-group="⑧ 추진 경과 제목">창립총회를 향한 걸음</h2>
         </div>
-        <div class="progress reveal" style="--i:1">
+        <div class="progress reveal" style="--i:1" id="progressList">
           <div class="progress-item done">
             <span class="st">완료</span>
             <h3>발기인 모임 결성</h3>
@@ -923,8 +930,8 @@
     <section class="section" id="activities" style="background:var(--mist); padding-bottom:0;">
       <div class="wrap">
         <div class="section-head reveal" style="--i:0">
-          <span class="eyebrow">활동 계획</span>
-          <h2>창립 이후 함께 만들어갈 활동</h2>
+          <span class="eyebrow" data-edit="activities_eyebrow" data-edit-label="작은 제목" data-edit-group="⑨ 활동 계획">활동 계획</span>
+          <h2 data-edit="activities_heading" data-edit-label="큰 제목" data-edit-group="⑨ 활동 계획">창립 이후 함께 만들어갈 활동</h2>
         </div>
       </div>
       <div class="wrap" style="padding-bottom:96px;">
@@ -932,38 +939,38 @@
           <div class="activity-card">
             <span class="activity-num">01</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21h16"/><path d="M12 3v10"/><path d="M6 8h12l-2 5H8z"/><circle cx="12" cy="3" r="1.2" fill="currentColor" stroke="none"/></svg>
-            <h3>정기모임</h3>
-            <p>정기적으로 모여 서로의 안부를 나누고 연합회의 방향을 함께 논의합니다.</p>
+            <h3 data-edit="activity_1_title" data-edit-label="활동 1 제목" data-edit-group="⑨ 활동 계획">정기모임</h3>
+            <p data-edit="activity_1_desc" data-edit-label="활동 1 설명" data-edit-group="⑨ 활동 계획">정기적으로 모여 서로의 안부를 나누고 연합회의 방향을 함께 논의합니다.</p>
           </div>
           <div class="activity-card">
             <span class="activity-num">02</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z"/></svg>
-            <h3>장학사업</h3>
-            <p>차세대 인재 양성을 위해 회원들의 정성을 모아 장학금을 지원합니다.</p>
+            <h3 data-edit="activity_2_title" data-edit-label="활동 2 제목" data-edit-group="⑨ 활동 계획">장학사업</h3>
+            <p data-edit="activity_2_desc" data-edit-label="활동 2 설명" data-edit-group="⑨ 활동 계획">차세대 인재 양성을 위해 회원들의 정성을 모아 장학금을 지원합니다.</p>
           </div>
           <div class="activity-card">
             <span class="activity-num">03</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.4"/><path d="M2 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M14.5 20c.2-2.6 2-4.6 4.5-4.6"/></svg>
-            <h3>청년 네트워킹</h3>
-            <p>다양한 분야에서 활동하는 영덕 출신 청년들을 서로 연결합니다.</p>
+            <h3 data-edit="activity_3_title" data-edit-label="활동 3 제목" data-edit-group="⑨ 활동 계획">청년 네트워킹</h3>
+            <p data-edit="activity_3_desc" data-edit-label="활동 3 설명" data-edit-group="⑨ 활동 계획">다양한 분야에서 활동하는 영덕 출신 청년들을 서로 연결합니다.</p>
           </div>
           <div class="activity-card">
             <span class="activity-num">04</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 8a4 4 0 10-8 0 4 4 0 008 0z"/><path d="M4 21c0-3.9 2.7-6 6-6s6 2.1 6 6"/></svg>
-            <h3>봉사활동</h3>
-            <p>지역사회와 함께 나눔을 실천하며 이웃과 더불어 살아갑니다.</p>
+            <h3 data-edit="activity_4_title" data-edit-label="활동 4 제목" data-edit-group="⑨ 활동 계획">봉사활동</h3>
+            <p data-edit="activity_4_desc" data-edit-label="활동 4 설명" data-edit-group="⑨ 활동 계획">지역사회와 함께 나눔을 실천하며 이웃과 더불어 살아갑니다.</p>
           </div>
           <div class="activity-card">
             <span class="activity-num">05</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21c3-6 6-9 9-9s6 3 9 9"/><path d="M9 12c0-4 1-7 3-9 2 2 3 5 3 9"/></svg>
-            <h3>선진지 견학 사업</h3>
-            <p>선진지 견학을 통해 영덕의 다양한 변화를 이뤄갑니다.</p>
+            <h3 data-edit="activity_5_title" data-edit-label="활동 5 제목" data-edit-group="⑨ 활동 계획">선진지 견학 사업</h3>
+            <p data-edit="activity_5_desc" data-edit-label="활동 5 설명" data-edit-group="⑨ 활동 계획">선진지 견학을 통해 영덕의 다양한 변화를 이뤄갑니다.</p>
           </div>
           <div class="activity-card">
             <span class="activity-num">06</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 13s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
-            <h3>문화·친목 행사</h3>
-            <p>야유회, 체육대회 등 세대를 넘나드는 친목 행사를 함께 만듭니다.</p>
+            <h3 data-edit="activity_6_title" data-edit-label="활동 6 제목" data-edit-group="⑨ 활동 계획">문화·친목 행사</h3>
+            <p data-edit="activity_6_desc" data-edit-label="활동 6 설명" data-edit-group="⑨ 활동 계획">야유회, 체육대회 등 세대를 넘나드는 친목 행사를 함께 만듭니다.</p>
           </div>
         </div>
       </div>
@@ -972,11 +979,11 @@
     <section class="section" id="gallery" style="background:var(--paper);">
       <div class="wrap">
         <div class="section-head reveal" style="--i:0">
-          <span class="eyebrow">갤러리</span>
-          <h2>창립을 준비하는 순간들</h2>
-          <p>발기인 모임부터 준비위원회 활동까지, 창립을 준비해온 순간들입니다.</p>
+          <span class="eyebrow" data-edit="gallery_eyebrow" data-edit-label="작은 제목" data-edit-group="⑩ 사진첩 소개">갤러리</span>
+          <h2 data-edit="gallery_heading" data-edit-label="큰 제목" data-edit-group="⑩ 사진첩 소개">창립을 준비하는 순간들</h2>
+          <p data-edit="gallery_desc" data-edit-label="설명" data-edit-group="⑩ 사진첩 소개">발기인 모임부터 준비위원회 활동까지, 창립을 준비해온 순간들입니다.</p>
         </div>
-        <div class="gallery-grid reveal" style="--i:1">
+        <div class="gallery-grid reveal" style="--i:1" id="galleryGrid">
           <a class="gallery-tile photo" href="#" style="background-image:var(--photo-founders)"><span>발기인 모임</span></a>
           <a class="gallery-tile photo" href="#" style="background-image:var(--photo-prep)"><span>준비위원회 회의</span></a>
           <a class="gallery-tile photo" href="#" style="background-image:var(--photo-bylaws)"><span>정관 검토 회의</span></a>
@@ -984,18 +991,19 @@
           <a class="gallery-tile g5" href="#"><span>홍보 활동</span></a>
           <a class="gallery-tile g6" href="#"><span>청년 네트워킹</span></a>
         </div>
+        <div class="gallery-more reveal" style="--i:2"><a class="btn btn-line" href="gallery.html">전체 사진첩 보기 →</a></div>
       </div>
     </section>
 
     <section class="section" id="themesong" style="background:var(--mist);">
       <div class="wrap">
         <div class="section-head reveal" style="--i:0">
-          <span class="eyebrow">테마곡</span>
-          <h2>뉴영덕연합회 테마곡</h2>
-          <p>창립을 축하하는 마음을 담은 테마곡입니다.</p>
+          <span class="eyebrow" data-edit="song_eyebrow" data-edit-label="작은 제목" data-edit-group="⑪ 테마곡">테마곡</span>
+          <h2 data-edit="song_heading" data-edit-label="큰 제목" data-edit-group="⑪ 테마곡">뉴영덕연합회 테마곡</h2>
+          <p data-edit="song_desc" data-edit-label="설명" data-edit-group="⑪ 테마곡">창립을 축하하는 마음을 담은 테마곡입니다.</p>
         </div>
         <div class="video-frame reveal" style="--i:1">
-          <iframe src="https://www.youtube.com/embed/17TrdOzDkBA" title="뉴영덕연합회 테마곡" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          <iframe id="songFrame" src="https://www.youtube.com/embed/17TrdOzDkBA" title="뉴영덕연합회 테마곡" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
       </div>
     </section>
@@ -1003,27 +1011,27 @@
     <section class="section contact" id="contact">
       <div class="wrap contact-grid">
         <div class="reveal" style="--i:0">
-          <span class="eyebrow">문의 · 가입 신청</span>
-          <h2>언제든 연락 주세요</h2>
+          <span class="eyebrow" data-edit="contact_eyebrow" data-edit-label="작은 제목" data-edit-group="⑫ 문의">문의 · 가입 신청</span>
+          <h2 data-edit="contact_heading" data-edit-label="큰 제목" data-edit-group="⑫ 문의">언제든 연락 주세요</h2>
           <div class="contact-list">
             <div class="contact-row">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.2 7-11.5A7 7 0 105 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
-              <div><b>주소</b><p>경북 영덕군 영해면 영덕로 1771-1</p></div>
+              <div><b data-edit="contact_row1_label" data-edit-label="주소 항목명" data-edit-group="⑫ 문의">주소</b><p data-edit="contact_row1_text" data-edit-label="주소 내용" data-edit-group="⑫ 문의">경북 영덕군 영해면 영덕로 1771-1</p></div>
             </div>
             <div class="contact-row">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
-              <div><b>창립총회 일시</b><p>2026년 9월 17일 목요일 오후 5시 30분 (취임식 6시 30분) · 칠보산 웨딩홀</p></div>
+              <div><b data-edit="contact_row2_label" data-edit-label="둘째 줄 항목명" data-edit-group="⑫ 문의">창립총회 일시</b><p data-edit="contact_row2_text" data-edit-label="둘째 줄 내용" data-edit-group="⑫ 문의">2026년 9월 17일 목요일 오후 5시 30분 (취임식 6시 30분) · 칠보산 웨딩홀</p></div>
             </div>
             <div class="contact-row">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
-              <div><b>고유번호</b><p>832-80-03712</p></div>
+              <div><b data-edit="contact_row3_label" data-edit-label="셋째 줄 항목명" data-edit-group="⑫ 문의">고유번호</b><p data-edit="contact_row3_text" data-edit-label="셋째 줄 내용" data-edit-group="⑫ 문의">832-80-03712</p></div>
             </div>
           </div>
         </div>
         <div class="reveal" style="--i:1">
           <div class="map-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18" opacity=".4"/><path d="M8 8l8 8M16 8l-8 8" opacity=".4"/></svg>
-            <p>경북 영덕군 영해면 영덕로 1771-1<br>지도 연결은 추후 업데이트됩니다.</p>
+            <p data-edit="contact_map_text" data-edit-label="지도 자리 문구" data-edit-group="⑫ 문의">경북 영덕군 영해면 영덕로 1771-1<br>지도 연결은 추후 업데이트됩니다.</p>
           </div>
         </div>
       </div>
@@ -1033,10 +1041,10 @@
       <div class="wrap">
         <div class="cta-inner reveal" style="--i:0">
           <div>
-            <h3>영덕을 사랑하는 청년이라면, 지금 함께해요</h3>
-            <p>뉴영덕연합회는 2026년 9월 17일 창립총회 및 취임식을 시작으로 여러분과 함께 걸어갑니다.</p>
+            <h3 data-edit="cta_title" data-edit-label="맨 아래 권유 제목" data-edit-group="⑫ 문의">영덕을 사랑하는 청년이라면, 지금 함께해요</h3>
+            <p data-edit="cta_desc" data-edit-label="맨 아래 권유 설명" data-edit-group="⑫ 문의">뉴영덕연합회는 2026년 9월 17일 창립총회 및 취임식을 시작으로 여러분과 함께 걸어갑니다.</p>
           </div>
-          <a class="btn btn-primary" href="#contact">참석 · 가입 문의하기</a>
+          <a class="btn btn-primary" href="#contact" data-edit="cta_button" data-edit-label="맨 아래 버튼 글자" data-edit-group="⑫ 문의">참석 · 가입 문의하기</a>
         </div>
       </div>
     </section>
@@ -1070,7 +1078,8 @@
             <h4>안내</h4>
             <ul>
               <li><a href="#activities">활동계획</a></li>
-              <li><a href="#gallery">갤러리</a></li>
+              <li><a href="gallery.html">사진첩</a></li>
+              <li><a href="board.html">게시판</a></li>
               <li><a href="#themesong">테마곡</a></li>
               <li><a href="#contact">문의</a></li>
               <li><a href="members.html">회원검색</a></li>
@@ -1079,7 +1088,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 뉴영덕연합회. All rights reserved.</span>
+        <span>© 2026 뉴영덕연합회. All rights reserved. · <a href="admin.html" class="admin-link">관리자</a></span>
         <span>고유번호 832-80-03712 · 경북 영덕군 영해면 영덕로 1771-1</span>
       </div>
     </div>
@@ -1155,6 +1164,7 @@
 
   /* ---- countdown ---- */
   var target = new Date('2026-09-17T17:30:00+09:00').getTime();
+  window.nydSetCountdownTarget = function(t){ target = t; updateCountdown(); };
   function pad(n){ return String(n).padStart(2,'0'); }
   function updateCountdown(){
     var now = Date.now();
@@ -1178,13 +1188,14 @@
   var modal = document.getElementById('inviteModal');
   var HIDE_KEY = 'nyd_invite_hide_until';
 
+  window.nydOpenPopup = function(){ openModal(); };
   function openModal(){ modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
   function closeModal(){
     modal.classList.remove('open');
     document.body.style.overflow = '';
     var hideBox = document.getElementById('modalHide7');
     if(hideBox && hideBox.checked){
-      localStorage.setItem(HIDE_KEY, String(Date.now() + 7*86400000));
+      try{ localStorage.setItem(HIDE_KEY, String(Date.now() + 7*86400000)); }catch(e){}
     }
   }
 
@@ -1198,10 +1209,12 @@
     if(el){ el.addEventListener('click', openModal); }
   });
 
-  var hideUntil = parseInt(localStorage.getItem(HIDE_KEY) || '0', 10);
-  if(Date.now() > hideUntil){
-    setTimeout(openModal, 500);
-  }
+  // 팝업은 관리자 설정(켜기/끄기, 이미지)을 불러온 뒤에 띄웁니다 → js/home.js
+  window.nydMaybeOpenPopup = function(){
+    var hideUntil = 0;
+    try{ hideUntil = parseInt(localStorage.getItem(HIDE_KEY) || '0', 10); }catch(e){}
+    if(Date.now() > hideUntil){ setTimeout(openModal, 300); }
+  };
 
   /* ==================== 공지사항 미리보기 (읽기 전용, 전체보기는 notice.html) ==================== */
   var SUPABASE_URL = 'https://nfpysoaykskfrhjchrfr.supabase.co';
@@ -1238,5 +1251,7 @@
     });
   }
 </script>
+<script src="js/common.js"></script>
+<script src="js/home.js"></script>
 </body>
 </html>

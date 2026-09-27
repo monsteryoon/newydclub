@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사진첩 | 뉴영덕연합회</title>
+<meta name="description" content="뉴영덕연합회 행사 사진첩입니다.">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/extra.css">
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"><path d="M2 17c1.8 1.4 3.6 1.4 5.4 0 1.8-1.4 3.6-1.4 5.4 0 1.8 1.4 3.6 1.4 5.4 0 1.8-1.4 3.6-1.4 5.4 0"/><path d="M12 13V5"/><path d="M8 8l4-3 4 3"/></svg>
+        </span>
+        <span class="brand-text"><b>뉴영덕연합회</b><span>청년이 만드는 영덕의 화합과 발전</span></span>
+      </a>
+      <nav class="gnb">
+        <a href="notice.html">공지사항</a>
+        <div class="nav-item">
+          <button type="button" class="nav-trigger">소개</button>
+          <div class="nav-dropdown">
+            <a href="index.html#message">인사말</a>
+            <a href="index.html#orgchart">조직도</a>
+            <a href="index.html#values">설립취지</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button type="button" class="nav-trigger">창립총회</button>
+          <div class="nav-dropdown">
+            <a href="index.html#founding">창립총회 안내</a>
+            <a href="index.html#progress">추진경과</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button type="button" class="nav-trigger">활동·소식</button>
+          <div class="nav-dropdown">
+            <a href="index.html#activities">활동계획</a>
+            <a href="gallery.html">사진첩</a>
+            <a href="board.html">게시판</a>
+            <a href="index.html#themesong">테마곡</a>
+          </div>
+        </div>
+        <a href="index.html#contact">문의</a>
+        <a href="members.html">회원검색</a>
+      </nav>
+      <div class="header-actions">
+        <button class="burger" id="burgerBtn" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-panel" id="mobilePanel">
+    <div class="top"><button class="close" id="mobileClose" aria-label="닫기">×</button></div>
+    <nav>
+      <a href="notice.html">공지사항</a>
+      <span class="mp-label">소개</span>
+      <a href="index.html#message">인사말</a>
+      <a href="index.html#orgchart">조직도</a>
+      <a href="index.html#values">설립취지</a>
+      <span class="mp-label">창립총회</span>
+      <a href="index.html#founding">창립총회 안내</a>
+      <a href="index.html#progress">추진경과</a>
+      <span class="mp-label">활동·소식</span>
+      <a href="index.html#activities">활동계획</a>
+      <a href="gallery.html">사진첩</a>
+      <a href="board.html">게시판</a>
+      <a href="index.html#themesong">테마곡</a>
+      <a href="index.html#contact">문의</a>
+      <a href="members.html">회원검색</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="page-hero">
+      <div class="wrap">
+        <p class="crumb"><a href="index.html">홈</a> / 사진첩</p>
+        <h1>사진첩</h1>
+        <p>뉴영덕연합회의 행사와 활동을 사진으로 만나보세요.</p>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--paper); padding-top:56px;">
+      <div class="wrap">
+        <div id="albumListView">
+          <div class="album-grid" id="albumGrid"><p class="state-msg" style="grid-column:1/-1;">사진첩을 불러오는 중입니다…</p></div>
+        </div>
+        <div id="albumDetailView" style="display:none;">
+          <div class="album-head">
+            <div>
+              <h2 id="albumTitle"></h2>
+              <p class="meta" id="albumMeta"></p>
+            </div>
+            <a class="btn btn-line btn-sm" href="gallery.html">← 전체 사진첩</a>
+          </div>
+          <p class="album-desc" id="albumDesc"></p>
+          <div class="photo-grid" id="photoGrid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="사진 크게 보기">
+    <img id="lbImg" alt="">
+    <p class="lb-caption" id="lbCaption"></p>
+    <p class="lb-count" id="lbCount"></p>
+    <button class="lb-btn lb-close" id="lbClose" aria-label="닫기">×</button>
+    <button class="lb-btn lb-prev" id="lbPrev" aria-label="이전 사진">‹</button>
+    <button class="lb-btn lb-next" id="lbNext" aria-label="다음 사진">›</button>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <b>뉴영덕연합회</b>
+          <p>영덕을 사랑하는 청년들이 지역의 화합과 발전을 위해 만든 단체입니다.</p>
+          <div class="socials" style="margin-top:18px;">
+            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 8h2V5h-2a4 4 0 00-4 4v2H9v3h2v7h3v-7h2.5l.5-3H14V9a1 1 0 011-1z"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="6" width="19" height="12" rx="3"/><path d="M11 9.8v4.4l4-2.2z" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4>바로가기</h4>
+            <ul>
+              <li><a href="notice.html">공지사항</a></li>
+              <li><a href="index.html#message">인사말</a></li>
+              <li><a href="index.html#orgchart">조직도</a></li>
+              <li><a href="index.html#values">설립취지</a></li>
+              <li><a href="index.html#founding">창립총회</a></li>
+              <li><a href="index.html#progress">추진경과</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>안내</h4>
+            <ul>
+              <li><a href="index.html#activities">활동계획</a></li>
+              <li><a href="gallery.html">사진첩</a></li>
+              <li><a href="board.html">게시판</a></li>
+              <li><a href="index.html#themesong">테마곡</a></li>
+              <li><a href="index.html#contact">문의</a></li>
+              <li><a href="members.html">회원검색</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 뉴영덕연합회. All rights reserved. · <a href="admin.html" class="admin-link">관리자</a></span>
+        <span>고유번호 832-80-03712 · 경북 영덕군 영해면 영덕로 1771-1</span>
+      </div>
+    </div>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/common.js"></script>
+<script src="js/lightbox.js"></script>
+<script>
+(function(){
+  var N = window.NYD, esc = N.escapeHtml;
+  N.initChrome();
+  var albumId = new URLSearchParams(location.search).get('album');
+  var grid = document.getElementById('albumGrid');
+
+  function msg(el, text){ el.innerHTML = '<p class="state-msg" style="grid-column:1/-1;">' + esc(text) + '</p>'; }
+
+  async function loadList(){
+    if(!N.sbRead){ msg(grid, '사진첩을 불러올 수 없습니다.'); return; }
+    var res = await N.sbRead.from('albums').select('id,title,event_date,description,cover_url,created_at')
+      .order('event_date', {ascending:false, nullsFirst:false}).order('created_at', {ascending:false});
+    if(res.error){ msg(grid, '사진첩을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'); return; }
+    if(!res.data.length){ msg(grid, '아직 등록된 사진첩이 없습니다.'); return; }
+    grid.innerHTML = res.data.map(function(a){
+      var cover = N.safeUrl(a.cover_url);
+      return '<a class="album-card reveal" href="gallery.html?album=' + encodeURIComponent(a.id) + '">' +
+        '<div class="album-cover"' + (cover ? ' style="background-image:url(&quot;' + esc(cover) + '&quot;)"' : '') + '></div>' +
+        '<div class="album-info"><b>' + esc(a.title) + '</b><span>' + (a.event_date ? N.formatDate(a.event_date) : '&nbsp;') + '</span></div></a>';
+    }).join('');
+    N.observeReveal(grid);
+  }
+
+  async function loadAlbum(id){
+    document.getElementById('albumListView').style.display = 'none';
+    document.getElementById('albumDetailView').style.display = 'block';
+    var photoGrid = document.getElementById('photoGrid');
+    photoGrid.innerHTML = '<p class="state-msg">사진을 불러오는 중입니다…</p>';
+    if(!N.sbRead){ photoGrid.innerHTML = '<p class="state-msg">사진을 불러올 수 없습니다.</p>'; return; }
+    var a = await N.sbRead.from('albums').select('*').eq('id', id).maybeSingle();
+    if(a.error || !a.data){
+      document.getElementById('albumTitle').textContent = '사진첩을 찾을 수 없습니다.';
+      photoGrid.innerHTML = '<p class="state-msg">삭제되었거나 존재하지 않는 사진첩입니다.</p>';
+      return;
+    }
+    var album = a.data;
+    document.title = album.title + ' | 사진첩 | 뉴영덕연합회';
+    document.getElementById('albumTitle').textContent = album.title;
+    document.getElementById('albumDesc').innerHTML = N.richText(album.description || '');
+    var p = await N.sbRead.from('album_photos').select('*').eq('album_id', id).order('sort', {ascending:true}).order('created_at', {ascending:true});
+    var photos = (p.data || []).filter(function(x){ return N.safeUrl(x.url); });
+    document.getElementById('albumMeta').textContent = [album.event_date ? N.formatDate(album.event_date) : '', '사진 ' + photos.length + '장'].filter(Boolean).join(' · ');
+    if(!photos.length){ photoGrid.innerHTML = '<p class="state-msg">아직 올라온 사진이 없습니다.</p>'; return; }
+    photoGrid.innerHTML = photos.map(function(ph, i){
+      return '<button type="button" data-i="' + i + '"><img loading="lazy" src="' + esc(ph.url) + '" alt="' + esc(ph.caption || album.title + ' 사진 ' + (i+1)) + '"></button>';
+    }).join('');
+    photoGrid.addEventListener('click', function(e){
+      var b = e.target.closest('button[data-i]');
+      if(b) window.NYDLightbox.open(photos, +b.dataset.i);
+    });
+  }
+
+  if(albumId) loadAlbum(albumId); else loadList();
+})();
+</script>
+</body>
+</html>

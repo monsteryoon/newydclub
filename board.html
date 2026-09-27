@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게시판 | 뉴영덕연합회</title>
+<meta name="description" content="뉴영덕연합회 활동소식, 언론보도, 자료실입니다.">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/extra.css">
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"><path d="M2 17c1.8 1.4 3.6 1.4 5.4 0 1.8-1.4 3.6-1.4 5.4 0 1.8 1.4 3.6 1.4 5.4 0 1.8-1.4 3.6-1.4 5.4 0"/><path d="M12 13V5"/><path d="M8 8l4-3 4 3"/></svg>
+        </span>
+        <span class="brand-text"><b>뉴영덕연합회</b><span>청년이 만드는 영덕의 화합과 발전</span></span>
+      </a>
+      <nav class="gnb">
+        <a href="notice.html">공지사항</a>
+        <div class="nav-item">
+          <button type="button" class="nav-trigger">소개</button>
+          <div class="nav-dropdown">
+            <a href="index.html#message">인사말</a>
+            <a href="index.html#orgchart">조직도</a>
+            <a href="index.html#values">설립취지</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button type="button" class="nav-trigger">창립총회</button>
+          <div class="nav-dropdown">
+            <a href="index.html#founding">창립총회 안내</a>
+            <a href="index.html#progress">추진경과</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button type="button" class="nav-trigger">활동·소식</button>
+          <div class="nav-dropdown">
+            <a href="index.html#activities">활동계획</a>
+            <a href="gallery.html">사진첩</a>
+            <a href="board.html">게시판</a>
+            <a href="index.html#themesong">테마곡</a>
+          </div>
+        </div>
+        <a href="index.html#contact">문의</a>
+        <a href="members.html">회원검색</a>
+      </nav>
+      <div class="header-actions">
+        <button class="burger" id="burgerBtn" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-panel" id="mobilePanel">
+    <div class="top"><button class="close" id="mobileClose" aria-label="닫기">×</button></div>
+    <nav>
+      <a href="notice.html">공지사항</a>
+      <span class="mp-label">소개</span>
+      <a href="index.html#message">인사말</a>
+      <a href="index.html#orgchart">조직도</a>
+      <a href="index.html#values">설립취지</a>
+      <span class="mp-label">창립총회</span>
+      <a href="index.html#founding">창립총회 안내</a>
+      <a href="index.html#progress">추진경과</a>
+      <span class="mp-label">활동·소식</span>
+      <a href="index.html#activities">활동계획</a>
+      <a href="gallery.html">사진첩</a>
+      <a href="board.html">게시판</a>
+      <a href="index.html#themesong">테마곡</a>
+      <a href="index.html#contact">문의</a>
+      <a href="members.html">회원검색</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="page-hero">
+      <div class="wrap">
+        <p class="crumb"><a href="index.html">홈</a> / 게시판</p>
+        <h1 id="boardTitle">게시판</h1>
+        <p id="boardDesc">뉴영덕연합회의 소식과 자료를 전해드립니다.</p>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--paper); padding-top:48px;">
+      <div class="wrap">
+        <nav class="board-tabs" id="boardTabs" aria-label="게시판 선택"></nav>
+
+        <div id="postListView">
+          <div class="notice-table">
+            <div class="notice-table-head">
+              <span class="nt-num">번호</span>
+              <span class="nt-title">제목</span>
+              <span class="nt-author">작성자</span>
+              <span class="nt-date">작성일</span>
+            </div>
+            <div id="postList"><p class="notice-loading">글을 불러오는 중입니다…</p></div>
+          </div>
+        </div>
+
+        <div id="postDetailView" style="display:none;">
+          <div class="notice-detail">
+            <div class="notice-detail-head">
+              <h3 id="postTitle"></h3>
+              <div class="notice-detail-meta"><span id="postBoard"></span><span class="dot">·</span><span id="postDate"></span></div>
+            </div>
+            <div class="post-images" id="postImages"></div>
+            <div class="notice-detail-body" id="postBody"></div>
+            <div class="post-extra" id="postExtra"></div>
+            <div class="notice-detail-actions">
+              <a class="btn btn-line" id="postBack" href="board.html">← 목록으로</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="사진 크게 보기">
+    <img id="lbImg" alt="">
+    <p class="lb-caption" id="lbCaption"></p>
+    <p class="lb-count" id="lbCount"></p>
+    <button class="lb-btn lb-close" id="lbClose" aria-label="닫기">×</button>
+    <button class="lb-btn lb-prev" id="lbPrev" aria-label="이전 사진">‹</button>
+    <button class="lb-btn lb-next" id="lbNext" aria-label="다음 사진">›</button>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <b>뉴영덕연합회</b>
+          <p>영덕을 사랑하는 청년들이 지역의 화합과 발전을 위해 만든 단체입니다.</p>
+          <div class="socials" style="margin-top:18px;">
+            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 8h2V5h-2a4 4 0 00-4 4v2H9v3h2v7h3v-7h2.5l.5-3H14V9a1 1 0 011-1z"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="6" width="19" height="12" rx="3"/><path d="M11 9.8v4.4l4-2.2z" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4>바로가기</h4>
+            <ul>
+              <li><a href="notice.html">공지사항</a></li>
+              <li><a href="index.html#message">인사말</a></li>
+              <li><a href="index.html#orgchart">조직도</a></li>
+              <li><a href="index.html#values">설립취지</a></li>
+              <li><a href="index.html#founding">창립총회</a></li>
+              <li><a href="index.html#progress">추진경과</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>안내</h4>
+            <ul>
+              <li><a href="index.html#activities">활동계획</a></li>
+              <li><a href="gallery.html">사진첩</a></li>
+              <li><a href="board.html">게시판</a></li>
+              <li><a href="index.html#themesong">테마곡</a></li>
+              <li><a href="index.html#contact">문의</a></li>
+              <li><a href="members.html">회원검색</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 뉴영덕연합회. All rights reserved. · <a href="admin.html" class="admin-link">관리자</a></span>
+        <span>고유번호 832-80-03712 · 경북 영덕군 영해면 영덕로 1771-1</span>
+      </div>
+    </div>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/common.js"></script>
+<script src="js/lightbox.js"></script>
+<script>
+(function(){
+  var N = window.NYD, esc = N.escapeHtml;
+  N.initChrome();
+  var qs = new URLSearchParams(location.search);
+  var boardKey = qs.get('b') || N.BOARDS[0].key;
+  var postId = qs.get('id');
+  var board = N.BOARDS.find(function(b){ return b.key === boardKey; }) || N.BOARDS[0];
+  boardKey = board.key;
+
+  document.getElementById('boardTabs').innerHTML =
+    '<a href="notice.html">공지사항</a>' +
+    N.BOARDS.map(function(b){ return '<a href="board.html?b=' + b.key + '"' + (b.key === boardKey ? ' class="on"' : '') + '>' + esc(b.name) + '</a>'; }).join('');
+  document.getElementById('boardTitle').textContent = board.name;
+  document.getElementById('boardDesc').textContent = board.desc;
+  document.title = board.name + ' | 뉴영덕연합회';
+  document.getElementById('postBack').href = 'board.html?b=' + boardKey;
+
+  var listEl = document.getElementById('postList');
+  function listMsg(t){ listEl.innerHTML = '<p class="notice-empty">' + esc(t) + '</p>'; }
+
+  async function loadList(){
+    if(!N.sbRead){ listMsg('게시판을 불러올 수 없습니다.'); return; }
+    var res = await N.sbRead.from('posts').select('id,title,images,file_url,pinned,created_at').eq('board', boardKey)
+      .order('pinned', {ascending:false}).order('created_at', {ascending:false});
+    if(res.error){ listMsg('글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'); return; }
+    var rows = res.data || [];
+    if(!rows.length){ listMsg('등록된 글이 없습니다.'); return; }
+    var total = rows.filter(function(r){ return !r.pinned; }).length, n = total;
+    listEl.innerHTML = rows.map(function(p){
+      var num = p.pinned ? '<span class="pin-badge">고정</span>' : String(n--);
+      var marks = ((p.images && p.images.length) ? ' <span class="nt-img-mark" title="사진 첨부">📷</span>' : '') + (p.file_url ? ' <span class="nt-img-mark" title="파일 첨부">📎</span>' : '');
+      return '<a class="notice-row" href="board.html?b=' + boardKey + '&id=' + encodeURIComponent(p.id) + '">' +
+        '<span class="nt-num">' + num + '</span><span class="nt-title">' + esc(p.title) + marks + '</span>' +
+        '<span class="nt-author">뉴영덕연합회</span><span class="nt-date">' + N.formatDate(p.created_at) + '</span></a>';
+    }).join('');
+  }
+
+  async function loadPost(id){
+    document.getElementById('postListView').style.display = 'none';
+    document.getElementById('postDetailView').style.display = 'block';
+    var t = document.getElementById('postTitle');
+    if(!N.sbRead){ t.textContent = '글을 불러올 수 없습니다.'; return; }
+    var res = await N.sbRead.from('posts').select('*').eq('id', id).maybeSingle();
+    if(res.error || !res.data){ t.textContent = '글을 찾을 수 없습니다.'; document.getElementById('postBody').textContent = '삭제되었거나 존재하지 않는 글입니다.'; return; }
+    var p = res.data;
+    document.title = p.title + ' | ' + board.name + ' | 뉴영덕연합회';
+    t.textContent = p.title;
+    document.getElementById('postBoard').textContent = N.boardName(p.board);
+    document.getElementById('postDate').textContent = N.formatDate(p.created_at);
+    var imgs = (p.images || []).filter(function(u){ return N.safeUrl(u); }).map(function(u){ return {url:u}; });
+    document.getElementById('postImages').innerHTML = imgs.map(function(im, i){ return '<img loading="lazy" data-i="' + i + '" src="' + esc(im.url) + '" alt="' + esc(p.title) + ' 사진 ' + (i+1) + '">'; }).join('');
+    document.getElementById('postImages').onclick = function(e){ var im = e.target.closest('img[data-i]'); if(im) window.NYDLightbox.open(imgs, +im.dataset.i); };
+    document.getElementById('postBody').innerHTML = N.richText(p.body || '');
+    var extra = '';
+    if(N.safeUrl(p.link_url)) extra += '<a class="btn btn-line btn-sm" href="' + esc(p.link_url) + '" target="_blank" rel="noopener">관련 링크 열기 ↗</a>';
+    if(N.safeUrl(p.file_url)) extra += '<a class="btn btn-primary btn-sm" href="' + esc(p.file_url) + '" target="_blank" rel="noopener" download>첨부파일 받기 · ' + esc(p.file_name || '파일') + '</a>';
+    document.getElementById('postExtra').innerHTML = extra;
+  }
+
+  if(postId) loadPost(postId); else loadList();
+})();
+</script>
+</body>
+</html>

@@ -484,6 +484,7 @@
     .modal-body img{width:100%; height:auto; max-width:100%; max-height:55vh; object-fit:contain; margin:0;}
   }
 </style>
+<link rel="stylesheet" href="css/extra.css">
 </head>
 <body>
 
@@ -516,7 +517,8 @@
           <button type="button" class="nav-trigger">활동·소식</button>
           <div class="nav-dropdown">
             <a href="index.html#activities">활동계획</a>
-            <a href="index.html#gallery">갤러리</a>
+            <a href="gallery.html">사진첩</a>
+            <a href="board.html">게시판</a>
             <a href="index.html#themesong">테마곡</a>
           </div>
         </div>
@@ -542,7 +544,8 @@
       <a href="index.html#progress">추진경과</a>
       <span class="mp-label">활동·소식</span>
       <a href="index.html#activities">활동계획</a>
-      <a href="index.html#gallery">갤러리</a>
+      <a href="gallery.html">사진첩</a>
+      <a href="board.html">게시판</a>
       <a href="index.html#themesong">테마곡</a>
       <a href="index.html#contact">문의</a>
       <a href="members.html">회원검색</a>
@@ -607,7 +610,8 @@
             <h4>안내</h4>
             <ul>
               <li><a href="index.html#activities">활동계획</a></li>
-              <li><a href="index.html#gallery">갤러리</a></li>
+              <li><a href="gallery.html">사진첩</a></li>
+              <li><a href="board.html">게시판</a></li>
               <li><a href="index.html#themesong">테마곡</a></li>
               <li><a href="index.html#contact">문의</a></li>
               <li><a href="members.html">회원검색</a></li>
@@ -616,12 +620,14 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 뉴영덕연합회. All rights reserved.</span>
+        <span>© 2026 뉴영덕연합회. All rights reserved. · <a href="admin.html" class="admin-link">관리자</a></span>
         <span>고유번호 832-80-03712 · 경북 영덕군 영해면 영덕로 1771-1</span>
       </div>
     </div>
   </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/common.js"></script>
 <script>
   var header = document.getElementById('siteHeader');
   function onScroll(){
@@ -701,10 +707,21 @@
     renderResults(matches);
   });
 
-  fetch('members-data.json', { cache: 'no-store' })
-    .then(function(r){ return r.json(); })
-    .then(function(data){ ALL_MEMBERS = data; defaultHint(); })
-    .catch(function(){ memberHint.textContent = '회원 명단을 불러오지 못했습니다.'; });
+  // 관리자 화면에서 관리하는 회원 명단(DB)을 먼저 읽고, 안 되면 기존 파일을 사용
+  function loadMembersFile(){
+    return fetch('members-data.json', { cache: 'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(data){ ALL_MEMBERS = data; defaultHint(); })
+      .catch(function(){ memberHint.textContent = '회원 명단을 불러오지 못했습니다.'; });
+  }
+  if(window.NYD && window.NYD.sbRead){
+    window.NYD.sbRead.from('members').select('name,role,group,business,sort').order('sort', {ascending:true}).then(function(res){
+      if(!res.error && res.data && res.data.length){
+        ALL_MEMBERS = res.data.map(function(m){ return { name: m.name || '', role: m.role || '', group: m.group || '', business: m.business || '' }; });
+        defaultHint();
+      } else { loadMembersFile(); }
+    }, loadMembersFile);
+  } else { loadMembersFile(); }
 
 </script>
 </body>

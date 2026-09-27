@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>관리자 | 뉴영덕연합회</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/extra.css">
+</head>
+<body class="admin-page">
+
+  <!-- 로그인 화면 -->
+  <div id="loginView" style="display:none;">
+    <div class="wrap">
+      <div class="login-card">
+        <h1>홈페이지 관리자</h1>
+        <p>공지사항에 글을 올릴 때 쓰던 이메일과 비밀번호로 로그인하세요.</p>
+        <form id="loginForm" style="margin-top:22px;">
+          <label class="field"><span>이메일</span><input class="admin-input" type="email" id="loginEmail" autocomplete="username" required></label>
+          <label class="field"><span>비밀번호</span><input class="admin-input" type="password" id="loginPassword" autocomplete="current-password" required></label>
+          <p class="form-error" id="loginError" style="display:none;"></p>
+          <button class="btn btn-primary" type="submit" style="width:100%; margin-top:6px;">로그인</button>
+        </form>
+        <p style="margin-top:18px;"><a href="index.html" style="color:var(--sea); font-weight:700;">← 홈페이지로 돌아가기</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관리자 화면 -->
+  <div id="adminView" style="display:none;">
+    <header class="admin-top">
+      <div class="wrap">
+        <a class="brand" href="index.html" target="_blank" rel="noopener">
+          <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"><path d="M2 17c1.8 1.4 3.6 1.4 5.4 0 1.8-1.4 3.6-1.4 5.4 0 1.8 1.4 3.6 1.4 5.4 0 1.8-1.4 3.6-1.4 5.4 0"/><path d="M12 13V5"/><path d="M8 8l4-3 4 3"/></svg></span>
+          <span class="brand-text"><b>홈페이지 관리</b><span>뉴영덕연합회</span></span>
+        </a>
+        <div class="admin-top-actions">
+          <a class="btn btn-line btn-sm" href="index.html" target="_blank" rel="noopener">홈페이지 보기</a>
+          <button class="btn btn-line btn-sm" id="logoutBtn" type="button">로그아웃</button>
+        </div>
+      </div>
+    </header>
+    <nav class="admin-tabs" aria-label="관리 메뉴">
+      <div class="wrap">
+        <button type="button" data-tab="home" class="on">메인 화면</button>
+        <button type="button" data-tab="albums">행사 사진첩</button>
+        <button type="button" data-tab="board">게시판</button>
+        <button type="button" data-tab="org">조직도</button>
+        <button type="button" data-tab="members">회원 명단</button>
+      </div>
+    </nav>
+
+    <main class="admin-main">
+      <div class="wrap">
+        <div id="setupWarning" class="panel" style="display:none; border-color:var(--crab);">
+          <h2 style="color:var(--crab);">처음 한 번 설정이 필요합니다</h2>
+          <p class="hint">데이터 저장 공간이 아직 만들어지지 않았습니다. Supabase 대시보드 → SQL Editor 에서 <b>supabase-setup.sql</b> 내용을 붙여넣고 Run 을 눌러주세요. 한 번만 하면 됩니다.</p>
+        </div>
+        <div id="notAdminWarning" class="panel" style="display:none; border-color:var(--crab);">
+          <h2 style="color:var(--crab);">이 계정은 관리자로 등록되어 있지 않습니다</h2>
+          <p class="hint">저장이 되지 않을 수 있습니다. Supabase SQL Editor 에서 <code>insert into site_admins(email) values ('이메일주소');</code> 를 실행하면 관리자로 추가됩니다.</p>
+        </div>
+
+        <!-- 메인 화면 -->
+        <section data-panel="home">
+          <div class="panel">
+            <h2>메인 화면 문구·사진</h2>
+            <p class="hint">바꾸고 싶은 칸을 고친 뒤 아래 <b>저장</b>을 누르면 바로 홈페이지에 반영됩니다.<br>
+              글자 꾸미기: <b>*별표 하나*</b>로 감싸면 강조색, <b>**별표 두 개**</b>로 감싸면 굵은 글씨, 엔터는 줄바꿈이 됩니다.</p>
+          </div>
+          <div id="homeFields"><p class="state-msg">불러오는 중…</p></div>
+        </section>
+
+        <!-- 사진첩 -->
+        <section data-panel="albums" style="display:none;">
+          <div id="albumListPanel">
+            <div class="panel">
+              <div class="panel-head"><h2>행사 사진첩</h2><button class="btn btn-primary btn-sm" id="newAlbumBtn" type="button">+ 새 사진첩 만들기</button></div>
+              <p class="hint">행사마다 사진첩을 만들고 사진을 한꺼번에 올리세요. 최근 사진첩 6개가 메인 화면 갤러리에 자동으로 보입니다.</p>
+              <div id="newAlbumForm" style="display:none; margin-top:16px;">
+                <label class="field"><span>행사 이름</span><input type="text" id="newAlbumTitle" placeholder="예) 창립총회 및 취임식"></label>
+                <label class="field"><span>행사 날짜</span><input type="date" id="newAlbumDate"></label>
+                <div class="row"><button class="btn btn-primary btn-sm" id="createAlbumBtn" type="button">만들기</button><button class="btn btn-line btn-sm" id="cancelAlbumBtn" type="button">취소</button></div>
+              </div>
+            </div>
+            <div class="panel"><div id="albumList"><p class="state-msg">불러오는 중…</p></div></div>
+          </div>
+          <div id="albumEditPanel" style="display:none;">
+            <div class="panel">
+              <div class="panel-head"><button class="btn btn-line btn-sm" id="albumBackBtn" type="button">← 사진첩 목록</button><a class="btn btn-line btn-sm" id="albumViewLink" href="#" target="_blank" rel="noopener">홈페이지에서 보기 ↗</a></div>
+              <label class="field"><span>행사 이름</span><input type="text" id="albumTitleInput"></label>
+              <label class="field"><span>행사 날짜</span><input type="date" id="albumDateInput"></label>
+              <label class="field"><span>설명 (선택)</span><textarea id="albumDescInput" rows="3" placeholder="행사 소개를 적어주세요"></textarea></label>
+              <div class="row"><button class="btn btn-primary btn-sm" id="albumSaveBtn" type="button">정보 저장</button><button class="btn-mini danger" id="albumDeleteBtn" type="button">사진첩 삭제</button></div>
+            </div>
+            <div class="panel">
+              <h3>사진 올리기</h3>
+              <label class="dropzone" id="dropzone" style="margin-top:12px;">
+                <b>여기를 눌러 사진 선택</b>여러 장을 한 번에 고를 수 있어요 (컴퓨터에서는 끌어다 놓기도 됩니다)
+                <input type="file" id="photoInput" accept="image/*" multiple hidden>
+              </label>
+              <div id="uploadProgress" style="display:none;"><p class="hint" id="uploadText"></p><div class="progress-bar"><i id="uploadBar"></i></div></div>
+              <div class="panel-head" style="margin:22px 0 0;"><h3 id="photoCount">사진</h3><span class="hint" style="margin:0;">빨간 테두리 = 대표 사진</span></div>
+              <div class="admin-photos" id="adminPhotos"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 게시판 -->
+        <section data-panel="board" style="display:none;">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>게시판</h2>
+              <div class="row">
+                <select class="admin-input" id="boardSelect" style="width:auto;"></select>
+                <button class="btn btn-primary btn-sm" id="newPostBtn" type="button">+ 새 글 쓰기</button>
+              </div>
+            </div>
+            <div id="postForm" style="display:none; margin-top:10px;">
+              <label class="field"><span>제목</span><input type="text" id="postTitleInput"></label>
+              <label class="field"><span>내용</span><textarea id="postBodyInput" rows="8"></textarea></label>
+              <div class="field"><span id="postImgLabel">사진 (여러 장 가능)</span>
+                <div class="row"><label class="btn btn-line btn-sm" style="cursor:pointer;">사진 추가<input type="file" id="postImageInput" accept="image/*" multiple hidden></label></div>
+                <div class="admin-photos" id="postImagePreview"></div>
+              </div>
+              <div id="postExtraFields">
+                <label class="field"><span>관련 링크 (선택 — 기사 주소 등)</span><input type="url" id="postLinkInput" placeholder="https://"></label>
+                <div class="field"><span>첨부파일 (선택 — 한글, PDF 등)</span>
+                  <div class="row"><label class="btn btn-line btn-sm" style="cursor:pointer;">파일 선택<input type="file" id="postFileInput" hidden></label><span class="hint" id="postFileName" style="margin:0;"></span><button type="button" class="btn-mini danger" id="postFileRemove" style="display:none;">파일 빼기</button></div>
+                </div>
+                <label class="chk" style="margin-bottom:14px;"><input type="checkbox" id="postPinnedInput"> 목록 맨 위에 고정</label>
+              </div>
+              <div class="row"><button class="btn btn-primary btn-sm" id="postSaveBtn" type="button">등록</button><button class="btn btn-line btn-sm" id="postCancelBtn" type="button">취소</button></div>
+            </div>
+          </div>
+          <div class="panel"><div id="postAdminList"><p class="state-msg">불러오는 중…</p></div></div>
+        </section>
+
+        <!-- 조직도 -->
+        <section data-panel="org" style="display:none;">
+          <div class="panel">
+            <h2>조직도</h2>
+            <p class="hint">이름을 고치거나 칸을 추가·삭제한 뒤 아래 <b>저장</b>을 누르세요. 회원 이름은 쉼표(,)로 구분합니다. 인원수는 자동으로 계산됩니다.<br>조직도 제목·"9개 읍·면" 같은 표시는 <b>메인 화면 → ⑤ 조직도 제목</b>에서 바꿉니다.</p>
+          </div>
+          <div id="orgEditor"><p class="state-msg">불러오는 중…</p></div>
+        </section>
+
+        <!-- 회원 명단 -->
+        <section data-panel="members" style="display:none;">
+          <div class="panel">
+            <div class="panel-head"><h2>회원 명단 (회원검색 페이지)</h2><button class="btn btn-primary btn-sm" id="addMemberBtn" type="button">+ 회원 추가</button></div>
+            <p class="hint">칸을 눌러 바로 고치고 아래 <b>저장</b>을 누르세요. 회원검색 페이지에 반영됩니다.</p>
+            <input class="admin-input" type="search" id="memberFilter" placeholder="이름·소속으로 찾기" style="margin-top:12px;">
+          </div>
+          <div class="panel table-scroll">
+            <table class="member-edit-table">
+              <thead><tr><th style="width:110px;">이름</th><th style="width:130px;">직책</th><th style="width:170px;">소속</th><th>업체·직업</th><th style="width:52px;"></th></tr></thead>
+              <tbody id="memberRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div class="savebar" id="savebar">
+      <div class="wrap">
+        <span id="savebarText">저장하지 않은 변경사항이 있습니다</span>
+        <div class="row"><button class="btn btn-line btn-sm" id="discardBtn" type="button">되돌리기</button><button class="btn btn-primary btn-sm" id="saveBtn" type="button">저장</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/common.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

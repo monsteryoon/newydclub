@@ -1,0 +1,153 @@
+/* 사진첩·게시판·관리자 기능용 추가 스타일 */
+
+.admin-link{color:inherit; opacity:.6; text-decoration:underline;}
+.admin-link:hover{opacity:1; color:var(--crab);}
+
+/* 메인: 행사 종료 문구, 사진첩 더보기 */
+.cd-done{margin-top:16px; background:rgba(0,0,0,0.18); border-radius:4px; padding:16px 18px; font-size:15px; font-weight:700; line-height:1.6; color:#fff;}
+.gallery-more{display:flex; justify-content:center; margin-top:28px;}
+.gallery-tile span small{display:block; font-size:12px; font-weight:600; opacity:.85; margin-top:2px;}
+
+/* 서브 페이지 상단 띠 */
+.page-hero{background:var(--crab); padding:96px 0 56px; color:#fff;}
+.page-hero .crumb{font-size:13px; font-weight:700; opacity:.85;}
+.page-hero .crumb a{color:#fff; text-decoration:underline;}
+.page-hero h1{margin-top:12px; font-size:clamp(28px,4vw,40px); font-weight:800; letter-spacing:-0.01em;}
+.page-hero p{margin-top:10px; font-size:15.5px; color:rgba(255,255,255,0.88);}
+
+.state-msg{color:var(--ink-soft); font-size:14.5px; padding:48px 18px; text-align:center; border:1px dashed var(--line); border-radius:8px;}
+
+/* ---------- 사진첩 ---------- */
+.album-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+.album-card{display:block; background:var(--paper); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:var(--shadow-sm); transition:transform .2s ease, box-shadow .2s ease;}
+.album-card:hover{transform:translateY(-4px); box-shadow:var(--shadow-lg);}
+.album-cover{aspect-ratio:4/3; background:linear-gradient(135deg,var(--navy),var(--sea)); background-size:cover; background-position:center;}
+.album-info{padding:16px 18px 18px;}
+.album-info b{display:block; font-size:16px; font-weight:800; line-height:1.4;}
+.album-info span{display:block; margin-top:4px; font-size:13px; color:var(--ink-soft);}
+.album-head{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:28px;}
+.album-head h2{font-size:clamp(24px,3vw,32px); font-weight:800; line-height:1.3;}
+.album-head .meta{margin-top:6px; font-size:14px; color:var(--ink-soft);}
+.album-desc{font-size:15.5px; line-height:1.85; color:var(--ink-soft); margin:-8px 0 28px; max-width:70ch;}
+.photo-grid{columns:3 260px; column-gap:12px;}
+.photo-grid button{display:block; width:100%; margin:0 0 12px; padding:0; border:0; background:var(--mist); border-radius:4px; overflow:hidden; cursor:zoom-in; break-inside:avoid;}
+.photo-grid img{width:100%; height:auto; display:block; transition:transform .3s ease;}
+.photo-grid button:hover img{transform:scale(1.03);}
+
+.lightbox{position:fixed; inset:0; z-index:300; background:rgba(6,10,14,0.94); display:none; align-items:center; justify-content:center; touch-action:pan-y;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:calc(100vw - 32px); max-height:calc(100vh - 120px); object-fit:contain; border-radius:2px; user-select:none;}
+.lb-btn{position:absolute; background:rgba(255,255,255,0.12); border:0; color:#fff; width:48px; height:48px; border-radius:50%; font-size:24px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.lb-btn:hover{background:rgba(255,255,255,0.25);}
+.lb-close{top:16px; right:16px;}
+.lb-prev{left:16px; top:50%; transform:translateY(-50%);}
+.lb-next{right:16px; top:50%; transform:translateY(-50%);}
+.lb-count{position:absolute; bottom:18px; left:0; right:0; text-align:center; color:rgba(255,255,255,0.8); font-size:13px;}
+.lb-caption{position:absolute; bottom:40px; left:16px; right:16px; text-align:center; color:#fff; font-size:14px;}
+
+/* ---------- 게시판 ---------- */
+.board-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px;}
+.board-tabs a{padding:9px 18px; border-radius:20px; border:1px solid var(--line); font-size:14px; font-weight:700; color:var(--ink); background:var(--paper);}
+.board-tabs a:hover{border-color:var(--crab); color:var(--crab);}
+.board-tabs a.on{background:var(--crab); border-color:var(--crab); color:#fff;}
+.pin-badge{display:inline-block; font-size:11px; font-weight:800; color:#fff; background:var(--crab); border-radius:10px; padding:2px 8px; margin-right:6px; vertical-align:1px;}
+.post-images{display:grid; gap:12px; margin:24px 0;}
+.post-images img{width:100%; max-height:640px; object-fit:contain; background:var(--mist); border:1px solid var(--line); border-radius:6px; cursor:zoom-in;}
+.post-extra{display:flex; gap:10px; flex-wrap:wrap; margin-top:24px;}
+
+/* ---------- 관리자 ---------- */
+.admin-page{background:var(--mist); min-height:100vh;}
+.admin-top{background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:40;}
+.admin-top .wrap{display:flex; align-items:center; justify-content:space-between; gap:12px; height:64px;}
+.admin-top .brand-text b{color:var(--ink);}
+.admin-top-actions{display:flex; gap:8px; align-items:center;}
+.admin-tabs{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:64px; z-index:39;}
+.admin-tabs::-webkit-scrollbar{display:none;}
+.admin-tabs .wrap{display:flex; gap:4px;}
+.admin-tabs button{flex:none; padding:14px 16px; border:0; background:none; font-size:14.5px; font-weight:800; color:var(--ink-soft); border-bottom:3px solid transparent; cursor:pointer;}
+.admin-tabs button.on{color:var(--crab); border-bottom-color:var(--crab);}
+.admin-main{padding:28px 0 120px;}
+.panel{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:22px; box-shadow:var(--shadow-sm); margin-bottom:18px;}
+.panel h2{font-size:18px; font-weight:800;}
+.panel h3{font-size:16px; font-weight:800;}
+.panel .hint{margin-top:6px; font-size:13.5px; color:var(--ink-soft); line-height:1.7;}
+.panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+details.panel > summary{list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:16px; font-weight:800;}
+details.panel > summary::-webkit-details-marker{display:none;}
+details.panel[open] > summary{margin-bottom:16px;}
+.field{display:block; margin-bottom:14px;}
+.field > span{display:block; font-size:12.5px; font-weight:800; color:var(--ink-soft); margin-bottom:6px;}
+.field input[type=text], .field input[type=date], .field input[type=datetime-local], .field input[type=url], .field textarea, .field select, .admin-input{
+  display:block; width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:4px; font-family:inherit; font-size:15px; background:var(--paper); color:var(--ink);}
+.field textarea{resize:vertical; min-height:72px; line-height:1.6;}
+.field.changed input, .field.changed textarea, .field.changed select{border-color:var(--gold); background:color-mix(in srgb, var(--gold) 7%, var(--paper));}
+.img-field{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
+.img-field .thumb{width:120px; height:80px; border-radius:6px; border:1px solid var(--line); background:var(--mist) center/cover no-repeat; flex:none;}
+.row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.grow{flex:1; min-width:0;}
+.savebar{position:fixed; left:0; right:0; bottom:0; z-index:60; background:var(--paper); border-top:1px solid var(--line); box-shadow:0 -10px 30px -18px rgba(0,0,0,0.35); padding:12px 0; transform:translateY(110%); transition:transform .2s ease;}
+.savebar.show{transform:translateY(0);}
+.savebar .wrap{display:flex; justify-content:space-between; align-items:center; gap:12px;}
+.savebar span{font-size:14px; font-weight:700;}
+.toast{position:fixed; left:50%; top:20px; transform:translate(-50%,-300%); visibility:hidden; z-index:400; background:var(--ink); color:var(--paper); padding:12px 20px; border-radius:24px; font-size:14px; font-weight:700; transition:transform .25s ease; box-shadow:var(--shadow-lg); max-width:calc(100vw - 32px);}
+.toast.show{transform:translate(-50%,0); visibility:visible;}
+.toast.err{background:var(--crab); color:#fff;}
+.list-item{display:flex; gap:12px; align-items:center; padding:12px 0; border-top:1px solid var(--line);}
+.list-item:first-child{border-top:0;}
+.list-item .thumb{width:64px; height:48px; border-radius:4px; background:var(--mist) center/cover no-repeat; flex:none;}
+.list-item .txt{flex:1; min-width:0;}
+.list-item .txt b{display:block; font-size:15px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.list-item .txt span{display:block; font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+.list-item .acts{display:flex; gap:6px; flex:none; flex-wrap:wrap; justify-content:flex-end;}
+.admin-photos{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:10px; margin-top:14px;}
+.admin-photo{position:relative; border-radius:6px; overflow:hidden; border:2px solid transparent; background:var(--mist); aspect-ratio:1/1;}
+.admin-photo.cover{border-color:var(--crab);}
+.admin-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+.admin-photo .ph-acts{position:absolute; left:0; right:0; bottom:0; display:flex; justify-content:flex-end; gap:4px; padding:6px; background:linear-gradient(0deg, rgba(0,0,0,0.65), rgba(0,0,0,0));}
+.admin-photo .ph-move{position:absolute; top:6px; right:6px; display:flex; gap:4px;}
+.admin-photo .ph-move button{border:0; border-radius:50%; width:26px; height:26px; font-size:11px; cursor:pointer; background:rgba(255,255,255,0.92); color:#222; display:flex; align-items:center; justify-content:center; padding:0;}
+.admin-photo .ph-acts button{border:0; border-radius:12px; font-size:11.5px; font-weight:800; padding:4px 8px; cursor:pointer; background:rgba(255,255,255,0.92); color:#222;}
+.admin-photo .ph-acts button.del{background:var(--crab); color:#fff;}
+.admin-photo .cover-badge{position:absolute; top:6px; left:6px; background:var(--crab); color:#fff; font-size:11px; font-weight:800; padding:2px 8px; border-radius:10px;}
+.dropzone{display:block; border:2px dashed var(--line); border-radius:8px; padding:26px 16px; text-align:center; color:var(--ink-soft); font-size:14.5px; cursor:pointer; background:var(--mist); transition:border-color .15s ease, background .15s ease;}
+.dropzone.drag, .dropzone:hover{border-color:var(--crab); color:var(--crab);}
+.dropzone b{display:block; font-size:16px; color:var(--ink); margin-bottom:4px;}
+.progress-bar{height:8px; background:var(--mist); border-radius:4px; overflow:hidden; margin-top:10px;}
+.progress-bar i{display:block; height:100%; width:0; background:var(--crab); transition:width .2s ease;}
+.org-edit-card{border:1px solid var(--line); border-radius:6px; padding:14px; margin-bottom:10px; background:var(--paper);}
+.org-edit-card .row + .row, .org-edit-card .row + textarea{margin-top:8px;}
+.org-edit-card textarea{width:100%; min-height:60px; padding:10px 12px; border:1px solid var(--line); border-radius:4px; font-family:inherit; font-size:14.5px; background:var(--paper); color:var(--ink); resize:vertical;}
+.org-edit-card .count{font-size:12.5px; color:var(--ink-soft); font-weight:700;}
+.chk{display:inline-flex; gap:6px; align-items:center; font-size:13.5px; font-weight:700; color:var(--ink-soft); cursor:pointer;}
+.chk input{accent-color:var(--crab); width:16px; height:16px;}
+.member-edit-table{width:100%; border-collapse:collapse; font-size:14px;}
+.member-edit-table th{text-align:left; font-size:12px; color:var(--ink-soft); font-weight:800; padding:8px 6px; border-bottom:1px solid var(--line);}
+.member-edit-table td{padding:4px 3px; border-bottom:1px solid var(--line);}
+.member-edit-table input{width:100%; padding:8px; border:1px solid transparent; border-radius:4px; font-family:inherit; font-size:14px; background:transparent; color:var(--ink);}
+.member-edit-table input:focus{border-color:var(--crab); background:var(--paper); outline:none;}
+.table-scroll{overflow-x:auto;}
+.login-card{max-width:400px; margin:12vh auto 0; background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:32px; box-shadow:var(--shadow-lg);}
+.login-card h1{font-size:22px; font-weight:800;}
+.login-card p{margin-top:6px; font-size:14px; color:var(--ink-soft);}
+.btn-sm{padding:9px 16px; font-size:13.5px;}
+.btn-primary.btn-sm::after, .savebar .btn-primary::after{display:none;}
+
+@media (max-width: 900px){
+  .album-grid{grid-template-columns:repeat(2,1fr); gap:14px;}
+}
+@media (max-width: 560px){
+  .album-grid{grid-template-columns:1fr 1fr; gap:10px;}
+  .album-info{padding:10px 12px 12px;}
+  .album-info b{font-size:14px;}
+  .photo-grid{columns:2; column-gap:8px;}
+  .photo-grid button{margin-bottom:8px;}
+  .lb-prev, .lb-next{top:auto; bottom:60px; transform:none;}
+  .panel{padding:16px;}
+  .list-item{flex-wrap:wrap;}
+  .list-item .acts{width:100%; justify-content:flex-start;}
+  .admin-top .brand-text span{display:none;}
+  .admin-top .brand-text b{white-space:nowrap; font-size:15px;}
+  .admin-top .brand-mark{width:32px; height:32px;}
+  .admin-top .btn{padding:8px 10px; font-size:12.5px;}
+  .admin-tabs button{padding:13px 12px; font-size:14px;}
+}
