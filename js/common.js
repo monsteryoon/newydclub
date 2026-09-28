@@ -41,7 +41,7 @@
   }
   function safeUrl(url){
     url = String(url || '').trim();
-    if(/^(https?:)?\/\//i.test(url) || /^[\w\-./]+$/.test(url)) return url;
+    if(/^(https?:)?\/\//i.test(url) || /^#[\w-]+$/.test(url) || /^[\w\-./]+(\?[\w\-=&%.]*)?(#[\w-]*)?$/.test(url)) return url;
     return '';
   }
   function youtubeId(url){
@@ -114,7 +114,28 @@
     });
   }
 
+  // 조직도 기본 그룹 (관리자 화면에서 추가·이름 변경 가능)
+  function defaultOrgGroups(st){
+    st = st || {};
+    return [
+      { key:'leader', name:'회장단', type:'leader', show_head:false, badge:'' },
+      { key:'branch', name:'지회', type:'cards', show_head:true, badge: st.org_branch_badge || '9개 읍·면' },
+      { key:'committee', name:'위원회', type:'cards', show_head:true, badge: st.org_committee_badge || '12개 분과' }
+    ];
+  }
+  function orgGroups(st){
+    try{ var g = JSON.parse(st && st.org_groups || 'null'); if(Array.isArray(g) && g.length) return g; }catch(e){}
+    return defaultOrgGroups(st);
+  }
+  function splitNames(str){
+    return String(str || '').split(/[,\n、·]+/).map(function(x){ return x.trim(); }).filter(Boolean);
+  }
+  function parseList(v){ try{ var l = JSON.parse(v || '[]'); return Array.isArray(l) ? l : []; }catch(e){ return []; } }
+  // 사진첩 주소에서 사진첩 번호 꺼내기
+  function albumIdFromUrl(u){ var m = String(u || '').match(/gallery\.html\?album=([\w-]+)/); return m ? m[1] : null; }
+
   window.NYD = {
+    defaultOrgGroups: defaultOrgGroups, orgGroups: orgGroups, splitNames: splitNames, parseList: parseList, albumIdFromUrl: albumIdFromUrl,
     sb: sb, sbRead: sbRead, ready: ready, BOARDS: BOARDS,
     escapeHtml: escapeHtml, richText: richText, formatDate: formatDate, safeUrl: safeUrl, youtubeId: youtubeId,
     resizeImage: resizeImage, uploadFile: uploadFile, initChrome: initChrome, observeReveal: observeReveal,

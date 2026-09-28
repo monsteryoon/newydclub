@@ -554,10 +554,10 @@
 
   <main id="top">
     <section class="hero">
-      <div class="hero-bg" aria-hidden="true">
-        <div class="hero-bg-slide" style="background-image:url('images/founders.jpg')" data-edit-bg="hero_photo_1" data-edit-label="배경 사진 1" data-edit-group="① 첫 화면"></div>
-        <div class="hero-bg-slide" style="background-image:url('images/prep.jpg')" data-edit-bg="hero_photo_2" data-edit-label="배경 사진 2" data-edit-group="① 첫 화면"></div>
-        <div class="hero-bg-slide" style="background-image:url('images/bylaws.jpg')" data-edit-bg="hero_photo_3" data-edit-label="배경 사진 3" data-edit-group="① 첫 화면"></div>
+      <div class="hero-bg" id="heroBg" aria-hidden="true">
+        <div class="hero-bg-slide" style="background-image:url('images/founders.jpg')"></div>
+        <div class="hero-bg-slide" style="background-image:url('images/prep.jpg')"></div>
+        <div class="hero-bg-slide" style="background-image:url('images/bylaws.jpg')"></div>
       </div>
       <span class="blob blob-1"></span>
       <span class="blob blob-2"></span>
@@ -648,6 +648,7 @@
           <p data-edit="org_desc" data-edit-label="설명" data-edit-group="⑤ 조직도 제목">창립을 준비하며 확정된 뉴영덕연합회의 임원진과 조직 구성입니다.</p>
         </div>
 
+        <div id="orgBody">
         <div id="orgLeaders">
         <div class="leader-tier reveal" style="--i:1">
           <div class="leader-card featured">
@@ -687,7 +688,7 @@
 
         </div>
         <div class="org-group-head reveal" style="--i:0">
-          <h3>지회 <span data-edit="org_branch_badge" data-edit-label="지회 옆 표시" data-edit-group="⑤ 조직도 제목">9개 읍·면</span></h3>
+          <h3>지회 <span data-org-badge="branch">9개 읍·면</span></h3>
         </div>
         <div class="org-grid reveal" style="--i:1" id="orgBranches">
           <details class="org-card">
@@ -731,7 +732,7 @@
         </div>
 
         <div class="org-group-head reveal" style="--i:0; margin-top:44px;">
-          <h3>위원회 <span data-edit="org_committee_badge" data-edit-label="위원회 옆 표시" data-edit-group="⑤ 조직도 제목">12개 분과</span></h3>
+          <h3>위원회 <span data-org-badge="committee">12개 분과</span></h3>
         </div>
         <div class="org-grid reveal" style="--i:1" id="orgCommittees">
           <details class="org-card">
@@ -804,6 +805,7 @@
               <span class="member-chip">신유정</span><span class="member-chip">고영임</span><span class="member-chip">권미옥</span><span class="member-chip">김미경</span><span class="member-chip">김은숙</span><span class="member-chip">김현주</span><span class="member-chip">박종숙</span><span class="member-chip">백은희</span><span class="member-chip">손미정</span><span class="member-chip">이미자</span><span class="member-chip">이영희</span><span class="member-chip">임수정</span><span class="member-chip">정애연</span><span class="member-chip">최미경</span>
             </div>
           </details>
+        </div>
         </div>
       </div>
     </section>
@@ -936,37 +938,37 @@
       </div>
       <div class="wrap" style="padding-bottom:96px;">
         <div class="activities-grid reveal" style="--i:1">
-          <div class="activity-card">
+          <div class="activity-card" data-activity="1">
             <span class="activity-num">01</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21h16"/><path d="M12 3v10"/><path d="M6 8h12l-2 5H8z"/><circle cx="12" cy="3" r="1.2" fill="currentColor" stroke="none"/></svg>
             <h3 data-edit="activity_1_title" data-edit-label="활동 1 제목" data-edit-group="⑨ 활동 계획">정기모임</h3>
             <p data-edit="activity_1_desc" data-edit-label="활동 1 설명" data-edit-group="⑨ 활동 계획">정기적으로 모여 서로의 안부를 나누고 연합회의 방향을 함께 논의합니다.</p>
           </div>
-          <div class="activity-card">
+          <div class="activity-card" data-activity="2">
             <span class="activity-num">02</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z"/></svg>
             <h3 data-edit="activity_2_title" data-edit-label="활동 2 제목" data-edit-group="⑨ 활동 계획">장학사업</h3>
             <p data-edit="activity_2_desc" data-edit-label="활동 2 설명" data-edit-group="⑨ 활동 계획">차세대 인재 양성을 위해 회원들의 정성을 모아 장학금을 지원합니다.</p>
           </div>
-          <div class="activity-card">
+          <div class="activity-card" data-activity="3">
             <span class="activity-num">03</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.4"/><path d="M2 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M14.5 20c.2-2.6 2-4.6 4.5-4.6"/></svg>
             <h3 data-edit="activity_3_title" data-edit-label="활동 3 제목" data-edit-group="⑨ 활동 계획">청년 네트워킹</h3>
             <p data-edit="activity_3_desc" data-edit-label="활동 3 설명" data-edit-group="⑨ 활동 계획">다양한 분야에서 활동하는 영덕 출신 청년들을 서로 연결합니다.</p>
           </div>
-          <div class="activity-card">
+          <div class="activity-card" data-activity="4">
             <span class="activity-num">04</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 8a4 4 0 10-8 0 4 4 0 008 0z"/><path d="M4 21c0-3.9 2.7-6 6-6s6 2.1 6 6"/></svg>
             <h3 data-edit="activity_4_title" data-edit-label="활동 4 제목" data-edit-group="⑨ 활동 계획">봉사활동</h3>
             <p data-edit="activity_4_desc" data-edit-label="활동 4 설명" data-edit-group="⑨ 활동 계획">지역사회와 함께 나눔을 실천하며 이웃과 더불어 살아갑니다.</p>
           </div>
-          <div class="activity-card">
+          <div class="activity-card" data-activity="5">
             <span class="activity-num">05</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21c3-6 6-9 9-9s6 3 9 9"/><path d="M9 12c0-4 1-7 3-9 2 2 3 5 3 9"/></svg>
             <h3 data-edit="activity_5_title" data-edit-label="활동 5 제목" data-edit-group="⑨ 활동 계획">선진지 견학 사업</h3>
             <p data-edit="activity_5_desc" data-edit-label="활동 5 설명" data-edit-group="⑨ 활동 계획">선진지 견학을 통해 영덕의 다양한 변화를 이뤄갑니다.</p>
           </div>
-          <div class="activity-card">
+          <div class="activity-card" data-activity="6">
             <span class="activity-num">06</span>
             <svg class="activity-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 13s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
             <h3 data-edit="activity_6_title" data-edit-label="활동 6 제목" data-edit-group="⑨ 활동 계획">문화·친목 행사</h3>

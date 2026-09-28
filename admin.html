@@ -125,7 +125,7 @@
                 <div class="admin-photos" id="postImagePreview"></div>
               </div>
               <div id="postExtraFields">
-                <label class="field"><span>관련 링크 (선택 — 기사 주소 등)</span><input type="url" id="postLinkInput" placeholder="https://"></label>
+                <div class="field"><span>연결 (선택 — 행사 사진첩을 고르면 글 아래에 사진이 함께 보입니다. 기사 주소도 넣을 수 있어요)</span><div id="postLinkBox"></div></div>
                 <div class="field"><span>첨부파일 (선택 — 한글, PDF 등)</span>
                   <div class="row"><label class="btn btn-line btn-sm" style="cursor:pointer;">파일 선택<input type="file" id="postFileInput" hidden></label><span class="hint" id="postFileName" style="margin:0;"></span><button type="button" class="btn-mini danger" id="postFileRemove" style="display:none;">파일 빼기</button></div>
                 </div>
@@ -141,7 +141,7 @@
         <section data-panel="org" style="display:none;">
           <div class="panel">
             <h2>조직도</h2>
-            <p class="hint">이름을 고치거나 칸을 추가·삭제한 뒤 아래 <b>저장</b>을 누르세요. 회원 이름은 쉼표(,)로 구분합니다. 인원수는 자동으로 계산됩니다.<br>조직도 제목·"9개 읍·면" 같은 표시는 <b>메인 화면 → ⑤ 조직도 제목</b>에서 바꿉니다.</p>
+            <p class="hint"><b>그룹</b>(회장단·지회·위원회 등) 안에 <b>조직</b>(영덕읍지회 등)이 있고, 조직을 누르면 <b>회원</b>을 추가·삭제할 수 있습니다. 고친 뒤 아래 <b>저장</b>을 누르세요.<br>조직도 맨 위 큰 제목은 <b>메인 화면 → ⑤ 조직도 제목</b>에서 바꿉니다.</p>
           </div>
           <div id="orgEditor"><p class="state-msg">불러오는 중…</p></div>
         </section>

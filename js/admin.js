@@ -86,6 +86,7 @@
     document.querySelectorAll('[data-panel]').forEach(function(p){ p.style.display = p.dataset.panel === tab ? '' : 'none'; });
     refreshSavebar();
     if(!loaded[tab] && loaders[tab]){ loaded[tab] = true; loaders[tab](); }
+    else if(tab === 'home' && albumsChanged && !dirty.home){ albumsChanged = false; loaders.home(); } // 새 사진첩을 연결 목록에 반영
     try{ history.replaceState(null, '', '#' + tab); }catch(e){}
     window.scrollTo(0, 0);
   }
@@ -124,7 +125,7 @@
   /* ======================================================================
      1. 메인 화면 문구·사진
      ====================================================================== */
-  var homeDefaults = {}, homeSaved = {}, homeValues = {}, homeDoc = null;
+  var homeDefaults = {}, homeSaved = {}, homeValues = {}, homeDoc = null, homeFields = {}, albumsCache = null;
 
   function htmlToText(el){
     var html = el.innerHTML
@@ -145,8 +146,73 @@
     homeDoc = new DOMParser().parseFromString(await res.text(), 'text/html');
     return homeDoc;
   }
+  async function getAlbums(){
+    if(albumsCache) return albumsCache;
+    var r = await sb.from('albums').select('id,title,event_date,cover_url').order('event_date', {ascending:false, nullsFirst:false}).order('created_at', {ascending:false});
+    albumsCache = r.error ? [] : (r.data || []);
+    return albumsCache;
+  }
 
-  // 화면에 직접 보이지 않는 설정들 (그룹별로 끼워 넣음)
+  /* ---- 연결(링크) 고르기 ---- */
+  var LINK_OPTIONS = [
+    ['#founding','메인 화면 · 행사 안내'], ['#message','메인 화면 · 회장 인사말'], ['#orgchart','메인 화면 · 조직도'],
+    ['#activities','메인 화면 · 활동 계획'], ['#gallery','메인 화면 · 사진첩 미리보기'], ['#contact','메인 화면 · 문의'],
+    ['gallery.html','사진첩 페이지 (전체)'], ['board.html','게시판'], ['notice.html','공지사항'], ['members.html','회원검색']
+  ];
+  function linkChoices(noneLabel){
+    var opts = noneLabel ? [['', noneLabel]] : [];
+    opts = opts.concat(LINK_OPTIONS);
+    (albumsCache || []).forEach(function(a){ opts.push(['gallery.html?album=' + a.id, '사진첩 · ' + a.title]); });
+    return opts;
+  }
+  function linkFieldHtml(attr, value, noneLabel){
+    value = value == null ? '' : String(value);
+    var opts = linkChoices(noneLabel), known = opts.some(function(o){ return o[0] === value; });
+    var custom = !known && value !== '';
+    return '<div class="link-field" ' + attr + '><select class="admin-input">' +
+      opts.map(function(o){ return '<option value="' + esc(o[0]) + '"' + (!custom && o[0] === value ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') +
+      '<option value="__custom"' + (custom ? ' selected' : '') + '>직접 주소 입력…</option></select>' +
+      '<input class="admin-input" type="text" placeholder="https:// 로 시작하는 주소" value="' + (custom ? esc(value) : '') + '"' + (custom ? '' : ' style="display:none;"') + '></div>';
+  }
+  function readLinkField(box){
+    var sel = box.querySelector('select'), inp = box.querySelector('input');
+    var isCustom = sel.value === '__custom';
+    inp.style.display = isCustom ? '' : 'none';
+    return isCustom ? inp.value.trim() : sel.value;
+  }
+
+  /* ---- 사진 고르기 창 (사진첩에서) ---- */
+  function pickPhoto(){
+    return new Promise(async function(resolve){
+      var wrap = document.createElement('div');
+      wrap.className = 'modal-overlay picker open';
+      wrap.innerHTML = '<div class="modal-card"><div class="modal-head"><span><span class="badge-dot"></span>사진첩에서 사진 고르기</span><button type="button" data-x aria-label="닫기">×</button></div><div class="modal-body"><p class="hint">불러오는 중…</p></div></div>';
+      document.body.appendChild(wrap);
+      var body = wrap.querySelector('.modal-body');
+      function done(v){ wrap.remove(); resolve(v); }
+      wrap.addEventListener('click', function(e){ if(e.target === wrap || e.target.closest('[data-x]')) done(null); });
+      async function showAlbums(){
+        var albums = await getAlbums();
+        if(!albums.length){ body.innerHTML = '<p class="state-msg">아직 사진첩이 없습니다. "행사 사진첩" 메뉴에서 먼저 사진을 올려주세요.</p>'; return; }
+        body.innerHTML = '<p class="hint" style="margin:0 0 12px;">사진첩을 고르세요</p><div class="picker-grid">' + albums.map(function(a){
+          return '<button type="button" data-a="' + a.id + '"><span class="ph" style="background-image:url(&quot;' + esc(a.cover_url || '') + '&quot;)"></span><span class="cap">' + esc(a.title) + '</span></button>';
+        }).join('') + '</div>';
+        body.querySelectorAll('[data-a]').forEach(function(b){ b.onclick = function(){ showPhotos(b.dataset.a, b.querySelector('.cap').textContent); }; });
+      }
+      async function showPhotos(id, title){
+        body.innerHTML = '<p class="hint">불러오는 중…</p>';
+        var r = await sb.from('album_photos').select('url').eq('album_id', id).order('sort', {ascending:true});
+        var ph = r.error ? [] : r.data || [];
+        body.innerHTML = '<div class="row" style="margin-bottom:12px;"><button type="button" class="btn-mini" data-back>← 사진첩 목록</button><b>' + esc(title) + '</b></div>' +
+          (ph.length ? '<div class="picker-grid">' + ph.map(function(p){ return '<button type="button" data-u="' + esc(p.url) + '"><span class="ph" style="background-image:url(&quot;' + esc(p.url) + '&quot;)"></span></button>'; }).join('') + '</div>' : '<p class="state-msg">사진이 없습니다.</p>');
+        body.querySelector('[data-back]').onclick = showAlbums;
+        body.querySelectorAll('[data-u]').forEach(function(b){ b.onclick = function(){ done(b.dataset.u); }; });
+      }
+      showAlbums();
+    });
+  }
+
+  // 화면에 직접 보이지 않는 설정들 (그룹별로 끼워 넣음, first:true 는 그룹 맨 위)
   function extraFields(doc){
     var marquee = Array.prototype.map.call(doc.querySelectorAll('#marqueeTrack .marquee-item'), function(x){ return x.textContent.trim(); });
     var uniq = marquee.slice(0, Math.max(1, marquee.length / 2));
@@ -156,7 +222,22 @@
     });
     var iframe = doc.getElementById('songFrame');
     var songId = iframe ? N.youtubeId(iframe.getAttribute('src')) : '';
-    return {
+    var heroPhotos = Array.prototype.map.call(doc.querySelectorAll('#heroBg .hero-bg-slide'), function(el){ return { img: bgUrl(el) }; });
+    var heroBtn = doc.querySelector('[data-edit="hero_button"]');
+    var contactLines = [];
+    doc.querySelectorAll('#contact .contact-row').forEach(function(r){
+      var b = r.querySelector('b'), p = r.querySelector('p');
+      if(b && p && !/창립총회/.test(b.textContent)) contactLines.push({ label:b.textContent.trim(), text:p.textContent.trim() });
+    });
+    var onOff = [['on','사용'],['off','사용 안 함']];
+    var extras = {
+      '① 첫 화면': [
+        { key:'hero_photos', label:'배경 사진 (여러 장이면 차례로 바뀝니다)', type:'list', first:true, grid:true, addUpload:true, addPick:true,
+          item:[{ name:'img', type:'image' }], def: JSON.stringify(heroPhotos) },
+        { key:'hero_slide_seconds', label:'사진이 바뀌는 간격', type:'select', first:true, options:[['4','4초'],['6','6초'],['8','8초'],['10','10초']], def:'6' },
+        { key:'hero_button_enabled', label:'주 버튼', type:'select', options:onOff, def:'on' },
+        { key:'hero_button_link', label:'주 버튼을 누르면 이동할 곳', type:'link', def: heroBtn ? heroBtn.getAttribute('href') : '#founding' }
+      ],
       '② 행사 카운트다운': [
         { key:'event_datetime', label:'행사 일시 (카운트다운 기준)', type:'datetime', def:'2026-09-17T17:30' },
         { key:'countdown_enabled', label:'카운트다운 표시', type:'select', options:[['on','보이기'],['off','숨기기']], def:'on' },
@@ -169,21 +250,48 @@
         { key:'popup_title', label:'팝업 제목', type:'text', def:'창립총회 초대장' },
         { key:'popup_image', label:'팝업 이미지 (초대장·포스터)', type:'image', def:'images/invite.png' }
       ],
+      '⑦ 행사 안내 (창립총회)': [
+        { key:'founding_enabled', label:'행사 안내 칸', type:'select', first:true, options:[['on','사용 (행사가 있을 때)'],['off','사용 안 함 (숨기기)']], def:'on' }
+      ],
       '⑧ 추진 경과 제목': [
-        { key:'progress_items', label:'추진 경과 단계', type:'progress', def: JSON.stringify(progress) }
+        { key:'progress_items', label:'추진 경과 단계', type:'list', addLabel:'+ 단계 추가', newItem:{ status:'upcoming', label:'예정', title:'', desc:'' },
+          item:[{ name:'status', type:'select', options:[['done','완료 (파란 점)'],['active','진행 중 (빨간 점)'],['upcoming','예정 (빈 점)']] },
+                { name:'label', type:'text', ph:'작은 표시 (예: 완료, 2026.09.17)' }, { name:'title', type:'text', ph:'단계 제목' }, { name:'desc', type:'textarea', ph:'설명' }],
+          def: JSON.stringify(progress) }
+      ],
+      '⑨ 활동 계획': [1,2,3,4,5,6].map(function(n){ return { key:'activity_' + n + '_album', label:'활동 ' + n + ' 사진첩 연결 (고르면 카드에 "사진 보기"가 생깁니다)', type:'album', def:'' }; }),
+      '⑩ 사진첩 소개': [
+        { key:'gallery_mode', label:'메인 화면 사진 구성', type:'select', options:[['auto','자동 — 최근 사진첩 6개'],['manual','직접 구성 — 아래 사진들']], def:'auto' },
+        { key:'gallery_tiles', label:'직접 구성할 사진 (첫 번째 사진이 크게 보입니다)', type:'list', addLabel:'+ 사진 칸 추가', newItem:{ img:'', title:'', link:'gallery.html' },
+          item:[{ name:'img', type:'image' }, { name:'title', type:'text', ph:'사진 제목 (예: 창립총회)' }, { name:'link', type:'link', label:'누르면 이동할 곳' }], def:'[]' }
       ],
       '⑪ 테마곡': [
         { key:'song_url', label:'유튜브 주소 (비우면 테마곡 칸 숨김)', type:'text', def: songId ? 'https://www.youtube.com/watch?v=' + songId : '' }
+      ],
+      '⑫ 문의': [
+        { key:'cta_popup_enabled', label:'맨 아래 버튼을 누르면', type:'select', options:[['on','작은 문의 팝업 띄우기'],['off','문의 칸으로 이동']], def:'on' },
+        { key:'cta_popup_title', label:'문의 팝업 제목', type:'text', def:'가입 · 참석 문의' },
+        { key:'cta_popup_intro', label:'문의 팝업 안내 문구 (선택)', type:'textarea', def:'' },
+        { key:'cta_popup_lines', label:'문의 팝업 내용 (전화번호·이메일은 누르면 바로 연결됩니다)', type:'list', addLabel:'+ 줄 추가', newItem:{ label:'', text:'' },
+          item:[{ name:'label', type:'text', ph:'항목 (예: 전화, 카카오톡, 이메일)' }, { name:'text', type:'text', ph:'내용 (예: 010-1234-5678)' }], def: JSON.stringify(contactLines) }
       ]
     };
+    return extras;
   }
 
   loaders.home = async function(){
     var box = $('homeFields');
     try{
       var doc = await fetchHomeDoc();
+      await getAlbums();
       var groups = {}, order = [];
-      function add(group, f){ if(!groups[group]){ groups[group] = []; order.push(group); } groups[group].push(f); homeDefaults[f.key] = f.def; }
+      homeFields = {};
+      function add(group, f){
+        if(!groups[group]){ groups[group] = []; order.push(group); }
+        if(f.first){ var k = 0; while(k < groups[group].length && groups[group][k].first) k++; groups[group].splice(k, 0, f); }
+        else groups[group].push(f);
+        homeDefaults[f.key] = f.def; homeFields[f.key] = f;
+      }
       doc.querySelectorAll('[data-edit], [data-edit-bg]').forEach(function(el){
         var isBg = el.hasAttribute('data-edit-bg');
         var key = el.getAttribute(isBg ? 'data-edit-bg' : 'data-edit');
@@ -200,6 +308,12 @@
       var rows = await sb.from('site_settings').select('key,value');
       homeSaved = {};
       if(!rows.error) (rows.data || []).forEach(function(r){ homeSaved[r.key] = r.value; });
+      // 예전 방식(배경 사진 1~3)으로 저장된 값이 있으면 목록으로 옮겨 보여줌
+      if(!homeSaved.hero_photos && (homeSaved.hero_photo_1 || homeSaved.hero_photo_2 || homeSaved.hero_photo_3)){
+        var hp = N.parseList(homeDefaults.hero_photos);
+        [1,2,3].forEach(function(n){ if(homeSaved['hero_photo_' + n] && hp[n-1]) hp[n-1].img = homeSaved['hero_photo_' + n]; });
+        homeDefaults.hero_photos = JSON.stringify(hp);
+      }
       homeValues = {};
       Object.keys(homeDefaults).forEach(function(k){ homeValues[k] = (k in homeSaved && homeSaved[k] != null) ? homeSaved[k] : homeDefaults[k]; });
 
@@ -207,7 +321,8 @@
         return '<details class="panel"' + (gi === 0 ? ' open' : '') + '><summary>' + esc(g) + '<span class="hint" style="margin:0;">' + groups[g].length + '개 항목</span></summary>' +
           groups[g].map(fieldHtml).join('') + '</details>';
       }).join('');
-      bindHomeFields(box);
+      Object.keys(homeFields).forEach(function(k){ if(homeFields[k].type === 'list') renderList(k); });
+      if(!box.dataset.bound){ box.dataset.bound = '1'; bindHomeFields(box); }
     }catch(e){ box.innerHTML = '<p class="state-msg">불러오지 못했습니다: ' + esc(errText(e)) + '</p>'; }
   };
 
@@ -217,24 +332,71 @@
     var head = '<span>' + esc(f.label) + '</span>';
     if(f.type === 'image'){
       return '<div class="field" data-key="' + f.key + '">' + head + '<div class="img-field"><div class="thumb" id="' + id + '_t" style="background-image:url(&quot;' + esc(v) + '&quot;)"></div>' +
-        '<label class="btn btn-line btn-sm" style="cursor:pointer;">사진 바꾸기<input type="file" accept="image/*" hidden data-img-key="' + f.key + '"></label>' +
+        '<label class="btn btn-line btn-sm" style="cursor:pointer;">사진 올리기<input type="file" accept="image/*" hidden data-img-key="' + f.key + '"></label>' +
+        '<button type="button" class="btn btn-line btn-sm" data-img-pick="' + f.key + '">사진첩에서 고르기</button>' +
         '<button type="button" class="btn-mini" data-reset="' + f.key + '">원래 사진으로</button></div></div>';
     }
-    if(f.type === 'select'){
+    if(f.type === 'select' || f.type === 'album'){
+      var opts = f.type === 'album' ? [['', '연결 안 함']].concat((albumsCache || []).map(function(a){ return [a.id, a.title + (a.event_date ? ' (' + N.formatDate(a.event_date) + ')' : '')]; })) : f.options;
       return '<label class="field" data-key="' + f.key + '">' + head + '<select id="' + id + '" data-k="' + f.key + '">' +
-        f.options.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === v ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>';
+        opts.map(function(o){ return '<option value="' + esc(o[0]) + '"' + (o[0] === v ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>';
+    }
+    if(f.type === 'link'){
+      return '<div class="field" data-key="' + f.key + '">' + head + linkFieldHtml('data-lk="' + f.key + '"', v) + '</div>';
     }
     if(f.type === 'datetime'){
       return '<label class="field" data-key="' + f.key + '">' + head + '<input type="datetime-local" id="' + id + '" data-k="' + f.key + '" value="' + esc(v) + '"></label>';
     }
-    if(f.type === 'progress'){
-      return '<div class="field" data-key="' + f.key + '">' + head + '<div id="progressEditor"></div><button type="button" class="btn btn-line btn-sm" id="progressAdd">+ 단계 추가</button></div>';
+    if(f.type === 'list'){
+      var acts = '';
+      if(f.addUpload) acts += '<label class="btn btn-line btn-sm" style="cursor:pointer;">+ 사진 올리기 (여러 장)<input type="file" accept="image/*" multiple hidden data-list-upload="' + f.key + '"></label>';
+      if(f.addPick) acts += '<button type="button" class="btn btn-line btn-sm" data-list-pick="' + f.key + '">+ 사진첩에서 고르기</button>';
+      if(f.addLabel) acts += '<button type="button" class="btn btn-line btn-sm" data-list-add="' + f.key + '">' + esc(f.addLabel) + '</button>';
+      return '<div class="field" data-key="' + f.key + '">' + head + '<div id="le_' + f.key + '" data-list="' + f.key + '"' + (f.grid ? ' class="le-photos"' : '') + '></div><div class="row" style="margin-top:10px;">' + acts + '</div></div>';
     }
     if(f.type === 'textarea'){
       var rows = Math.min(10, Math.max(2, Math.ceil(String(v).length / 60) + (String(v).match(/\n/g) || []).length));
       return '<label class="field" data-key="' + f.key + '">' + head + '<textarea id="' + id + '" data-k="' + f.key + '" rows="' + rows + '">' + esc(v) + '</textarea></label>';
     }
     return '<label class="field" data-key="' + f.key + '">' + head + '<input type="text" id="' + id + '" data-k="' + f.key + '" value="' + esc(v) + '"></label>';
+  }
+
+  /* ---- 목록 편집기 (배경 사진, 추진 경과, 사진 칸, 문의 팝업 줄) ---- */
+  function getList(key){ return N.parseList(homeValues[key]); }
+  function setList(key, l, rerender){ homeValues[key] = JSON.stringify(l); if(rerender) renderList(key); markHome(); }
+  function renderList(key){
+    var f = homeFields[key], box = $('le_' + key); if(!f || !box) return;
+    var l = getList(key);
+    var acts = '<div class="le-acts"><span class="row" style="gap:4px;"><button type="button" class="btn-mini" data-la="up" title="앞으로">▲</button><button type="button" class="btn-mini" data-la="down" title="뒤로">▼</button></span><button type="button" class="btn-mini danger" data-la="del">삭제</button></div>';
+    if(!l.length){ box.innerHTML = '<p class="hint" style="grid-column:1/-1;">비어 있습니다.' + (key === 'gallery_tiles' ? ' 비어 있으면 최근 사진첩이 자동으로 보입니다.' : '') + '</p>'; return; }
+    box.innerHTML = l.map(function(it, i){
+      var inner = f.item.map(function(sf){
+        var v = it[sf.name] == null ? '' : it[sf.name];
+        if(sf.type === 'image'){
+          var up = '<label class="btn-mini" style="cursor:pointer;">올리기<input type="file" accept="image/*" hidden data-lup="' + i + '"></label><button type="button" class="btn-mini" data-la="pick">사진첩에서</button>';
+          return f.grid ? '<div class="thumb" style="background-image:url(&quot;' + esc(v) + '&quot;)"></div>'
+                        : '<div class="le-img"><div class="thumb" style="background-image:url(&quot;' + esc(v) + '&quot;)"></div>' + up + '</div>';
+        }
+        if(sf.type === 'select') return '<div class="row"><select class="admin-input" data-lf="' + sf.name + '">' + sf.options.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === v ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></div>';
+        if(sf.type === 'textarea') return '<div class="row"><textarea class="admin-input" data-lf="' + sf.name + '" rows="2" placeholder="' + esc(sf.ph || '') + '">' + esc(v) + '</textarea></div>';
+        if(sf.type === 'link') return '<div class="row"><span class="hint" style="margin:0;">' + esc(sf.label || '연결') + '</span></div><div class="row">' + linkFieldHtml('data-llink="' + sf.name + '"', v) + '</div>';
+        return '<div class="row"><input class="admin-input grow" type="text" data-lf="' + sf.name + '" placeholder="' + esc(sf.ph || '') + '" value="' + esc(v) + '"></div>';
+      }).join('');
+      return '<div class="le-item" data-i="' + i + '">' + inner + acts + '</div>';
+    }).join('');
+  }
+  async function uploadInto(key, files, index){
+    if(!(await ensureSession())) return;
+    toast('사진 올리는 중… (' + files.length + '장)');
+    try{
+      for(var k = 0; k < files.length; k++){
+        var url = await N.uploadFile(files[k], 'site');
+        var l = getList(key);
+        if(index != null) l[index].img = url; else l.push(Object.assign({}, homeFields[key].newItem || {}, { img:url }));
+        setList(key, l, true);
+      }
+      toast('사진이 준비됐습니다. 저장을 눌러 반영하세요.');
+    }catch(e){ fail(e); }
   }
 
   function homeChangedKeys(){
@@ -250,58 +412,64 @@
   }
 
   function bindHomeFields(box){
-    box.addEventListener('input', function(e){ var k = e.target.dataset && e.target.dataset.k; if(k){ homeValues[k] = e.target.value; markHome(); } });
-    box.addEventListener('change', function(e){ var k = e.target.dataset && e.target.dataset.k; if(k){ homeValues[k] = e.target.value; markHome(); } });
-    box.querySelectorAll('input[data-img-key]').forEach(function(inp){
-      pickFiles(inp, async function(files){
-        var key = inp.dataset.imgKey, thumb = $('f_' + key + '_t');
-        if(!(await ensureSession())) return;
-        toast('사진 올리는 중…');
-        try{
-          var url = await N.uploadFile(files[0], 'site');
-          homeValues[key] = url; thumb.style.backgroundImage = 'url("' + url + '")'; markHome();
-          toast('사진이 준비됐습니다. 저장을 눌러 반영하세요.');
-        }catch(e){ fail(e); }
-      });
+    function onEdit(e){
+      var t = e.target;
+      if(t.dataset && t.dataset.k){ homeValues[t.dataset.k] = t.value; markHome(); return; }
+      var lk = t.closest('[data-lk]');
+      if(lk){ homeValues[lk.dataset.lk] = readLinkField(lk); markHome(); return; }
+      var list = t.closest('[data-list]'), item = t.closest('[data-i]');
+      if(list && item){
+        var key = list.dataset.list, l = getList(key), i = +item.dataset.i;
+        var ll = t.closest('[data-llink]');
+        if(ll) l[i][ll.dataset.llink] = readLinkField(ll);
+        else if(t.dataset.lf) l[i][t.dataset.lf] = t.value;
+        else return;
+        setList(key, l, false);
+      }
+    }
+    box.addEventListener('input', onEdit);
+    box.addEventListener('change', async function(e){
+      var t = e.target;
+      if(t.type === 'file'){
+        var files = Array.prototype.slice.call(t.files || []); t.value = '';
+        if(!files.length) return;
+        if(t.dataset.imgKey){
+          var key = t.dataset.imgKey;
+          if(!(await ensureSession())) return;
+          toast('사진 올리는 중…');
+          try{ var url = await N.uploadFile(files[0], 'site'); homeValues[key] = url; $('f_' + key + '_t').style.backgroundImage = 'url("' + url + '")'; markHome(); toast('사진이 준비됐습니다. 저장을 눌러 반영하세요.'); }catch(err){ fail(err); }
+        } else if(t.dataset.listUpload){ uploadInto(t.dataset.listUpload, files, null); }
+        else if(t.dataset.lup != null){ uploadInto(t.closest('[data-list]').dataset.list, files.slice(0, 1), +t.dataset.lup); }
+        return;
+      }
+      onEdit(e);
     });
-    box.querySelectorAll('[data-reset]').forEach(function(b){
-      b.addEventListener('click', function(){
+    box.addEventListener('click', async function(e){
+      var b = e.target.closest('button'); if(!b) return;
+      if(b.dataset.reset){
         var key = b.dataset.reset; homeValues[key] = homeDefaults[key];
-        $('f_' + key + '_t').style.backgroundImage = 'url("' + homeDefaults[key] + '")'; markHome();
-      });
+        $('f_' + key + '_t').style.backgroundImage = 'url("' + homeDefaults[key] + '")'; markHome(); return;
+      }
+      if(b.dataset.imgPick){
+        var u = await pickPhoto(); if(!u) return;
+        homeValues[b.dataset.imgPick] = u; $('f_' + b.dataset.imgPick + '_t').style.backgroundImage = 'url("' + u + '")'; markHome(); return;
+      }
+      if(b.dataset.listAdd){
+        var f = homeFields[b.dataset.listAdd], l0 = getList(f.key);
+        l0.push(JSON.parse(JSON.stringify(f.newItem || {}))); setList(f.key, l0, true); return;
+      }
+      if(b.dataset.listPick){
+        var pu = await pickPhoto(); if(!pu) return;
+        var lp = getList(b.dataset.listPick); lp.push(Object.assign({}, homeFields[b.dataset.listPick].newItem || {}, { img:pu })); setList(b.dataset.listPick, lp, true); return;
+      }
+      if(b.dataset.la){
+        var listEl = b.closest('[data-list]'), key2 = listEl.dataset.list, i = +b.closest('[data-i]').dataset.i, l = getList(key2);
+        if(b.dataset.la === 'del'){ if(!confirm('삭제할까요?')) return; l.splice(i, 1); }
+        else if(b.dataset.la === 'pick'){ var pk = await pickPhoto(); if(!pk) return; l[i].img = pk; }
+        else { var j = b.dataset.la === 'up' ? i - 1 : i + 1; if(j < 0 || j >= l.length) return; var tmp = l[i]; l[i] = l[j]; l[j] = tmp; }
+        setList(key2, l, true);
+      }
     });
-    renderProgressEditor();
-    var add = $('progressAdd');
-    if(add) add.addEventListener('click', function(){
-      var list = progressList(); list.push({ status:'upcoming', label:'예정', title:'', desc:'' });
-      homeValues.progress_items = JSON.stringify(list); renderProgressEditor(); markHome();
-    });
-  }
-
-  function progressList(){ try{ var l = JSON.parse(homeValues.progress_items || '[]'); return Array.isArray(l) ? l : []; }catch(e){ return []; } }
-  function renderProgressEditor(){
-    var box = $('progressEditor'); if(!box) return;
-    var list = progressList();
-    box.innerHTML = list.map(function(it, i){
-      return '<div class="org-edit-card" data-i="' + i + '"><div class="row">' +
-        '<select class="admin-input" data-pf="status" style="width:auto;">' + [['done','완료 (파란 점)'],['active','진행 중 (빨간 점)'],['upcoming','예정 (빈 점)']].map(function(o){ return '<option value="' + o[0] + '"' + (it.status === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
-        '<input class="admin-input grow" data-pf="label" placeholder="작은 표시 (예: 완료, 2026.09.17)" value="' + esc(it.label) + '"></div>' +
-        '<div class="row"><input class="admin-input grow" data-pf="title" placeholder="단계 제목" value="' + esc(it.title) + '"></div>' +
-        '<textarea data-pf="desc" placeholder="설명">' + esc(it.desc) + '</textarea>' +
-        '<div class="row" style="margin-top:8px;"><button type="button" class="btn-mini" data-pm="up">▲ 위로</button><button type="button" class="btn-mini" data-pm="down">▼ 아래로</button><button type="button" class="btn-mini danger" data-pm="del">삭제</button></div></div>';
-    }).join('');
-    box.oninput = box.onchange = function(e){
-      var card = e.target.closest('[data-i]'); var f = e.target.dataset.pf; if(!card || !f) return;
-      var l = progressList(); l[+card.dataset.i][f] = e.target.value; homeValues.progress_items = JSON.stringify(l); markHome();
-      e.stopPropagation();
-    };
-    box.onclick = function(e){
-      var b = e.target.closest('[data-pm]'); if(!b) return;
-      var i = +b.closest('[data-i]').dataset.i, l = progressList(), m = b.dataset.pm;
-      if(m === 'del'){ if(!confirm('이 단계를 삭제할까요?')) return; l.splice(i, 1); }
-      else { var j = m === 'up' ? i - 1 : i + 1; if(j < 0 || j >= l.length) return; var t = l[i]; l[i] = l[j]; l[j] = t; }
-      homeValues.progress_items = JSON.stringify(l); renderProgressEditor(); markHome();
-    };
   }
 
   saveHandlers.home = async function(){
@@ -315,13 +483,16 @@
   };
   discardHandlers.home = function(){ $('homeFields').innerHTML = '<p class="state-msg">불러오는 중…</p>'; setDirty('home', false); loaders.home(); };
 
+
   /* ======================================================================
      2. 행사 사진첩
      ====================================================================== */
   var albums = [], curAlbum = null, curPhotos = [];
 
   loaders.albums = loadAlbums;
+  var albumsChanged = false;
   async function loadAlbums(){
+    albumsCache = null; albumsChanged = true;
     var box = $('albumList');
     try{
       albums = await must(sb.from('albums').select('*').order('event_date', {ascending:false, nullsFirst:false}).order('created_at', {ascending:false}));
@@ -500,12 +671,13 @@
       try{ await must(sb.from(isNotice() ? 'notices' : 'posts').delete().eq('id', p.id)); toast('삭제했습니다.'); loadPosts(); }catch(err){ fail(err); }
     }
   });
-  function openPostForm(p){
+  async function openPostForm(p){
     editing = p || null;
+    await getAlbums();
     $('postTitleInput').value = p ? p.title : '';
     $('postBodyInput').value = p ? (p.body || '') : '';
     postImages = p ? (isNotice() ? (p.image_url ? [p.image_url] : []) : (p.images || []).slice()) : [];
-    $('postLinkInput').value = p && p.link_url || '';
+    $('postLinkBox').innerHTML = linkFieldHtml('id="postLinkField"', p && p.link_url || '', '연결 안 함');
     $('postPinnedInput').checked = !!(p && p.pinned);
     postFile = null; postFileRemoved = false;
     $('postFileName').textContent = p && p.file_url ? '현재: ' + (p.file_name || '첨부파일') : '';
@@ -519,6 +691,7 @@
   }
   function closePostForm(){ $('postForm').style.display = 'none'; editing = null; }
   $('newPostBtn').addEventListener('click', function(){ openPostForm(null); });
+  $('postLinkBox').addEventListener('change', function(){ var f = $('postLinkField'); if(f) readLinkField(f); });
   $('postCancelBtn').addEventListener('click', closePostForm);
   function renderPostImages(){
     $('postImagePreview').innerHTML = postImages.map(function(u, i){
@@ -550,7 +723,7 @@
       if(isNotice()){
         payload = { title:title, body:body, image_url: postImages[0] || null };
       } else {
-        payload = { board:curBoard, title:title, body:body, images:postImages, link_url:$('postLinkInput').value.trim() || null, pinned:$('postPinnedInput').checked };
+        payload = { board:curBoard, title:title, body:body, images:postImages, link_url:readLinkField($('postLinkField')) || null, pinned:$('postPinnedInput').checked };
         if(postFile){ payload.file_url = await N.uploadFile(postFile, 'files', { raw:true }); payload.file_name = postFile.name; }
         else if(postFileRemoved){ payload.file_url = null; payload.file_name = null; }
       }
@@ -564,24 +737,35 @@
   });
 
   /* ======================================================================
-     4. 조직도
+     4. 조직도 — 그룹(회장단·지회·위원회…) > 조직 > 회원
      ====================================================================== */
-  var orgUnits = [], orgOriginal = '[]', orgDeleted = [];
-  var ORG_SECTIONS = [
-    { key:'leader', name:'회장단 · 감사 · 부회장 · 사무국', hint:'같은 "줄 번호"끼리 한 줄에 나란히 보입니다.' },
-    { key:'branch', name:'지회', hint:'' },
-    { key:'committee', name:'위원회', hint:'' }
-  ];
-  function splitNames(s){ return String(s || '').split(/[,\n、·]+/).map(function(x){ return x.trim(); }).filter(Boolean); }
+  var orgGroupsList = [], orgUnits = [], orgOriginal = '', orgDeleted = [], orgOpen = {}, orgKeySeq = 0;
+  var TYPE_LABEL = { leader:'임원 카드형 (회장단처럼)', cards:'펼쳐보기형 (지회·위원회처럼)' };
+
+  function orgSnapshot(){
+    return JSON.stringify({ g: orgGroupsList, u: orgUnits.map(function(u){ var c = Object.assign({}, u); delete c._k; return c; }) });
+  }
+  function tagUnits(){ orgUnits.forEach(function(u){ if(!u._k) u._k = 'k' + (++orgKeySeq); }); }
 
   loaders.org = async function(){
     try{
+      var st = {};
+      var sr = await sb.from('site_settings').select('key,value');
+      if(!sr.error) (sr.data || []).forEach(function(r){ st[r.key] = r.value; });
+      orgGroupsList = JSON.parse(JSON.stringify(N.orgGroups(st)));
       orgUnits = await must(sb.from('org_units').select('*').order('sort', {ascending:true}));
-      orgOriginal = JSON.stringify(orgUnits); orgDeleted = [];
+      tagUnits();
+      orgDeleted = [];
+      orgOriginal = st.org_groups ? orgSnapshot() : '';
+      if(orgUnits.length && !st.org_groups) orgOriginal = orgSnapshot();
       if(!orgUnits.length){
-        orgUnits = await orgFromHomepage();
+        orgUnits = await orgFromHomepage(); tagUnits();
         if(orgUnits.length) toast('현재 홈페이지 조직도를 불러왔습니다. 저장을 누르면 관리가 시작됩니다.');
       }
+      // DB에 있지만 그룹 목록에 없는 조직은 새 그룹으로 보여줌
+      orgUnits.forEach(function(u){
+        if(!orgGroupsList.some(function(g){ return g.key === u.section; })) orgGroupsList.push({ key:u.section, name:'기타 (' + u.section + ')', type:'cards', show_head:true, badge:'' });
+      });
       renderOrg(); markOrg();
     }catch(e){ $('orgEditor').innerHTML = '<p class="state-msg">' + esc(errText(e)) + '</p>'; }
   };
@@ -600,91 +784,178 @@
     });
     return out;
   }
+
   function renderOrg(){
-    $('orgEditor').innerHTML = ORG_SECTIONS.map(function(sec){
-      var items = orgUnits.map(function(u, i){ return { u:u, i:i }; }).filter(function(x){ return x.u.section === sec.key; });
-      return '<div class="panel"><div class="panel-head"><h3>' + esc(sec.name) + ' <span class="hint" style="font-weight:600;">(' + items.length + ')</span></h3><button type="button" class="btn btn-line btn-sm" data-oadd="' + sec.key + '">+ 추가</button></div>' +
-        (sec.hint ? '<p class="hint" style="margin:-6px 0 12px;">' + sec.hint + '</p>' : '') +
-        items.map(function(x){ return orgCard(x.u, x.i); }).join('') + '</div>';
+    var groupOpts = orgGroupsList.map(function(g){ return [g.key, g.name]; });
+    var html = orgGroupsList.map(function(g, gi){
+      var items = orgUnits.map(function(u, i){ return { u:u, i:i }; }).filter(function(x){ return x.u.section === g.key; });
+      var members = items.reduce(function(n, x){ return n + (g.type === 'leader' ? 0 : N.splitNames(x.u.members).length); }, 0);
+      return '<details class="panel og-panel" open data-g="' + gi + '"><summary><span class="og-sum">' + esc(g.name || '(이름 없음)') +
+          ' <span class="og-tag">' + (g.type === 'leader' ? '임원 카드형' : '펼쳐보기형') + '</span><span class="hint" style="margin:0;">조직 ' + items.length + '개' + (members ? ' · 회원 ' + members + '명' : '') + '</span></span></summary>' +
+        '<div class="og-settings"><div class="row">' +
+          '<label class="chk">그룹 이름 <input class="admin-input" style="width:160px;" data-gf="name" value="' + esc(g.name) + '"></label>' +
+          '<label class="chk">옆 표시 <input class="admin-input" style="width:140px;" data-gf="badge" placeholder="비우면 자동 (예: ' + items.length + '개)" value="' + esc(g.badge || '') + '"></label>' +
+          '<label class="chk"><input type="checkbox" data-gf="show_head"' + (g.show_head ? ' checked' : '') + '> 홈페이지에 그룹 제목 보이기</label></div>' +
+          '<div class="row"><label class="chk">보여주는 모양 <select class="admin-input" style="width:auto;" data-gf="type">' +
+            Object.keys(TYPE_LABEL).map(function(t){ return '<option value="' + t + '"' + (g.type === t ? ' selected' : '') + '>' + TYPE_LABEL[t] + '</option>'; }).join('') + '</select></label>' +
+          '<span class="grow"></span><button type="button" class="btn-mini" data-ga="up">▲ 그룹 위로</button><button type="button" class="btn-mini" data-ga="down">▼ 그룹 아래로</button><button type="button" class="btn-mini danger" data-ga="del">그룹 삭제</button></div></div>' +
+        items.map(function(x){ return unitCard(x.u, x.i, g, groupOpts); }).join('') +
+        '<button type="button" class="btn btn-line btn-sm" data-oadd="' + esc(g.key) + '" style="margin-top:6px;">+ "' + esc(g.name) + '"에 ' + (g.type === 'leader' ? '임원 추가' : '조직 추가') + '</button>' +
+      '</details>';
     }).join('');
+    html += '<div class="panel"><div class="row"><button type="button" class="btn btn-primary btn-sm" data-gnew="cards">+ 새 그룹 추가 (펼쳐보기형)</button><button type="button" class="btn btn-line btn-sm" data-gnew="leader">+ 새 그룹 추가 (임원 카드형)</button></div>' +
+      '<p class="hint">예: "자문위원단", "청년부" 같은 새 묶음을 만들 수 있습니다.</p></div>';
+    $('orgEditor').innerHTML = html;
   }
-  function orgCard(u, i){
-    var move = '<button type="button" class="btn-mini" data-oa="up">▲</button><button type="button" class="btn-mini" data-oa="down">▼</button><button type="button" class="btn-mini danger" data-oa="del">삭제</button>';
-    if(u.section === 'leader'){
-      return '<div class="org-edit-card" data-i="' + i + '"><div class="row">' +
-        '<input class="admin-input" style="width:150px;" data-of="title" placeholder="직책 (예: 회장)" value="' + esc(u.title) + '">' +
-        '<input class="admin-input grow" data-of="members" placeholder="이름" value="' + esc(u.members) + '"></div>' +
-        '<div class="row"><label class="chk">줄 번호 <input class="admin-input" type="number" min="1" max="20" style="width:70px;" data-of="tier" value="' + (u.tier || 1) + '"></label>' +
+  function unitCard(u, i, g, groupOpts){
+    var open = orgOpen[u._k] ? ' open' : '';
+    var move = '<div class="row" style="margin-top:12px;"><label class="chk">그룹 이동 <select class="admin-input" style="width:auto;" data-omove>' +
+      groupOpts.map(function(o){ return '<option value="' + esc(o[0]) + '"' + (o[0] === u.section ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>' +
+      '<span class="grow"></span><button type="button" class="btn-mini" data-oa="up">▲</button><button type="button" class="btn-mini" data-oa="down">▼</button><button type="button" class="btn-mini danger" data-oa="del">삭제</button></div>';
+    if(g.type === 'leader'){
+      return '<details class="ou-card" data-i="' + i + '"' + open + '><summary><span><b data-sum="title">' + esc(u.title || '(직책 없음)') + '</b><i data-sum="members">' + esc(u.members || '') + '</i></span><span class="cnt">' + (u.tier || 1) + '번째 줄</span></summary>' +
+        '<div class="ou-body"><div class="row"><input class="admin-input" style="width:160px;" data-of="title" placeholder="직책 (예: 회장)" value="' + esc(u.title) + '">' +
+        '<input class="admin-input grow" data-of="members" placeholder="이름 (여러 명이면 · 로 구분)" value="' + esc(u.members) + '"></div>' +
+        '<div class="row"><label class="chk">몇 번째 줄 <input class="admin-input" type="number" min="1" max="20" style="width:70px;" data-of="tier" value="' + (u.tier || 1) + '"></label>' +
         '<label class="chk"><input type="checkbox" data-of="featured"' + (u.featured ? ' checked' : '') + '> 빨간 강조</label>' +
-        '<label class="chk"><input type="checkbox" data-of="wide"' + (u.wide ? ' checked' : '') + '> 넓게</label>' +
-        '<span class="grow"></span>' + move + '</div></div>';
+        '<label class="chk"><input type="checkbox" data-of="wide"' + (u.wide ? ' checked' : '') + '> 넓게</label></div>' + move + '</div></details>';
     }
-    var n = splitNames(u.members).length;
-    return '<div class="org-edit-card" data-i="' + i + '"><div class="row">' +
-      '<input class="admin-input grow" data-of="title" placeholder="' + (u.section === 'branch' ? '지회 이름 (예: 영덕읍지회)' : '위원회 이름 (예: 홍보위원장)') + '" value="' + esc(u.title) + '">' +
-      '<input class="admin-input grow" data-of="leader" placeholder="' + (u.section === 'branch' ? '예: 지회장 홍길동' : '위원장 이름') + '" value="' + esc(u.leader) + '"></div>' +
-      '<textarea data-of="members" placeholder="회원 이름을 쉼표로 구분해 적어주세요">' + esc(u.members) + '</textarea>' +
-      '<div class="row" style="margin-top:8px;"><span class="count" data-count>' + n + '명</span><span class="grow"></span>' + move + '</div></div>';
+    var names = N.splitNames(u.members);
+    return '<details class="ou-card" data-i="' + i + '"' + open + '><summary><span><b data-sum="title">' + esc(u.title || '(이름 없음)') + '</b><i data-sum="leader">' + esc(u.leader || '') + '</i></span><span class="cnt" data-sum="cnt">' + names.length + '명</span></summary>' +
+      '<div class="ou-body"><div class="row"><input class="admin-input grow" data-of="title" placeholder="조직 이름 (예: 영덕읍지회)" value="' + esc(u.title) + '">' +
+      '<input class="admin-input grow" data-of="leader" placeholder="대표 (예: 지회장 홍길동)" value="' + esc(u.leader) + '"></div>' +
+      '<div class="chips">' + (names.length ? names.map(function(n, k){ return '<span class="chip">' + esc(n) + '<button type="button" data-chipdel="' + k + '" aria-label="' + esc(n) + ' 빼기">×</button></span>'; }).join('') : '<span class="hint" style="margin:0;">회원이 없습니다.</span>') + '</div>' +
+      '<div class="chip-add"><input class="admin-input" data-chipin placeholder="회원 이름 (여러 명은 쉼표로: 홍길동, 김철수)"><button type="button" class="btn btn-line btn-sm" data-chipadd>+ 회원 추가</button></div>' +
+      move + '</div></details>';
   }
   function markOrg(){
-    var changed = JSON.stringify(orgUnits) !== orgOriginal || orgDeleted.length > 0;
+    var changed = orgSnapshot() !== orgOriginal || orgDeleted.length > 0;
     setDirty('org', changed, changed ? '조직도에 저장하지 않은 변경사항이 있습니다' : '');
   }
-  $('orgEditor').addEventListener('input', function(e){
-    var card = e.target.closest('[data-i]'), f = e.target.dataset.of; if(!card || !f) return;
-    var u = orgUnits[+card.dataset.i];
-    u[f] = e.target.type === 'checkbox' ? e.target.checked : (f === 'tier' ? (parseInt(e.target.value, 10) || 1) : e.target.value);
-    if(f === 'members'){ var c = card.querySelector('[data-count]'); if(c) c.textContent = splitNames(u.members).length + '명'; }
-    markOrg();
+  function unitOf(el){ var c = el.closest('.ou-card[data-i]'); return c ? orgUnits[+c.dataset.i] : null; }
+  function groupOf(el){ var c = el.closest('[data-g]'); return c ? orgGroupsList[+c.dataset.g] : null; }
+  function addChips(card){
+    var inp = card.querySelector('[data-chipin]'), u = orgUnits[+card.dataset.i];
+    var add = N.splitNames(inp.value); if(!add.length){ inp.focus(); return; }
+    u.members = N.splitNames(u.members).concat(add).join(', ');
+    orgOpen[u._k] = true; renderOrg(); markOrg();
+    var again = $('orgEditor').querySelector('.ou-card[data-i="' + orgUnits.indexOf(u) + '"] [data-chipin]'); if(again) again.focus();
+  }
+
+  var oe = $('orgEditor');
+  oe.addEventListener('toggle', function(e){ var t = e.target; if(t.classList && t.classList.contains('ou-card')){ var u = orgUnits[+t.dataset.i]; if(u) orgOpen[u._k] = t.open; } }, true);
+  oe.addEventListener('input', function(e){
+    var t = e.target;
+    if(t.dataset.gf && t.type !== 'checkbox' && t.tagName !== 'SELECT'){ groupOf(t)[t.dataset.gf] = t.value; markOrg(); return; }
+    if(t.dataset.of && t.type !== 'checkbox'){
+      var u = unitOf(t); u[t.dataset.of] = t.dataset.of === 'tier' ? (parseInt(t.value, 10) || 1) : t.value;
+      var s = t.closest('.ou-card').querySelector('[data-sum="' + t.dataset.of + '"]'); if(s) s.textContent = t.value;
+      markOrg();
+    }
   });
-  $('orgEditor').addEventListener('change', function(e){
-    if(e.target.type !== 'checkbox' || !e.target.dataset.of) return;
-    orgUnits[+e.target.closest('[data-i]').dataset.i][e.target.dataset.of] = e.target.checked; markOrg();
+  oe.addEventListener('change', function(e){
+    var t = e.target;
+    if(t.dataset.gf){
+      var g = groupOf(t); g[t.dataset.gf] = t.type === 'checkbox' ? t.checked : t.value;
+      if(t.dataset.gf === 'type' || t.dataset.gf === 'name') renderOrg();
+      markOrg(); return;
+    }
+    if(t.dataset.of && t.type === 'checkbox'){ unitOf(t)[t.dataset.of] = t.checked; markOrg(); return; }
+    if(t.hasAttribute('data-omove')){
+      var u = unitOf(t); u.section = t.value;
+      var tg = orgGroupsList.find(function(x){ return x.key === t.value; });
+      if(tg && tg.type === 'leader' && !u.tier) u.tier = 1;
+      // 옮긴 그룹의 맨 끝으로
+      orgUnits.splice(orgUnits.indexOf(u), 1); orgUnits.push(u);
+      orgOpen[u._k] = true; renderOrg(); markOrg();
+      toast('"' + (tg ? tg.name : '') + '" 그룹으로 옮겼습니다.');
+    }
   });
-  $('orgEditor').addEventListener('click', function(e){
-    var add = e.target.closest('[data-oadd]');
-    if(add){
-      var sec = add.dataset.oadd, same = orgUnits.filter(function(u){ return u.section === sec; });
-      var tier = sec === 'leader' ? (same.length ? Math.max.apply(null, same.map(function(u){ return u.tier || 1; })) + 1 : 1) : 0;
-      var lastIdx = -1; orgUnits.forEach(function(u, i){ if(u.section === sec) lastIdx = i; });
-      var nu = { section:sec, tier:tier, title:'', leader:'', members:'', featured:false, wide:false };
-      if(lastIdx >= 0) orgUnits.splice(lastIdx + 1, 0, nu); else orgUnits.push(nu);
+  oe.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && e.target.hasAttribute('data-chipin')){ e.preventDefault(); addChips(e.target.closest('.ou-card')); }
+  });
+  oe.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    if(b.hasAttribute('data-chipadd')){ addChips(b.closest('.ou-card')); return; }
+    if(b.dataset.chipdel != null){
+      var u = unitOf(b), names = N.splitNames(u.members); names.splice(+b.dataset.chipdel, 1);
+      u.members = names.join(', '); orgOpen[u._k] = true; renderOrg(); markOrg(); return;
+    }
+    if(b.dataset.gnew){
+      orgGroupsList.push({ key:'g' + Date.now().toString(36), name:'새 그룹', type:b.dataset.gnew, show_head:true, badge:'' });
       renderOrg(); markOrg();
-      var cards = $('orgEditor').querySelectorAll('[data-i="' + orgUnits.indexOf(nu) + '"] input');
-      if(cards[0]) cards[0].focus();
+      var gin = oe.querySelector('[data-g="' + (orgGroupsList.length - 1) + '"] [data-gf="name"]');
+      if(gin){ gin.focus(); gin.select(); gin.scrollIntoView({block:'center'}); }
+      toast('새 그룹을 만들었습니다. 그룹 이름을 바꾸고 조직을 추가하세요.'); return;
+    }
+    if(b.dataset.ga){
+      var gi = +b.closest('[data-g]').dataset.g, g = orgGroupsList[gi];
+      if(b.dataset.ga === 'del'){
+        var inside = orgUnits.filter(function(u){ return u.section === g.key; });
+        if(!confirm('"' + g.name + '" 그룹을 삭제할까요?' + (inside.length ? '\n그룹 안의 조직 ' + inside.length + '개도 함께 삭제됩니다.' : ''))) return;
+        inside.forEach(function(u){ if(u.id) orgDeleted.push(u.id); });
+        orgUnits = orgUnits.filter(function(u){ return u.section !== g.key; });
+        orgGroupsList.splice(gi, 1);
+      } else {
+        var j = b.dataset.ga === 'up' ? gi - 1 : gi + 1; if(j < 0 || j >= orgGroupsList.length) return;
+        orgGroupsList[gi] = orgGroupsList[j]; orgGroupsList[j] = g;
+      }
+      renderOrg(); markOrg(); return;
+    }
+    if(b.dataset.oadd){
+      var sec = b.dataset.oadd, grp = orgGroupsList.find(function(x){ return x.key === sec; });
+      var same = orgUnits.filter(function(u){ return u.section === sec; });
+      var tier = grp && grp.type === 'leader' ? (same.length ? Math.max.apply(null, same.map(function(u){ return u.tier || 1; })) + 1 : 1) : 0;
+      var nu = { section:sec, tier:tier, title:'', leader:'', members:'', featured:false, wide:false };
+      var lastIdx = -1; orgUnits.forEach(function(u, i){ if(u.section === sec) lastIdx = i; });
+      if(lastIdx >= 0) orgUnits.splice(lastIdx + 1, 0, nu); else orgUnits.push(nu);
+      tagUnits(); orgOpen[nu._k] = true;
+      renderOrg(); markOrg();
+      var inp = oe.querySelector('.ou-card[data-i="' + orgUnits.indexOf(nu) + '"] [data-of="title"]'); if(inp) inp.focus();
       return;
     }
-    var b = e.target.closest('[data-oa]'); if(!b) return;
-    var i = +b.closest('[data-i]').dataset.i, u = orgUnits[i], act = b.dataset.oa;
-    if(act === 'del'){
-      if(!confirm('"' + (u.title || '빈 칸') + '"을(를) 삭제할까요?')) return;
-      if(u.id) orgDeleted.push(u.id);
-      orgUnits.splice(i, 1);
-    } else {
-      var dir = act === 'up' ? -1 : 1, j = i + dir;
-      while(j >= 0 && j < orgUnits.length && orgUnits[j].section !== u.section) j += dir;
-      if(j < 0 || j >= orgUnits.length) return;
-      orgUnits[i] = orgUnits[j]; orgUnits[j] = u;
+    if(b.dataset.oa){
+      var card = b.closest('.ou-card'), i = +card.dataset.i, u2 = orgUnits[i];
+      if(b.dataset.oa === 'del'){
+        if(!confirm('"' + (u2.title || '빈 칸') + '"을(를) 삭제할까요?')) return;
+        if(u2.id) orgDeleted.push(u2.id);
+        orgUnits.splice(i, 1);
+      } else {
+        var dir = b.dataset.oa === 'up' ? -1 : 1, k = i + dir;
+        while(k >= 0 && k < orgUnits.length && orgUnits[k].section !== u2.section) k += dir;
+        if(k < 0 || k >= orgUnits.length) return;
+        orgUnits[i] = orgUnits[k]; orgUnits[k] = u2;
+      }
+      renderOrg(); markOrg();
     }
-    renderOrg(); markOrg();
   });
+
   saveHandlers.org = async function(){
     if(!(await ensureSession())) return;
+    var badG = orgGroupsList.find(function(g){ return !String(g.name || '').trim(); });
+    if(badG){ toast('이름이 비어 있는 그룹이 있습니다.', true); return; }
     var bad = orgUnits.find(function(u){ return !String(u.title || '').trim(); });
-    if(bad){ toast('이름(직책)이 비어 있는 칸이 있습니다.', true); return; }
+    if(bad){ orgOpen[bad._k] = true; renderOrg(); toast('이름(직책)이 비어 있는 칸이 있습니다.', true); return; }
+    // 그룹 순서대로 정렬해서 번호 매기기
+    var ordered = [];
+    orgGroupsList.forEach(function(g){ orgUnits.forEach(function(u){ if(u.section === g.key) ordered.push(u); }); });
+    orgUnits = ordered;
     orgUnits.forEach(function(u, i){ u.sort = i + 1; u.title = String(u.title).trim(); });
+    function clean(u){ var c = Object.assign({}, u); delete c._k; return c; }
+    await must(sb.from('site_settings').upsert([{ key:'org_groups', value:JSON.stringify(orgGroupsList), updated_at:new Date().toISOString() }], { onConflict:'key' }));
     if(orgDeleted.length) await must(sb.from('org_units').delete().in('id', orgDeleted));
     var existing = orgUnits.filter(function(u){ return u.id; }), fresh = orgUnits.filter(function(u){ return !u.id; });
-    if(existing.length) await must(sb.from('org_units').upsert(existing, { onConflict:'id' }));
+    if(existing.length) await must(sb.from('org_units').upsert(existing.map(clean), { onConflict:'id' }));
     if(fresh.length){
-      var ins = await must(sb.from('org_units').insert(fresh).select());
+      var ins = await must(sb.from('org_units').insert(fresh.map(clean)).select());
       (ins || []).forEach(function(r){ var t = fresh.find(function(f){ return !f.id && f.sort === r.sort; }); if(t) t.id = r.id; });
     }
-    orgOriginal = JSON.stringify(orgUnits); orgDeleted = [];
+    orgDeleted = [];
+    orgOriginal = orgSnapshot();
     renderOrg(); markOrg();
     toast('조직도를 저장했습니다.');
   };
-  discardHandlers.org = function(){ orgUnits = JSON.parse(orgOriginal); orgDeleted = []; renderOrg(); markOrg(); };
+  discardHandlers.org = function(){ setDirty('org', false); $('orgEditor').innerHTML = '<p class="state-msg">불러오는 중…</p>'; loaders.org(); };
 
   /* ======================================================================
      5. 회원 명단

@@ -227,10 +227,27 @@
     document.getElementById('postImages').innerHTML = imgs.map(function(im, i){ return '<img loading="lazy" data-i="' + i + '" src="' + esc(im.url) + '" alt="' + esc(p.title) + ' 사진 ' + (i+1) + '">'; }).join('');
     document.getElementById('postImages').onclick = function(e){ var im = e.target.closest('img[data-i]'); if(im) window.NYDLightbox.open(imgs, +im.dataset.i); };
     document.getElementById('postBody').innerHTML = N.richText(p.body || '');
-    var extra = '';
-    if(N.safeUrl(p.link_url)) extra += '<a class="btn btn-line btn-sm" href="' + esc(p.link_url) + '" target="_blank" rel="noopener">관련 링크 열기 ↗</a>';
+    var extra = '', albumId = N.albumIdFromUrl(p.link_url);
+    if(albumId) extra += '<a class="btn btn-line btn-sm" href="gallery.html?album=' + encodeURIComponent(albumId) + '">사진첩에서 크게 보기 →</a>';
+    else if(N.safeUrl(p.link_url)) extra += '<a class="btn btn-line btn-sm" href="' + esc(p.link_url) + '"' + (/^https?:/i.test(p.link_url) ? ' target="_blank" rel="noopener"' : '') + '>관련 링크 열기 ↗</a>';
     if(N.safeUrl(p.file_url)) extra += '<a class="btn btn-primary btn-sm" href="' + esc(p.file_url) + '" target="_blank" rel="noopener" download>첨부파일 받기 · ' + esc(p.file_name || '파일') + '</a>';
     document.getElementById('postExtra').innerHTML = extra;
+    if(albumId) showAlbum(albumId);
+  }
+
+  // 글에 연결된 행사 사진첩의 사진을 글 아래에 보여줌
+  async function showAlbum(id){
+    var a = await N.sbRead.from('albums').select('id,title').eq('id', id).maybeSingle();
+    if(a.error || !a.data) return;
+    var r = await N.sbRead.from('album_photos').select('url,caption').eq('album_id', id).order('sort', {ascending:true});
+    var photos = (r.data || []).filter(function(x){ return N.safeUrl(x.url); });
+    if(!photos.length) return;
+    var box = document.createElement('div');
+    box.className = 'post-album';
+    box.innerHTML = '<h4>📷 ' + esc(a.data.title) + ' 사진 (' + photos.length + '장)</h4><div class="photo-grid">' +
+      photos.map(function(ph, i){ return '<button type="button" data-i="' + i + '"><img loading="lazy" src="' + esc(ph.url) + '" alt="' + esc(a.data.title) + ' 사진 ' + (i+1) + '"></button>'; }).join('') + '</div>';
+    box.addEventListener('click', function(e){ var b = e.target.closest('button[data-i]'); if(b) window.NYDLightbox.open(photos, +b.dataset.i); });
+    document.getElementById('postExtra').before(box);
   }
 
   if(postId) loadPost(postId); else loadList();
