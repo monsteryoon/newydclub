@@ -714,13 +714,37 @@
       .then(function(data){ ALL_MEMBERS = data; defaultHint(); })
       .catch(function(){ memberHint.textContent = '회원 명단을 불러오지 못했습니다.'; });
   }
+  // 조직도에 있는 사람도 함께 검색되도록 합침 (회원 명단에 없는 사람만 추가)
+  function mergeOrg(list, orgRes, setRes){
+    var N = window.NYD;
+    if(!orgRes || orgRes.error || !orgRes.data || !orgRes.data.length) return list;
+    var st = {};
+    ((setRes && setRes.data) || []).forEach(function(r){ st[r.key] = r.value; });
+    var seen = {};
+    list.forEach(function(m){ seen[m.name + '|' + m.group] = true; });
+    N.orgPeople(N.orgGroups(st), orgRes.data).forEach(function(p){
+      if(seen[p.name + '|' + p.group]) return;
+      seen[p.name + '|' + p.group] = true;
+      list.push({ name:p.name, role:p.role, group:p.group, business:'' });
+    });
+    return list;
+  }
   if(window.NYD && window.NYD.sbRead){
-    window.NYD.sbRead.from('members').select('name,role,group,business,sort').order('sort', {ascending:true}).then(function(res){
-      if(!res.error && res.data && res.data.length){
-        ALL_MEMBERS = res.data.map(function(m){ return { name: m.name || '', role: m.role || '', group: m.group || '', business: m.business || '' }; });
+    var R = window.NYD.sbRead, safe = function(q){ return q.then(function(r){ return r; }, function(){ return null; }); };
+    Promise.all([
+      safe(R.from('members').select('name,role,group,business,sort').order('sort', {ascending:true})),
+      safe(R.from('org_units').select('*').order('sort', {ascending:true})),
+      safe(R.from('site_settings').select('key,value').eq('key', 'org_groups'))
+    ]).then(function(res){
+      var mem = res[0], list;
+      if(mem && !mem.error && mem.data && mem.data.length){
+        list = mem.data.map(function(m){ return { name: m.name || '', role: m.role || '', group: m.group || '', business: m.business || '' }; });
+        ALL_MEMBERS = mergeOrg(list, res[1], res[2]);
         defaultHint();
-      } else { loadMembersFile(); }
-    }, loadMembersFile);
+      } else {
+        loadMembersFile().then(function(){ ALL_MEMBERS = mergeOrg(ALL_MEMBERS || [], res[1], res[2]); defaultHint(); });
+      }
+    });
   } else { loadMembersFile(); }
 
 </script>

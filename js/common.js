@@ -134,7 +134,34 @@
   // 사진첩 주소에서 사진첩 번호 꺼내기
   function albumIdFromUrl(u){ var m = String(u || '').match(/gallery\.html\?album=([\w-]+)/); return m ? m[1] : null; }
 
+  /* 조직도 → 회원 명단 연동: 조직도에 적힌 사람들을 (이름, 직책, 소속) 목록으로 */
+  function unitGroupName(u, g){
+    if(g && g.type === 'leader') return /사무국/.test(u.title || '') ? '사무국' : '임원단';
+    return String(u.title || '').trim().replace(/위원장(?=\(|$)/, '위원회');
+  }
+  function orgPeople(groups, units){
+    var byKey = {}; (groups || []).forEach(function(g){ byKey[g.key] = g; });
+    var out = [];
+    (units || []).forEach(function(u){
+      var g = byKey[u.section] || { type:'cards' }, grp = unitGroupName(u, g);
+      if(g.type === 'leader'){
+        var role = String(u.title || '').trim();
+        String(u.members || '').split(/[·,\n、]+/).forEach(function(tok){
+          var parts = tok.trim().split(/\s+/).filter(Boolean); if(!parts.length) return;
+          if(parts.length > 1) role = parts.slice(0, -1).join(' ');
+          out.push({ name:parts[parts.length - 1], role:role, group:grp });
+        });
+      } else {
+        var lead = String(u.leader || '').trim().split(/\s+/).filter(Boolean);
+        if(lead.length) out.push({ name:lead[lead.length - 1], role: lead.length > 1 ? lead.slice(0, -1).join(' ') : (/위원장/.test(u.title || '') ? String(u.title).trim() : '대표'), group:grp });
+        splitNames(u.members).forEach(function(n){ out.push({ name:n, role:'회원', group:grp }); });
+      }
+    });
+    return out;
+  }
+
   window.NYD = {
+    unitGroupName: unitGroupName, orgPeople: orgPeople,
     defaultOrgGroups: defaultOrgGroups, orgGroups: orgGroups, splitNames: splitNames, parseList: parseList, albumIdFromUrl: albumIdFromUrl,
     sb: sb, sbRead: sbRead, ready: ready, BOARDS: BOARDS,
     escapeHtml: escapeHtml, richText: richText, formatDate: formatDate, safeUrl: safeUrl, youtubeId: youtubeId,

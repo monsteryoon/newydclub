@@ -807,9 +807,52 @@
       orgUnits.forEach(function(u){
         if(!orgGroupsList.some(function(g){ return g.key === u.section; })) orgGroupsList.push({ key:u.section, name:'기타 (' + u.section + ')', type:'cards', show_head:true, badge:'' });
       });
+      orgPeopleAtLoad = N.orgPeople(orgGroupsList, orgUnits);
       renderOrg(); markOrg();
     }catch(e){ $('orgEditor').innerHTML = '<p class="state-msg">' + esc(errText(e)) + '</p>'; }
   };
+  var orgPeopleAtLoad = [];
+  function pkey(p){ return String(p.name || '').trim() + '|' + String(p.group || '').trim(); }
+
+  /* 조직도를 저장하면 회원 명단(회원검색)도 맞춰 줌
+     - 조직도에 있는데 명단에 없는 사람 → 명단에 추가
+     - 다른 조직으로 옮긴 사람 → 명단의 소속·직책만 바꿈 (업체 정보 유지)
+     - 조직도에서 뺀 사람 → 명단에서 삭제 (업체·직업이 적혀 있으면 남겨 둠) */
+  async function syncMembersFromOrg(before, after){
+    var rows = await must(sb.from('members').select('*').order('sort', {ascending:true}));
+    var byKey = {}, maxSort = 0;
+    rows.forEach(function(r){ byKey[pkey(r)] = r; maxSort = Math.max(maxSort, r.sort || 0); });
+    var afterK = {}, beforeK = {};
+    after.forEach(function(p){ afterK[pkey(p)] = p; });
+    before.forEach(function(p){ beforeK[pkey(p)] = p; });
+    var removed = before.filter(function(p){ return !afterK[pkey(p)]; });
+    var removedByName = {};
+    removed.forEach(function(p){ (removedByName[p.name] = removedByName[p.name] || []).push(p); });
+    var inserts = [], updates = {}, used = {}, kept = 0;
+    after.forEach(function(p){
+      var k = pkey(p), r = byKey[k];
+      if(r){
+        var old = beforeK[k];
+        if(old && old.role !== p.role && r.role !== p.role) updates[r.id] = Object.assign({}, r, { role:p.role });
+        return;
+      }
+      var from = (removedByName[p.name] || []).shift(), fr = from && byKey[pkey(from)];
+      if(fr && !used[fr.id]){ used[fr.id] = true; updates[fr.id] = Object.assign({}, fr, { group:p.group, role:p.role }); return; }
+      if(inserts.some(function(x){ return pkey(x) === k; })) return;
+      inserts.push({ name:p.name, role:p.role, group:p.group, business:'', sort:++maxSort });
+    });
+    var deletes = [];
+    removed.forEach(function(p){
+      var r = byKey[pkey(p)]; if(!r || used[r.id]) return;
+      if(String(r.business || '').trim()) kept++; else deletes.push(r.id);
+    });
+    var upd = Object.keys(updates).map(function(id){ return updates[id]; });
+    if(deletes.length) await must(sb.from('members').delete().in('id', deletes));
+    if(upd.length) await must(sb.from('members').upsert(upd, { onConflict:'id' }));
+    if(inserts.length) await must(sb.from('members').insert(inserts));
+    if(!dirty.members) loaded.members = false;   // 회원 명단 탭을 다시 열면 새로 불러옴
+    return { added:inserts.length, changed:upd.length, removed:deletes.length, kept:kept };
+  }
   async function orgFromHomepage(){
     var doc = await fetchHomeDoc(), out = [], sort = 0;
     doc.querySelectorAll('#orgLeaders .leader-tier').forEach(function(t, ti){
@@ -993,8 +1036,17 @@
     }
     orgDeleted = [];
     orgOriginal = orgSnapshot();
+    var peopleNow = N.orgPeople(orgGroupsList, orgUnits), msg = '조직도를 저장했습니다.';
+    try{
+      var r = await syncMembersFromOrg(orgPeopleAtLoad, peopleNow);
+      var parts = [];
+      if(r.added) parts.push(r.added + '명 추가'); if(r.changed) parts.push(r.changed + '명 소속 변경'); if(r.removed) parts.push(r.removed + '명 삭제');
+      if(parts.length) msg += ' 회원검색에도 반영: ' + parts.join(', ') + '.';
+      if(r.kept) msg += ' (업체 정보가 있는 ' + r.kept + '명은 회원 명단에 남겨 두었습니다)';
+    }catch(e){ console.error(e); msg += ' (회원 명단 반영은 실패했습니다: ' + errText(e) + ')'; }
+    orgPeopleAtLoad = peopleNow;
     renderOrg(); markOrg();
-    toast('조직도를 저장했습니다.');
+    toast(msg);
   };
   discardHandlers.org = function(){ setDirty('org', false); $('orgEditor').innerHTML = '<p class="state-msg">불러오는 중…</p>'; loaders.org(); };
 
@@ -1013,6 +1065,20 @@
           if(members.length) toast('기존 회원 명단 파일을 불러왔습니다. 저장을 누르면 관리가 시작됩니다.');
         }catch(e){}
       }
+      // 조직도에만 있고 명단에 없는 사람을 찾아 추가 (저장하면 반영)
+      try{
+        var st = {}, sr = await sb.from('site_settings').select('key,value').eq('key', 'org_groups');
+        (sr.data || []).forEach(function(r){ st[r.key] = r.value; });
+        var ou = await sb.from('org_units').select('*').order('sort', {ascending:true});
+        if(!ou.error && ou.data && ou.data.length){
+          var have = {}; members.forEach(function(m){ have[pkey(m)] = true; });
+          var missing = N.orgPeople(N.orgGroups(st), ou.data).filter(function(p){ if(have[pkey(p)]) return false; have[pkey(p)] = true; return true; });
+          if(missing.length){
+            missing.reverse().forEach(function(p){ members.unshift({ name:p.name, role:p.role, group:p.group, business:'' }); });
+            toast('조직도에만 있던 ' + missing.length + '명을 명단 맨 위에 추가했습니다. 저장을 누르면 반영됩니다.');
+          }
+        }
+      }catch(e){ console.error(e); }
       renderMembers(); markMembers();
     }catch(e){ $('memberRows').innerHTML = '<tr><td colspan="5"><p class="state-msg">' + esc(errText(e)) + '</p></td></tr>'; }
   };
@@ -1059,9 +1125,48 @@
       var ins = await must(sb.from('members').insert(fresh).select());
       (ins || []).forEach(function(r){ var t = fresh.find(function(f){ return !f.id && f.sort === r.sort; }); if(t) t.id = r.id; });
     }
+    var before = JSON.parse(membersOriginal), deletedIds = membersDeleted.slice();
     members = list; membersOriginal = JSON.stringify(members); membersDeleted = [];
     renderMembers(); markMembers();
-    toast('회원 명단을 저장했습니다.');
+    var msg = '회원 명단을 저장했습니다.';
+    try{ var n = await syncOrgFromMembers(before, list, deletedIds); if(n) msg += ' 조직도에도 ' + n + '곳 반영했습니다.'; }
+    catch(e){ console.error(e); msg += ' (조직도 반영은 실패했습니다: ' + errText(e) + ')'; }
+    toast(msg);
   };
+  /* 회원 명단에서 일반 회원(직책 '회원')을 추가·삭제·소속 변경하면 조직도의 해당 조직 회원에도 반영 */
+  async function syncOrgFromMembers(before, after, deletedIds){
+    var st = {}, sr = await sb.from('site_settings').select('key,value').eq('key', 'org_groups');
+    (sr.data || []).forEach(function(r){ st[r.key] = r.value; });
+    var groups = N.orgGroups(st), gByKey = {};
+    groups.forEach(function(g){ gByKey[g.key] = g; });
+    var units = await must(sb.from('org_units').select('*').order('sort', {ascending:true}));
+    function unitFor(groupName){
+      return units.find(function(u){ var g = gByKey[u.section]; return g && g.type !== 'leader' && N.unitGroupName(u, g) === String(groupName || '').trim(); });
+    }
+    var changed = {};
+    function removeFrom(p){
+      if(p.role !== '회원') return; var u = unitFor(p.group); if(!u) return;
+      var names = N.splitNames(u.members), i = names.indexOf(String(p.name).trim());
+      if(i >= 0){ names.splice(i, 1); u.members = names.join(', '); changed[u.id] = u; }
+    }
+    function addTo(p){
+      if(p.role !== '회원') return; var u = unitFor(p.group); if(!u) return;
+      var names = N.splitNames(u.members), nm = String(p.name).trim();
+      if(names.indexOf(nm) < 0){ names.push(nm); u.members = names.join(', '); changed[u.id] = u; }
+    }
+    var beforeById = {}; before.forEach(function(m){ if(m.id) beforeById[m.id] = m; });
+    deletedIds.forEach(function(id){ if(beforeById[id]) removeFrom(beforeById[id]); });
+    after.forEach(function(m){
+      var old = m.id ? beforeById[m.id] : null;
+      if(!old){ addTo(m); return; }
+      if(pkey(old) !== pkey(m) || old.role !== m.role){ removeFrom(old); addTo(m); }
+    });
+    var list = Object.keys(changed).map(function(id){ return changed[id]; });
+    if(list.length){
+      await must(sb.from('org_units').upsert(list, { onConflict:'id' }));
+      if(!dirty.org) loaded.org = false;   // 조직도 탭을 다시 열면 새로 불러옴
+    }
+    return list.length;
+  }
   discardHandlers.members = function(){ members = JSON.parse(membersOriginal); membersDeleted = []; renderMembers(); markMembers(); };
 })();

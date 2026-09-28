@@ -54,6 +54,13 @@ window.NYDLinks = (function(){
 
   // 관리자용: 주소의 미리보기 정보 받아오기 (무료 미리보기 서비스 사용)
   async function fetchPreview(u){
+    // 유튜브는 유튜브 공식 정보(oEmbed)로 제목·썸네일을 받음
+    if(window.NYD && window.NYD.youtubeId(u)){
+      try{
+        var y = await (await fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent(u))).json();
+        return { title:(y.title || '').slice(0, 200), description:y.author_name ? y.author_name + ' · YouTube' : '', image:youtubeThumb(u) || y.thumbnail_url || '', site:'YouTube' };
+      }catch(e){ return { title:'', description:'', image:youtubeThumb(u), site:'YouTube' }; }
+    }
     try{
       var r = await fetch('https://api.microlink.io/?url=' + encodeURIComponent(u));
       var j = await r.json();
