@@ -227,7 +227,7 @@
     var contactLines = [];
     doc.querySelectorAll('#contact .contact-row').forEach(function(r){
       var b = r.querySelector('b'), p = r.querySelector('p');
-      if(b && p && !/창립총회/.test(b.textContent)) contactLines.push({ label:b.textContent.trim(), text:p.textContent.trim() });
+      if(b && p && !/창립총회/.test(b.textContent) && (b.textContent.trim() || p.textContent.trim())) contactLines.push({ label:b.textContent.trim(), text:p.textContent.trim() });
     });
     var onOff = [['on','사용'],['off','사용 안 함']];
     var extras = {
@@ -688,8 +688,47 @@
     renderPostImages();
     $('postForm').style.display = '';
     $('postTitleInput').focus();
+    refreshLinkPreview();
   }
   function closePostForm(){ $('postForm').style.display = 'none'; editing = null; }
+
+  /* ---- 링크 미리보기: 입력하는 동안 보여주고, 저장할 때 미리보기 정보를 저장 ---- */
+  var L = window.NYDLinks, fetchedPreviews = {}, previewTimer = null;
+  function postUrls(){
+    var urls = [];
+    if(!isNotice()){ var lf = $('postLinkField'); var lu = lf ? readLinkField(lf) : ''; if(/^https?:\/\//i.test(lu)) urls.push(lu); }
+    L.extract($('postBodyInput').value).forEach(function(u){ if(urls.indexOf(u) < 0) urls.push(u); });
+    return urls.slice(0, 8);
+  }
+  async function refreshLinkPreview(){
+    var urls = postUrls(), box = $('postLinkPreview');
+    $('postLinkPreviewWrap').style.display = urls.length ? '' : 'none';
+    if(!urls.length){ box.innerHTML = ''; return; }
+    var saved = await L.load(urls);
+    box.innerHTML = urls.map(function(u){ return L.cardHtml(u, saved[u] || fetchedPreviews[u]); }).join('');
+    for(var i = 0; i < urls.length; i++){
+      var u = urls[i];
+      if(saved[u] || fetchedPreviews[u] !== undefined) continue;
+      fetchedPreviews[u] = null;
+      var p = await L.fetchPreview(u);
+      fetchedPreviews[u] = p;
+      if(p && postUrls().indexOf(u) >= 0) box.innerHTML = postUrls().map(function(x){ return L.cardHtml(x, saved[x] || fetchedPreviews[x]); }).join('');
+    }
+  }
+  function schedulePreview(){ clearTimeout(previewTimer); previewTimer = setTimeout(refreshLinkPreview, 700); }
+  $('postBodyInput').addEventListener('input', schedulePreview);
+  $('postLinkBox').addEventListener('input', schedulePreview);
+  $('postLinkBox').addEventListener('change', schedulePreview);
+  async function savePreviews(urls){
+    if(!urls.length) return;
+    var saved = await L.load(urls), rows = [];
+    for(var i = 0; i < urls.length; i++){
+      var u = urls[i]; if(saved[u]) continue;
+      var p = fetchedPreviews[u] || await L.fetchPreview(u);
+      if(p) rows.push({ key:'lp:' + u, value:JSON.stringify(p), updated_at:new Date().toISOString() });
+    }
+    if(rows.length) await sb.from('site_settings').upsert(rows, { onConflict:'key' });
+  }
   $('newPostBtn').addEventListener('click', function(){ openPostForm(null); });
   $('postLinkBox').addEventListener('change', function(){ var f = $('postLinkField'); if(f) readLinkField(f); });
   $('postCancelBtn').addEventListener('click', closePostForm);
@@ -728,6 +767,8 @@
         else if(postFileRemoved){ payload.file_url = null; payload.file_name = null; }
       }
       var table = isNotice() ? 'notices' : 'posts';
+      var urls = postUrls();
+      if(urls.length){ toast('링크 미리보기를 만드는 중…'); try{ await savePreviews(urls); }catch(err){ console.error(err); } }
       if(editing) await must(sb.from(table).update(payload).eq('id', editing.id));
       else await must(sb.from(table).insert(payload));
       toast(editing ? '수정했습니다.' : '등록했습니다.');

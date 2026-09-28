@@ -107,6 +107,7 @@
             </div>
             <div class="post-images" id="postImages"></div>
             <div class="notice-detail-body" id="postBody"></div>
+            <div class="link-cards" id="postLinks"></div>
             <div class="post-extra" id="postExtra"></div>
             <div class="notice-detail-actions">
               <a class="btn btn-line" id="postBack" href="board.html">← 목록으로</a>
@@ -173,6 +174,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/common.js"></script>
 <script src="js/lightbox.js"></script>
+<script src="js/linkpreview.js"></script>
 <script>
 (function(){
   var N = window.NYD, esc = N.escapeHtml;
@@ -196,7 +198,7 @@
 
   async function loadList(){
     if(!N.sbRead){ listMsg('게시판을 불러올 수 없습니다.'); return; }
-    var res = await N.sbRead.from('posts').select('id,title,images,file_url,pinned,created_at').eq('board', boardKey)
+    var res = await N.sbRead.from('posts').select('id,title,body,images,file_url,link_url,pinned,created_at').eq('board', boardKey)
       .order('pinned', {ascending:false}).order('created_at', {ascending:false});
     if(res.error){ listMsg('글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'); return; }
     var rows = res.data || [];
@@ -204,7 +206,7 @@
     var total = rows.filter(function(r){ return !r.pinned; }).length, n = total;
     listEl.innerHTML = rows.map(function(p){
       var num = p.pinned ? '<span class="pin-badge">고정</span>' : String(n--);
-      var marks = ((p.images && p.images.length) ? ' <span class="nt-img-mark" title="사진 첨부">📷</span>' : '') + (p.file_url ? ' <span class="nt-img-mark" title="파일 첨부">📎</span>' : '');
+      var marks = ((p.images && p.images.length) ? ' <span class="nt-img-mark" title="사진 첨부">📷</span>' : '') + (p.file_url ? ' <span class="nt-img-mark" title="파일 첨부">📎</span>' : '') + ((/https?:\/\//.test(p.body || '') || (p.link_url && !N.albumIdFromUrl(p.link_url))) ? ' <span class="nt-img-mark" title="링크">🔗</span>' : '');
       return '<a class="notice-row" href="board.html?b=' + boardKey + '&id=' + encodeURIComponent(p.id) + '">' +
         '<span class="nt-num">' + num + '</span><span class="nt-title">' + esc(p.title) + marks + '</span>' +
         '<span class="nt-author">뉴영덕연합회</span><span class="nt-date">' + N.formatDate(p.created_at) + '</span></a>';
@@ -226,13 +228,17 @@
     var imgs = (p.images || []).filter(function(u){ return N.safeUrl(u); }).map(function(u){ return {url:u}; });
     document.getElementById('postImages').innerHTML = imgs.map(function(im, i){ return '<img loading="lazy" data-i="' + i + '" src="' + esc(im.url) + '" alt="' + esc(p.title) + ' 사진 ' + (i+1) + '">'; }).join('');
     document.getElementById('postImages').onclick = function(e){ var im = e.target.closest('img[data-i]'); if(im) window.NYDLightbox.open(imgs, +im.dataset.i); };
-    document.getElementById('postBody').innerHTML = N.richText(p.body || '');
+    document.getElementById('postBody').innerHTML = window.NYDLinks.linkify(N.richText(p.body || ''));
     var extra = '', albumId = N.albumIdFromUrl(p.link_url);
     if(albumId) extra += '<a class="btn btn-line btn-sm" href="gallery.html?album=' + encodeURIComponent(albumId) + '">사진첩에서 크게 보기 →</a>';
-    else if(N.safeUrl(p.link_url)) extra += '<a class="btn btn-line btn-sm" href="' + esc(p.link_url) + '"' + (/^https?:/i.test(p.link_url) ? ' target="_blank" rel="noopener"' : '') + '>관련 링크 열기 ↗</a>';
+    else if(N.safeUrl(p.link_url) && !/^https?:/i.test(p.link_url)) extra += '<a class="btn btn-line btn-sm" href="' + esc(p.link_url) + '">관련 페이지 보기 →</a>';
     if(N.safeUrl(p.file_url)) extra += '<a class="btn btn-primary btn-sm" href="' + esc(p.file_url) + '" target="_blank" rel="noopener" download>첨부파일 받기 · ' + esc(p.file_name || '파일') + '</a>';
     document.getElementById('postExtra').innerHTML = extra;
     if(albumId) showAlbum(albumId);
+    // 링크 미리보기 카드 (관련 링크 + 본문 속 주소)
+    var urls = (/^https?:/i.test(p.link_url || '') ? [p.link_url] : []).concat(window.NYDLinks.extract(p.body));
+    urls = urls.filter(function(u, i){ return urls.indexOf(u) === i; });
+    window.NYDLinks.render(document.getElementById('postLinks'), urls);
   }
 
   // 글에 연결된 행사 사진첩의 사진을 글 아래에 보여줌

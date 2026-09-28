@@ -124,7 +124,7 @@
       // 기본값: 문의 칸에 적힌 내용
       document.querySelectorAll('#contact .contact-row').forEach(function(r){
         var b = r.querySelector('b'), p = r.querySelector('p');
-        if(b && p && !/창립총회/.test(b.textContent)) lines.push({ label:b.textContent.trim(), text:p.textContent.trim() });
+        if(b && p && !/창립총회/.test(b.textContent) && (b.textContent.trim() || p.textContent.trim())) lines.push({ label:b.textContent.trim(), text:p.textContent.trim() });
       });
     }
     var modal = document.createElement('div');
@@ -132,7 +132,7 @@
     modal.id = 'contactModal';
     modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true');
     modal.innerHTML = '<div class="modal-card"><div class="modal-head"><span><span class="badge-dot"></span>' + esc(st.cta_popup_title || '가입 · 참석 문의') + '</span><button type="button" aria-label="닫기" data-close>×</button></div>' +
-      '<div class="modal-body">' + (st.cta_popup_intro ? '<p class="cp-intro">' + rich(st.cta_popup_intro) + '</p>' : '') + '<ul class="cp-lines">' + lines.map(contactLineHtml).join('') + '</ul></div></div>';
+      '<div class="modal-body">' + (st.cta_popup_intro ? '<p class="cp-intro">' + rich(st.cta_popup_intro) + '</p>' : '') + '<ul class="cp-lines">' + lines.filter(function(l){ return l && (String(l.label || '').trim() || String(l.text || '').trim()); }).map(contactLineHtml).join('') + '</ul></div></div>';
     document.body.appendChild(modal);
     function open(e){ if(e) e.preventDefault(); modal.classList.add('open'); }
     function close(){ modal.classList.remove('open'); }

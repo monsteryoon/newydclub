@@ -620,6 +620,7 @@
             </div>
             <img id="detailImage" class="notice-detail-image" style="display:none;" alt="">
             <div class="notice-detail-body" id="detailBody"></div>
+            <div class="link-cards" id="detailLinks"></div>
             <div class="notice-detail-actions">
               <a class="btn btn-line" href="notice.html">← 목록으로</a>
               <div class="notice-admin-actions" id="detailAdminActions" style="display:none;">
@@ -696,6 +697,8 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/common.js"></script>
+<script src="js/linkpreview.js"></script>
 <script>
   var header = document.getElementById('siteHeader');
   function onScroll(){
@@ -790,7 +793,7 @@
     }
     var total = currentNotices.length;
     noticeBoardList.innerHTML = currentNotices.map(function(n, i){
-      var imgMark = n.image_url ? ' <span class="nt-img-mark" title="사진 첨부">📷</span>' : '';
+      var imgMark = (n.image_url ? ' <span class="nt-img-mark" title="사진 첨부">📷</span>' : '') + (/https?:\/\//.test(n.body || '') ? ' <span class="nt-img-mark" title="링크">🔗</span>' : '');
       return (
         '<a class="notice-row" href="notice.html?id='+encodeURIComponent(n.id)+'">' +
           '<span class="nt-num">'+(total - i)+'</span>' +
@@ -809,7 +812,9 @@
     var img = document.getElementById('detailImage');
     if(notice.image_url){ img.src = notice.image_url; img.alt = notice.title + ' 첨부 이미지'; img.style.display = 'block'; }
     else { img.style.display = 'none'; img.src = ''; }
-    document.getElementById('detailBody').innerHTML = escapeHtml(notice.body).replace(/\n/g,'<br>');
+    var bodyHtml = escapeHtml(notice.body).replace(/\n/g,'<br>');
+    document.getElementById('detailBody').innerHTML = window.NYDLinks ? window.NYDLinks.linkify(bodyHtml) : bodyHtml;
+    if(window.NYDLinks) window.NYDLinks.render(document.getElementById('detailLinks'), window.NYDLinks.extract(notice.body));
 
     var adminActions = document.getElementById('detailAdminActions');
     adminActions.style.display = isAdmin ? 'flex' : 'none';
