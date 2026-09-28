@@ -151,14 +151,17 @@
         <section data-panel="members" style="display:none;">
           <div class="panel">
             <div class="panel-head"><h2>회원 명단 (회원검색 페이지)</h2><button class="btn btn-primary btn-sm" id="addMemberBtn" type="button">+ 회원 추가</button></div>
-            <p class="hint">칸을 눌러 바로 고치고 아래 <b>저장</b>을 누르세요. 회원검색 페이지에 반영됩니다.</p>
+            <p class="hint">칸을 눌러 바로 고치고 아래 <b>저장</b>을 누르세요. 조직도의 이름에 마우스를 올리면 뜨는 <b>회원카드</b>와 회원검색에 반영됩니다.<br>
+              사진 칸을 누르면 사진을 올릴 수 있습니다. <b>전화번호는 "공개"에 체크한 사람만</b> 홈페이지에 보이니, 본인 동의를 받은 경우에만 체크해 주세요.</p>
+            <p class="hint" id="cardSetupWarn" style="display:none; color:var(--crab); font-weight:700;">사진·지역·전화 칸을 저장하려면 Supabase에서 member-cards.sql 을 한 번 실행해야 합니다.</p>
             <input class="admin-input" type="search" id="memberFilter" placeholder="이름·소속으로 찾기" style="margin-top:12px;">
           </div>
           <div class="panel table-scroll">
             <table class="member-edit-table">
-              <thead><tr><th style="width:110px;">이름</th><th style="width:130px;">직책</th><th style="width:170px;">소속</th><th>업체·직업</th><th style="width:52px;"></th></tr></thead>
+              <thead><tr><th style="width:48px;">사진</th><th style="width:96px;">이름</th><th style="width:110px;">직책</th><th style="width:140px;">소속</th><th style="width:90px;">지역</th><th style="width:130px;">전화</th><th style="width:48px;" title="체크하면 홈페이지 회원카드에 전화번호가 보입니다">공개</th><th style="min-width:140px;">업체·직업</th><th style="width:52px;"></th></tr></thead>
               <tbody id="memberRows"></tbody>
             </table>
+            <input type="file" accept="image/*" id="memberPhotoInput" hidden>
           </div>
         </section>
       </div>

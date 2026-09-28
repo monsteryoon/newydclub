@@ -1053,10 +1053,20 @@
   /* ======================================================================
      5. 회원 명단
      ====================================================================== */
-  var members = [], membersOriginal = '[]', membersDeleted = [];
+  var members = [], membersOriginal = '[]', membersDeleted = [], cardReady = true, contactIds = [], photoTarget = null;
+  var MEMBER_COLS = ['id','name','role','group','business','sort','photo_url','region'];
+  function memberRow(m){ var o = {}; MEMBER_COLS.forEach(function(k){ if(k in m && (cardReady || (k !== 'photo_url' && k !== 'region'))) o[k] = m[k]; }); return o; }
   loaders.members = async function(){
     try{
       members = await must(sb.from('members').select('*').order('sort', {ascending:true}));
+      // 회원카드 칸(사진·지역)과 연락처 테이블이 준비됐는지 확인
+      var cr = await sb.from('member_contacts').select('member_id,phone,phone_public');
+      cardReady = !cr.error && (!members.length || 'photo_url' in members[0]);
+      $('cardSetupWarn').style.display = cardReady ? 'none' : '';
+      var contacts = {};
+      (cr.data || []).forEach(function(c){ contacts[c.member_id] = c; });
+      members.forEach(function(m){ var c = contacts[m.id]; m.phone = c ? c.phone || '' : ''; m.phone_public = !!(c && c.phone_public); });
+      contactIds = Object.keys(contacts);
       membersOriginal = JSON.stringify(members); membersDeleted = [];
       if(!members.length){
         try{
@@ -1085,10 +1095,14 @@
   function renderMembers(){
     var q = $('memberFilter').value.trim();
     $('memberRows').innerHTML = members.map(function(m, i){
-      if(q && [m.name, m.role, m.group, m.business].join(' ').indexOf(q) < 0) return '';
-      return '<tr data-i="' + i + '">' + ['name','role','group','business'].map(function(f){
-        return '<td><input data-mf="' + f + '" value="' + esc(m[f] || '') + '"></td>';
-      }).join('') + '<td><button type="button" class="btn-mini danger" data-mdel>삭제</button></td></tr>';
+      if(q && [m.name, m.role, m.group, m.business, m.region, m.phone].join(' ').indexOf(q) < 0) return '';
+      function cell(f, ph){ return '<td><input data-mf="' + f + '" value="' + esc(m[f] || '') + '"' + (ph ? ' placeholder="' + ph + '"' : '') + '></td>'; }
+      var photo = N.safeUrl(m.photo_url);
+      return '<tr data-i="' + i + '">' +
+        '<td class="c"><button type="button" class="m-photo' + (photo ? ' has' : '') + '" data-mphoto title="사진 올리기"' + (photo ? ' style="background-image:url(&quot;' + esc(photo) + '&quot;)"' : '') + '>' + (photo ? '' : '+') + '</button></td>' +
+        cell('name') + cell('role') + cell('group') + cell('region', '예: 영해면') + cell('phone', '010-') +
+        '<td class="c"><input type="checkbox" data-mf="phone_public"' + (m.phone_public ? ' checked' : '') + ' title="홈페이지에 전화번호 공개" style="width:18px; height:18px; accent-color:var(--crab);"></td>' +
+        cell('business') + '<td><button type="button" class="btn-mini danger" data-mdel>삭제</button></td></tr>';
     }).join('') || '<tr><td colspan="5"><p class="hint" style="padding:12px;">해당하는 회원이 없습니다.</p></td></tr>';
   }
   function markMembers(){
@@ -1098,9 +1112,24 @@
   $('memberFilter').addEventListener('input', renderMembers);
   $('memberRows').addEventListener('input', function(e){
     var tr = e.target.closest('[data-i]'), f = e.target.dataset.mf; if(!tr || !f) return;
-    members[+tr.dataset.i][f] = e.target.value; markMembers();
+    members[+tr.dataset.i][f] = e.target.type === 'checkbox' ? e.target.checked : e.target.value; markMembers();
+  });
+  $('memberRows').addEventListener('change', function(e){
+    if(e.target.type !== 'checkbox') return;
+    var tr = e.target.closest('[data-i]'); members[+tr.dataset.i].phone_public = e.target.checked; markMembers();
+  });
+  // 사진 올리기 (정사각형에 가깝게 작게 줄여서)
+  pickFiles($('memberPhotoInput'), async function(files){
+    var m = photoTarget; photoTarget = null; if(!m) return;
+    if(!(await ensureSession())) return;
+    toast('사진 올리는 중…');
+    try{ m.photo_url = await N.uploadFile(files[0], 'members', { maxSide:600 }); renderMembers(); markMembers(); toast('사진이 준비됐습니다. 저장을 눌러 반영하세요.'); }catch(err){ fail(err); }
   });
   $('memberRows').addEventListener('click', function(e){
+    if(e.target.closest('[data-mphoto]')){
+      if(!cardReady){ toast('먼저 Supabase에서 member-cards.sql 을 실행해 주세요.', true); return; }
+      photoTarget = members[+e.target.closest('[data-i]').dataset.i]; $('memberPhotoInput').click(); return;
+    }
     if(!e.target.closest('[data-mdel]')) return;
     var i = +e.target.closest('[data-i]').dataset.i, m = members[i];
     if(!confirm((m.name || '이 회원') + '을(를) 명단에서 삭제할까요?')) return;
@@ -1120,10 +1149,17 @@
     list.forEach(function(m, i){ m.sort = i + 1; m.name = m.name.trim(); });
     if(membersDeleted.length) await must(sb.from('members').delete().in('id', membersDeleted));
     var existing = list.filter(function(m){ return m.id; }), fresh = list.filter(function(m){ return !m.id; });
-    if(existing.length) await must(sb.from('members').upsert(existing, { onConflict:'id' }));
+    if(existing.length) await must(sb.from('members').upsert(existing.map(memberRow), { onConflict:'id' }));
     if(fresh.length){
-      var ins = await must(sb.from('members').insert(fresh).select());
+      var ins = await must(sb.from('members').insert(fresh.map(memberRow)).select());
       (ins || []).forEach(function(r){ var t = fresh.find(function(f){ return !f.id && f.sort === r.sort; }); if(t) t.id = r.id; });
+    }
+    // 전화번호는 별도 보안 테이블에 저장
+    if(cardReady){
+      var crow = list.filter(function(m){ return m.id && (String(m.phone || '').trim() || m.phone_public || contactIds.indexOf(m.id) >= 0); })
+                     .map(function(m){ return { member_id:m.id, phone:String(m.phone || '').trim() || null, phone_public:!!m.phone_public && !!String(m.phone || '').trim(), updated_at:new Date().toISOString() }; });
+      if(crow.length) await must(sb.from('member_contacts').upsert(crow, { onConflict:'member_id' }));
+      contactIds = crow.map(function(c){ return c.member_id; });
     }
     var before = JSON.parse(membersOriginal), deletedIds = membersDeleted.slice();
     members = list; membersOriginal = JSON.stringify(members); membersDeleted = [];

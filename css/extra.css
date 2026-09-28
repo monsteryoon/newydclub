@@ -235,3 +235,33 @@ details.panel[open] > summary{margin-bottom:16px;}
   .lc-img{width:100%; aspect-ratio:1.91/1;}
   .lc-icon{aspect-ratio:auto; height:64px;}
 }
+
+/* ---------- 회원카드 ---------- */
+button.person{font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; border-bottom:1px dashed currentColor; line-height:inherit;}
+button.person:hover, button.person:focus-visible{color:var(--crab); border-bottom-style:solid; outline:none;}
+.leader-card.featured button.person:hover{color:var(--gold-bright);}
+button.member-chip.person{border:1px solid var(--line); border-radius:20px; padding:5px 12px; font-size:13px; font-weight:600; background:var(--mist); transition:border-color .15s ease, color .15s ease, background .15s ease;}
+button.member-chip.person:hover, button.member-chip.person:focus-visible{border-color:var(--crab); color:var(--crab); background:var(--paper);}
+.person-card{position:fixed; z-index:250; width:300px; max-width:calc(100vw - 24px); background:var(--paper); color:var(--ink); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-lg); padding:16px; opacity:0; visibility:hidden; transform:translateY(4px); transition:opacity .15s ease, transform .15s ease, visibility .15s;}
+.person-card.open{opacity:1; visibility:visible; transform:none;}
+.person-card.sheet{left:12px !important; right:12px; bottom:12px; top:auto !important; width:auto; max-width:none; transform:translateY(20px);}
+.person-card.sheet.open{transform:none;}
+.pc-top{display:flex; gap:14px; align-items:center;}
+.pc-photo{width:72px; height:72px; border-radius:50%; flex:none; background:var(--mist) center/cover no-repeat; border:2px solid var(--line);}
+.pc-initial{display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; color:#fff; background:linear-gradient(155deg, var(--crab), var(--crab-deep)); border-color:transparent;}
+.pc-head{flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;}
+.pc-head b{font-size:18px; font-weight:800;}
+.pc-role{font-size:13.5px; font-weight:800; color:var(--crab);}
+.pc-group{font-size:13px; color:var(--ink-soft);}
+.pc-close{align-self:flex-start; border:0; background:none; font-size:20px; line-height:1; color:var(--ink-soft); cursor:pointer; padding:2px 4px;}
+.pc-rows{display:grid; grid-template-columns:auto 1fr; gap:8px 14px; margin:14px 0 0; padding-top:12px; border-top:1px solid var(--line); font-size:14px;}
+.pc-rows dt{color:var(--ink-soft); font-weight:700; font-size:12.5px; padding-top:1px;}
+.pc-rows dd{margin:0; font-weight:600; word-break:keep-all;}
+.pc-rows a{color:var(--sea); text-decoration:underline;}
+.pc-empty{margin-top:12px; padding-top:12px; border-top:1px solid var(--line); font-size:13px; color:var(--ink-soft);}
+@media (hover:hover){ .person-card:not(.sheet) .pc-close{display:none;} }
+
+/* 관리자 회원 명단: 사진 칸 */
+.m-photo{width:36px; height:36px; border-radius:50%; border:1px dashed var(--line); background:var(--mist) center/cover no-repeat; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--ink-soft); padding:0;}
+.m-photo.has{border-style:solid;}
+.member-edit-table td.c{text-align:center;}

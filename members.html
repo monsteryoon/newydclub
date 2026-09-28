@@ -628,6 +628,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/common.js"></script>
+<script src="js/personcard.js"></script>
 <script>
   var header = document.getElementById('siteHeader');
   function onScroll(){
@@ -691,7 +692,7 @@
       var isLeader = m.role !== '회원';
       return (
         '<div class="member-row">' +
-          '<span class="mt-name">' + escapeHtml(m.name) + '</span>' +
+          '<span class="mt-name">' + (window.NYDPerson ? '<button type="button" class="person" data-name="' + escapeHtml(m.name) + '" data-group="' + escapeHtml(m.group) + '">' + escapeHtml(m.name) + '</button>' : escapeHtml(m.name)) + '</span>' +
           '<span class="mt-group">' + escapeHtml(m.group) + '</span>' +
           '<span class="mt-role"><span class="role-badge' + (isLeader ? ' leader' : '') + '">' + escapeHtml(m.role) + '</span></span>' +
           '<span class="mt-business">' + (m.business ? escapeHtml(m.business) : '<span class="mt-business-empty">정보 없음</span>') + '</span>' +
@@ -741,6 +742,7 @@
         list = mem.data.map(function(m){ return { name: m.name || '', role: m.role || '', group: m.group || '', business: m.business || '' }; });
         ALL_MEMBERS = mergeOrg(list, res[1], res[2]);
         defaultHint();
+        if(window.NYDPerson){ window.NYDPerson.load(); window.NYDPerson.addPeople(ALL_MEMBERS); }
       } else {
         loadMembersFile().then(function(){ ALL_MEMBERS = mergeOrg(ALL_MEMBERS || [], res[1], res[2]); defaultHint(); });
       }

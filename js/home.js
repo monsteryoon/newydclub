@@ -176,21 +176,32 @@
         var badge = (g.badge != null && String(g.badge).trim()) ? g.badge : mine.length + '개';
         html += '<div class="org-group-head reveal" style="--i:0;' + (i ? ' margin-top:44px;' : '') + '"><h3>' + esc(g.name) + ' <span>' + esc(badge) + '</span></h3></div>';
       }
+      var P = window.NYDPerson;
       if(g.type === 'leader'){
         var tiers = {};
         mine.forEach(function(u){ (tiers[u.tier || 1] = tiers[u.tier || 1] || []).push(u); });
         html += '<div class="org-leaders">' + Object.keys(tiers).sort(function(a, b){ return a - b; }).map(function(t, k){
           return '<div class="leader-tier reveal" style="--i:' + (k+1) + '">' + tiers[t].map(function(u){
             var cls = 'leader-card' + (u.featured ? ' featured' : '') + (u.wide ? ' wide' : '');
-            return '<div class="' + cls + '"><span class="lc-role">' + esc(u.title) + '</span><span class="lc-name">' + esc(u.members || u.leader || '') + '</span></div>';
+            var grp = N.unitGroupName(u, g);
+            // "국장 권순용 · 차장 조주현" → 이름마다 회원카드
+            var names = String(u.members || u.leader || '').split(/\s*[·,、]\s*/).filter(Boolean).map(function(tok){
+              var parts = tok.trim().split(/\s+/), nm = parts.pop();
+              return (parts.length ? esc(parts.join(' ')) + ' ' : '') + (P ? P.tag(nm, grp) : esc(nm));
+            }).join(' · ');
+            return '<div class="' + cls + '"><span class="lc-role">' + esc(u.title) + '</span><span class="lc-name">' + names + '</span></div>';
           }).join('') + '</div>';
         }).join('') + '</div>';
       } else {
         html += '<div class="org-grid reveal" style="--i:1">' + mine.map(function(u){
-          var names = N.splitNames(u.members);
-          var chips = names.length ? names.map(function(n){ return '<span class="member-chip">' + esc(n) + '</span>'; }).join('')
+          var names = N.splitNames(u.members), grp = N.unitGroupName(u, g);
+          var chips = names.length ? names.map(function(n){
+                        return P ? '<button type="button" class="member-chip person" data-name="' + esc(n) + '" data-group="' + esc(grp) + '">' + esc(n) + '</button>' : '<span class="member-chip">' + esc(n) + '</span>';
+                      }).join('')
                                    : '<span class="member-chip muted">회원 명단 준비 중</span>';
-          return '<details class="org-card"><summary><span class="oc-title"><b>' + esc(u.title) + '</b><i>' + esc(u.leader || '') + '</i></span>' +
+          var lead = String(u.leader || '').trim().split(/\s+/).filter(Boolean), leadHtml = '';
+          if(lead.length){ var ln = lead.pop(); leadHtml = (lead.length ? esc(lead.join(' ')) + ' ' : '') + (P ? P.tag(ln, grp) : esc(ln)); }
+          return '<details class="org-card"><summary><span class="oc-title"><b>' + esc(u.title) + '</b><i>' + leadHtml + '</i></span>' +
                  '<span class="oc-meta">' + (names.length ? names.length + '명' : '-') + ' ' + chevron + '</span></summary>' +
                  '<div class="org-members">' + chips + '</div></details>';
         }).join('') + '</div>';
@@ -199,6 +210,7 @@
     });
     body.innerHTML = html;
     N.observeReveal($('orgchart'));
+    if(window.NYDPerson) window.NYDPerson.load(N.orgPeople(groups, units));
   }
   // DB 조직도가 없어도 그룹 표시(예: 9개 읍·면)는 반영
   function applyOrgBadges(st){

@@ -79,7 +79,7 @@
   /* site-media 저장소에 파일 업로드 → 공개 주소 반환 */
   async function uploadFile(file, folder, opts){
     opts = opts || {};
-    var toSend = opts.raw ? file : await resizeImage(file);
+    var toSend = opts.raw ? file : await resizeImage(file, opts.maxSide, opts.quality);
     var ext = (toSend.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '') || 'bin';
     var path = (folder || 'misc') + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
     var res = await sb.storage.from('site-media').upload(path, toSend, { cacheControl: '31536000', upsert: false, contentType: toSend.type || undefined });
